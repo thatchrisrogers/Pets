@@ -1,0 +1,33 @@
+﻿body {
+    font-family: 'Comic Sans MS';
+    margin: 0;
+}
+.message {
+    position: relative;
+    z-index: 10; /*Higher number is always on top*/
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+.messageSuccess {
+    color: #3c763d;
+    background-color: #dff0d8;
+    border-color: #d6e9c6;
+}
+.messageError {
+    color: #a94442;
+    background-color: #f2dede;
+    border-color: #ebccd1;
+}
+.gridWith2Columns {
+    display: grid;
+    grid-template-columns: fit-content(200px) auto;
+    grid-gap: 5px;
+}
+.gridLabelColumn {
+    text-align: left;
+    font-weight: bold;
+}
+
+.gridInputColumn {
+    text-align: left;
+}

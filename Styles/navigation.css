@@ -1,0 +1,56 @@
+﻿.topNav {
+    overflow: hidden;
+    background-color: cyan;
+}
+
+    .topNav a {
+        float: left;
+    }
+
+.topNavLogo {
+    height: 3rem;
+    border-radius: 4px;
+}
+
+.topNavLink {
+    padding: 12px;
+    color: black;
+    text-align: center;
+    text-decoration: none;
+}
+    .topNavLink:hover {
+        background-color: darkcyan;
+        color: white;
+        border-radius: 4px;
+    }
+.topNavIcon {
+    display: none;
+}
+/* When the screen is less 600 pixels wide, hide all links except for Home button.  Show the link that opens and closes topNav */
+@media screen and (max-width: 600px) {
+    .topNav a:not(:first-child) {
+        display: none;
+    }
+
+    .topNav a.topNavIcon {
+        float: right;
+        display: block;
+    }
+   
+    /* The responsive class is added to the topNav with JavaScript when the user clicks on the icon.  This makes the topNav look good on small screens (displays links vertically instead of horizontally) */
+    .topNav.responsive {
+        position: relative;
+    }
+
+        .topNav.responsive .topNavIcon {
+            position: absolute;
+            right: 0;
+            top: 0;
+        }
+
+        .topNav.responsive a {
+            float: none;
+            display: block;
+            text-align: left;
+        }
+}
