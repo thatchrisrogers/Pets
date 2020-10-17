@@ -9,15 +9,53 @@
     border-radius: 4px;
 }
 .messageSuccess {
-    color: #3c763d;
-    background-color: #dff0d8;
-    border-color: #d6e9c6;
+    color: green;
+    background-color: lawngreen;
 }
 .messageError {
     color: #a94442;
     background-color: #f2dede;
     border-color: #ebccd1;
 }
+.overlay {
+    position: fixed; /*Sit on top of pge content*/
+    display: none;
+    width: 100%; /*Cover the whole page*/
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.4);
+    z-index: 1; /*Specify a stack order in case you are using a different order for other elements*/
+}
+.modalContent {
+    background-color: #fefefe;
+    margin: 5% auto; /*20% from top and centered*/
+    padding: 10px;
+    border: 1px solid #888;
+    border-radius: 4px;
+    width: 60%
+}
+@media screen and (max-width:600px) {
+    .modalContent {
+        width: 100%;
+        margin: 20% auto;
+    }
+}
+.modalClose {
+    color: #676767;
+    float: right;
+    background-color: transparent;
+    border-style: none;
+    font-size: 1.5rem;
+}
+
+    .modalClose:hover, .modalClose:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
 .gridWith2Columns {
     display: grid;
     grid-template-columns: fit-content(200px) auto;
@@ -27,7 +65,52 @@
     text-align: left;
     font-weight: bold;
 }
-
 .gridInputColumn {
     text-align: left;
+}
+table {
+    border-collapse: collapse;
+    table-layout: auto;
+    background-color: #fefefe;
+    border-radius: 4px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+th {
+    border-bottom: solid 2px;
+    padding: 5px;
+}
+
+    th.tableHeading {
+        border-bottom: none;
+        text-align: left;
+        padding-left: 0px;
+    }
+
+td {
+    padding: 5px;
+    vertical-align: top;
+}
+
+    td:first-child {
+        border-top-left-radius: 4px;
+        border-bottom-left-radius: 4px;
+    }
+
+    td:last-child {
+        border-top-right-radius: 4px;
+        border-bottom-right-radius: 4px;
+    }
+.tableFilter {
+    text-align: right;
+    border-bottom: none;
+}
+.selecTable > thead > tr:hover {
+    cursor: pointer;
+}
+.selecTable > tbody > tr:hover {
+    cursor: pointer;
+    background-color: darkcyan;
+    color: white;
 }

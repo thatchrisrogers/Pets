@@ -9,6 +9,7 @@ namespace Pets.Models
     {
         public Int16? ID { get; set; }
         public string HouseholdName { get; set; }
+        public string Address { get; set; }
         public string Email { get; set; }
     }
 }

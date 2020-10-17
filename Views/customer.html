@@ -1,19 +1,46 @@
 ﻿<h1>Customer Information</h1>
+<table id="CustomerTable" class="selecTable">
+    <thead>
+        <tr>
+            <th colspan="3" class="tableFilter">
+                <input type="text" onkeyup="filterCustomers(this.value);" placeholder="filter" />
+            </th>
+        </tr>
+        <tr>
+            <th onclick="sortCustomers('HouseholdName');" class="stickyHeader">Household</th>
+            <th onclick="sortCustomers('Address');" class="stickyHeader">Address</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+<input type="submit" value="New Customer" onclick="displayCustomerForm(null);" />
 <form class="overlay" id="CustomerForm">
-    <div class="gridWith2Columns">
-        <input type="hidden" name="ID" />
-        <div class="gridLabelColumn"><label for="HouseholdName">Household Name:</label></div>
-        <div class="gridInputColumn">
-            <input type="text" id="HouseholdName" required />
+    <div class="modalContent">
+        <div class="gridWith2Columns">
+            <div class="gridLabelColumn"><input type="hidden" name="ID" /></div>
+            <div class="gridInputColumn">
+                <button type="button" class="modalClose" onclick="closeCustomerForm();">&times;</button>
+            </div>
+            <div class="gridLabelColumn"><label for="HouseholdName">Household Name:</label></div>
+            <div class="gridInputColumn">
+                <input type="text" id="HouseholdName" required />
+            </div>
+            <div class="gridLabelColumn">
+                <label for="Email">Address:</label>
+            </div>
+            <div class="gridInputColumn">
+                <input type="Text" id="Address" required />
+            </div>
+            <div class="gridLabelColumn">
+                <label for="Email">Email:</label>
+            </div>
+            <div class="gridInputColumn">
+                <input type="Email" id="Email" required />
+            </div>
         </div>
-        <div class="gridLabelColumn">
-            <label for="Email">Email:</label>
+        <div>
+            <input type="submit" value="Save" />
+            <input type="submit" id="SaveAndClose" value="Save & Close" />
         </div>
-        <div class="gridInputColumn">
-            <input type="Email" id="Email" required />
-        </div>
-    </div>
-    <div>
-        <input type="submit" value="Save" />
     </div>
 </form>
