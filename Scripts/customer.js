@@ -1,4 +1,5 @@
 ﻿var customers;
+var customerID;
 var unfilteredCustomers;
 var prevSortProperty;
 var sortDirection;
@@ -9,12 +10,6 @@ function initCustomerView() {
     document.getElementById('CustomerForm').onsubmit = function (event) {
         event.preventDefault();
         saveCustomer();
-        if (document.activeElement.id === 'Save') {
-            getCustomer(id, displayCustomerForm);  //reload form to get fresh IDs.  ToDo - this is not working????
-        }
-        else if (document.activeElement.id === 'SaveAndClose') {
-            closeCustomerForm();
-        }
     };
 }
 function createCustomerTable() {
@@ -40,8 +35,8 @@ function createCustomerTable() {
         element.innerHTML = customer.Address;
         tableCell.appendChild(element);      
         tableRow.onclick = function () {
-            let id = this.cells[0].querySelector('[name=CustomerID]').value;
-            getCustomer(id, displayCustomerForm);
+            customerID = this.cells[0].querySelector('[name=CustomerID]').value;
+            getCustomer(customerID, displayCustomerForm);
         }
     }
 }
@@ -50,7 +45,7 @@ function displayCustomerForm(customer) {
         let customerForm = document.forms.namedItem("CustomerForm");
         let table = document.getElementById("PetTable");
         if (customer !== null) {
-            customerForm.ID.value = customer.ID;
+            customerID = customer.ID;
             customerForm.HouseholdName.value = customer.HouseholdName;
             customerForm.Address.value = customer.Address;
             customerForm.Email.value = customer.Email;
@@ -61,7 +56,7 @@ function displayCustomerForm(customer) {
             }
         }
         else { //Display empty Customer Form
-            customerForm.ID.value = '';
+            customerID = null;
             customerForm.HouseholdName.value = '';
             customerForm.Address.value = '';
             customerForm.Email.value = '';
@@ -117,9 +112,9 @@ function getCustomers(callBackFunction, refresh) {
         callBackFunction();
     }
 }
-function getCustomer(id, callBackFunction) {
+function getCustomer(customerID, callBackFunction) {
     let xhttp = new XMLHttpRequest();
-    xhttp.open('GET', 'api/customer/' + id, true);
+    xhttp.open('GET', 'api/customer/' + customerID, true);
     xhttp.onreadystatechange = function () {
         if (this.readyState == 4) {
             if (this.status == 200) {
@@ -137,7 +132,7 @@ function getCustomer(id, callBackFunction) {
 function saveCustomer() {
     let formData = document.getElementById('CustomerForm');
     let customer = {};
-    customer.ID = formData.ID.value;
+    customer.ID = customerID;
     customer.HouseholdName = formData.HouseholdName.value;
     customer.Address = formData.Address.value;
     customer.Email = formData.Email.value;
@@ -163,7 +158,17 @@ function saveCustomer() {
         if (this.readyState === 4) {
             if (this.status === 200 || this.status === 204) {
                 displaySuccess('Customer saved');
+
+                let customer = JSON.parse(this.responseText);
+                if (document.activeElement.id === 'Save') {
+                    displayCustomerForm(customer);  //If staying on the form, then refresh with fresh IDs passed back in the response.
+                }
+                else if (document.activeElement.id === 'SaveAndClose') {
+                    closeCustomerForm();
+                }
+
                 getCustomers(createCustomerTable, true);
+                
             }
             else {
                 displayError('Error saving customer', this);

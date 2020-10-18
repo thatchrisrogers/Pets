@@ -32,9 +32,8 @@ When Not Matched By Target
 	)
 When Matched
 	Then Update Set
-		CustomerID = @customerID
-		,Name = sourcePets.Name
+		Name = sourcePets.Name
 		,Description = sourcePets.Description
-When Not Matched By Source And CustomerID = @customerID
+When Not Matched By Source And CustomerID = @customerID And ID Not In (Select ID From @pets)
 	Then Delete;
 Go

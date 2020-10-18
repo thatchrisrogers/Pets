@@ -83,7 +83,7 @@ namespace Pets.Controllers
 
         // POST api/<controller>
         [HttpPost]
-        public void Post(Customer customer)
+        public Customer Post(Customer customer)
         {
             SqlTransaction transaction;
             using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["Pets"].ConnectionString))
@@ -96,6 +96,9 @@ namespace Pets.Controllers
                     {
                         command.Connection = connection;
                         command.Transaction = transaction;
+                        command.Parameters.AddWithValue("HouseholdName", customer.HouseholdName);
+                        command.Parameters.AddWithValue("Address", customer.Address);
+                        command.Parameters.AddWithValue("Email", customer.Email);
                         if (customer.ID == null)
                         {
                             command.CommandText = "Insert Into dbo.Customer (HouseholdName, Address, Email) OUTPUT Inserted.ID Values (@HouseholdName, @Address, @Email);";
@@ -105,14 +108,12 @@ namespace Pets.Controllers
                         {
                             command.CommandText = "Update dbo.Customer Set HouseholdName = @HouseholdName, Address = @Address, Email = @Email Where ID = @ID;";
                             command.Parameters.AddWithValue("ID", customer.ID);
-                        }
-                        command.Parameters.AddWithValue("HouseholdName", customer.HouseholdName);
-                        command.Parameters.AddWithValue("Address", customer.Address);
-                        command.Parameters.AddWithValue("Email", customer.Email);
-                        command.ExecuteNonQuery();
+                            command.ExecuteNonQuery();
+                        }                                            
                     }
                     PetController.SaveList((Int16)customer.ID, customer.Pets, connection, transaction);
                     transaction.Commit();
+                    return Get((Int16)customer.ID); //return the newly created Customer so the caller has fresh IDs, etc.
                 }
                 catch (Exception ex)
                 {
