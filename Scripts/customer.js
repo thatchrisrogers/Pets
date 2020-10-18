@@ -9,7 +9,10 @@ function initCustomerView() {
     document.getElementById('CustomerForm').onsubmit = function (event) {
         event.preventDefault();
         saveCustomer();
-        if (document.activeElement.id === 'SaveAndClose') {
+        if (document.activeElement.id === 'Save') {
+            getCustomer(id, displayCustomerForm);  //reload form to get fresh IDs.  ToDo - this is not working????
+        }
+        else if (document.activeElement.id === 'SaveAndClose') {
             closeCustomerForm();
         }
     };
@@ -45,13 +48,26 @@ function createCustomerTable() {
 function displayCustomerForm(customer) {
     try {
         let customerForm = document.forms.namedItem("CustomerForm");
+        let table = document.getElementById("PetTable");
         if (customer !== null) {
             customerForm.ID.value = customer.ID;
             customerForm.HouseholdName.value = customer.HouseholdName;
             customerForm.Address.value = customer.Address;
             customerForm.Email.value = customer.Email;
+            table.removeChild(table.getElementsByTagName('tbody')[0]); //remove tbody first to delete any rows (empty table)
+            table.appendChild(document.createElement('tbody'));
+            for (pet of customer.Pets) {
+                addPetTableRow(pet);
+            }
         }
-             
+        else { //Display empty Customer Form
+            customerForm.ID.value = '';
+            customerForm.HouseholdName.value = '';
+            customerForm.Address.value = '';
+            customerForm.Email.value = '';
+            table.removeChild(table.getElementsByTagName('tbody')[0]);
+            table.appendChild(document.createElement('tbody'));
+        }
         customerForm.style.display = 'block';
     }
     catch (e) {
@@ -60,6 +76,22 @@ function displayCustomerForm(customer) {
 }
 function closeCustomerForm() {
     document.getElementById("CustomerForm").style.display = 'none';
+}
+function addPetTableRow(pet) {
+    let table = document.getElementById('PetTable');
+    let tableBody = table.getElementsByTagName('tbody')[0];
+    let tableRow = tableBody.insertRow((pet !== undefined ? -1 : 0)); //if adding new row then place in first position
+    let cellIndex = 0;
+    tableRow.insertCell(cellIndex);
+    //addDeleteButton(tableRow.cells[cellIndex], pet);
+    //addUndoButton(tableRow.cells[cellIndex], pet);
+    addElementToTableRow('PetID', 'hidden', false, (pet !== undefined ? pet.ID : undefined), cellIndex, tableRow);
+    cellIndex = 1;
+    tableRow.insertCell(cellIndex);
+    addElementToTableRow('PetName', 'text', true, (pet !== undefined ? pet.Name : undefined), cellIndex, tableRow);
+    cellIndex = 2;
+    tableRow.insertCell(cellIndex);
+    addElementToTableRow('PetDescription', 'text', true, (pet !== undefined ? pet.Description : undefined), cellIndex, tableRow);
 }
 function getCustomers(callBackFunction, refresh) {
     if (customers === undefined || refresh) {
@@ -109,6 +141,20 @@ function saveCustomer() {
     customer.HouseholdName = formData.HouseholdName.value;
     customer.Address = formData.Address.value;
     customer.Email = formData.Email.value;
+
+    let pets = [];
+    let pet;
+    let tableBody = document.getElementById('PetTable').getElementsByTagName('tbody')[0];
+    let tableRows = tableBody.querySelectorAll('tr');
+    for (let i = 0; i < tableRows.length; i++) {
+        pet = {};
+        pet.ID = document.getElementsByName('PetID')[i].value;
+        pet.Name = document.getElementsByName('PetName')[i].value;
+        pet.Description = document.getElementsByName('PetDescription')[i].value;      
+        pet.IsBeingDeleted = (tableRows[i].classList.contains('deleted') ? true : false); //ToDo - Fix or rewrite
+        pets.push(pet);
+    }
+    customer.Pets = pets;
 
     let xhttp = new XMLHttpRequest();
     xhttp.open("POST", "api/customer", true);

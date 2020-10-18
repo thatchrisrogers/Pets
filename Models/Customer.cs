@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace Pets.Models
 {
@@ -11,5 +9,6 @@ namespace Pets.Models
         public string HouseholdName { get; set; }
         public string Address { get; set; }
         public string Email { get; set; }
+        public List<Pet> Pets { get; set; }
     }
 }

@@ -77,6 +77,7 @@ namespace Pets.Controllers
                     throw new Exception(ex.Message);
                 }
             }
+            customer.Pets = PetController.GetList((Int16)customer.ID);
             return customer;
         }
 
@@ -84,17 +85,21 @@ namespace Pets.Controllers
         [HttpPost]
         public void Post(Customer customer)
         {
+            SqlTransaction transaction;
             using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["Pets"].ConnectionString))
             {
                 connection.Open();
+                transaction = connection.BeginTransaction();
                 try
                 {
                     using (SqlCommand command = new SqlCommand())
                     {
                         command.Connection = connection;
+                        command.Transaction = transaction;
                         if (customer.ID == null)
                         {
-                            command.CommandText = "Insert Into dbo.Customer (HouseholdName, Address, Email) Values (@HouseholdName, @Address, @Email);";
+                            command.CommandText = "Insert Into dbo.Customer (HouseholdName, Address, Email) OUTPUT Inserted.ID Values (@HouseholdName, @Address, @Email);";
+                            customer.ID = (Int16)command.ExecuteScalar();
                         }
                         else
                         {
@@ -105,10 +110,13 @@ namespace Pets.Controllers
                         command.Parameters.AddWithValue("Address", customer.Address);
                         command.Parameters.AddWithValue("Email", customer.Email);
                         command.ExecuteNonQuery();
-                    }                 
+                    }
+                    PetController.SaveList((Int16)customer.ID, customer.Pets, connection, transaction);
+                    transaction.Commit();
                 }
                 catch (Exception ex)
                 {
+                    transaction.Rollback();
                     throw new Exception(ex.Message);
                 }
             }

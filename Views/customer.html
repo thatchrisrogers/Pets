@@ -38,6 +38,26 @@
                 <input type="Email" id="Email" required />
             </div>
         </div>
+        <div style="overflow-x: auto;">
+            <table id="PetTable" name="Payments">
+                <thead>
+                    <tr>
+                        <th colspan="5" class="tableHeading">
+                            Pets:
+                        </th>
+                    </tr>
+                    <tr>
+                        <th><input type="button" value="+" onclick="addPetTableRow();" title="Add Pet"></th>
+                        <th>Name</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+                <tfoot>
+                    <tr></tr>
+                </tfoot>
+            </table>
+        </div>
         <div>
             <input type="submit" value="Save" />
             <input type="submit" id="SaveAndClose" value="Save & Close" />
