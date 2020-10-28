@@ -4,7 +4,6 @@ var unfilteredCustomers;
 var prevSortProperty;
 var sortDirection;
 
-
 function initCustomerView() {
     getCustomers(createCustomerTable);
     document.getElementById('CustomerForm').onsubmit = function (event) {
@@ -13,15 +12,15 @@ function initCustomerView() {
     };
 }
 function createCustomerTable() {
-    let table = document.getElementById("CustomerTable");
-    table.removeChild(table.getElementsByTagName('tbody')[0]); //remove tbody first to delete any rows (empty table)
-    tableBody = table.appendChild(document.createElement('tbody'));
-    let tableRow;
+    let customerTable = document.getElementById("CustomerTable");
+    customerTable.removeChild(customerTable.getElementsByTagName('tbody')[0]); //remove tbody first to delete any rows (emptycustomerTable)
+    customerTableBody = customerTable.appendChild(document.createElement('tbody'));
+    let customerTableRow;
     let tableCell;
     let element;
     for (customer of customers) {
-        tableRow = tableBody.insertRow(-1);
-        tableCell = tableRow.insertCell(0);
+        customerTableRow = customerTableBody.insertRow(-1);
+        tableCell = customerTableRow.insertCell(0);
         element = document.createElement('input');
         element.type = 'hidden';
         element.name = 'CustomerID';
@@ -30,11 +29,11 @@ function createCustomerTable() {
         element = document.createElement('label');
         element.innerHTML = customer.HouseholdName;
         tableCell.appendChild(element);
-        tableCell = tableRow.insertCell(1);
+        tableCell = customerTableRow.insertCell(1);
         element = document.createElement('label');
         element.innerHTML = customer.Address;
         tableCell.appendChild(element);      
-        tableRow.onclick = function () {
+        customerTableRow.onclick = function () {
             customerID = this.cells[0].querySelector('[name=CustomerID]').value;
             getCustomer(customerID, displayCustomerForm);
         }
@@ -43,14 +42,14 @@ function createCustomerTable() {
 function displayCustomerForm(customer) {
     try {
         let customerForm = document.forms.namedItem("CustomerForm");
-        let table = document.getElementById("PetTable");
+        let petTable = document.getElementById("PetTable");
         if (customer !== null) {
             customerID = customer.ID;
             customerForm.HouseholdName.value = customer.HouseholdName;
             customerForm.Address.value = customer.Address;
             customerForm.Email.value = customer.Email;
-            table.removeChild(table.getElementsByTagName('tbody')[0]); //remove tbody first to delete any rows (empty table)
-            table.appendChild(document.createElement('tbody'));
+            petTable.removeChild(petTable.getElementsByTagName('tbody')[0]); //remove tbody first to delete any rows (empty petTable)
+            petTable.appendChild(document.createElement('tbody'));
             for (pet of customer.Pets) {
                 addPetTableRow(pet);
             }
@@ -60,9 +59,10 @@ function displayCustomerForm(customer) {
             customerForm.HouseholdName.value = '';
             customerForm.Address.value = '';
             customerForm.Email.value = '';
-            table.removeChild(table.getElementsByTagName('tbody')[0]);
-            table.appendChild(document.createElement('tbody'));
+            petTable.removeChild(petTable.getElementsByTagName('tbody')[0]);
+            petTable.appendChild(document.createElement('tbody'));
         }
+        addPetTableRow(undefined);
         customerForm.style.display = 'block';
     }
     catch (e) {
@@ -73,21 +73,27 @@ function closeCustomerForm() {
     document.getElementById("CustomerForm").style.display = 'none';
 }
 function addPetTableRow(pet) {
-    let table = document.getElementById('PetTable');
-    let tableBody = table.getElementsByTagName('tbody')[0];
-    let tableRow = tableBody.insertRow((pet !== undefined ? -1 : 0)); //if adding new row then place in first position
+    let petTable = document.getElementById('PetTable');
+    let petTableBody = petTable.getElementsByTagName('tbody')[0];
+    let petTableRow = petTableBody.insertRow(-1); 
     let cellIndex = 0;
-    tableRow.insertCell(cellIndex);
-    //addDeleteButton(tableRow.cells[cellIndex], pet);
-    //addUndoButton(tableRow.cells[cellIndex], pet);
-    addElementToTableRow('PetID', 'hidden', false, (pet !== undefined ? pet.ID : undefined), cellIndex, tableRow);
-    cellIndex = 1;
-    tableRow.insertCell(cellIndex);
-    addElementToTableRow('PetName', 'text', true, (pet !== undefined ? pet.Name : undefined), cellIndex, tableRow);
-    cellIndex = 2;
-    tableRow.insertCell(cellIndex);
-    addElementToTableRow('PetDescription', 'text', true, (pet !== undefined ? pet.Description : undefined), cellIndex, tableRow);
+    petTableRow.insertCell(cellIndex);
+    addElementToTableRow('PetID', 'hidden', false, (pet !== undefined ? pet.ID : undefined), cellIndex, petTableRow);
+    petTableRow.insertCell(cellIndex += 1);
+    addElementToTableRow('PetName', 'text', true, (pet !== undefined ? pet.Name : undefined), cellIndex, petTableRow).onchange = function () { tableRowChanged(petTableRow); }
+    petTableRow.insertCell(cellIndex += 1);
+    addElementToTableRow('PetDescription', 'text', true, (pet !== undefined ? pet.Description : undefined), cellIndex, petTableRow).onchange = function () { tableRowChanged(petTableRow); }
 }
+//function petTableElementChanged(petTable) {
+//    //If an input in the Pet table changes, then check to see if all [required] inputs in the table have a value, and if so, add an empty row  
+//    //if (validTableInputs(petTable) === 'some') {
+//    //    makeAllTableInputsRequired(petTable);
+//    //}
+//    //if (validTableInputs(petTable) === 'all') {
+//    //    addPetTableRow(undefined);     
+//    //}
+
+//}
 function getCustomers(callBackFunction, refresh) {
     if (customers === undefined || refresh) {
         let xhttp = new XMLHttpRequest();
@@ -139,15 +145,16 @@ function saveCustomer() {
 
     let pets = [];
     let pet;
-    let tableBody = document.getElementById('PetTable').getElementsByTagName('tbody')[0];
-    let tableRows = tableBody.querySelectorAll('tr');
-    for (let i = 0; i < tableRows.length; i++) {
-        pet = {};
-        pet.ID = document.getElementsByName('PetID')[i].value;
-        pet.Name = document.getElementsByName('PetName')[i].value;
-        pet.Description = document.getElementsByName('PetDescription')[i].value;      
-        pet.IsBeingDeleted = (tableRows[i].classList.contains('deleted') ? true : false); //ToDo - Fix or rewrite
-        pets.push(pet);
+    let petTableBody = document.getElementById('PetTable').getElementsByTagName('tbody')[0];
+    let petTableRows = petTableBody.querySelectorAll('tr');
+    for (let i = 0; i < petTableRows.length; i++) {
+        if (allTableRowInputsAreValid(petTableRows[i])) {
+            pet = {};
+            pet.ID = document.getElementsByName('PetID')[i].value;
+            pet.Name = document.getElementsByName('PetName')[i].value;
+            pet.Description = document.getElementsByName('PetDescription')[i].value;
+            pets.push(pet);
+        }      
     }
     customer.Pets = pets;
 

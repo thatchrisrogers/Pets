@@ -114,3 +114,7 @@ td {
     background-color: darkcyan;
     color: white;
 }
+a.delete, a.undo {
+    cursor: pointer;
+    padding: 5px;
+}
