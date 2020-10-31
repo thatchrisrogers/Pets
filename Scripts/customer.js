@@ -78,22 +78,15 @@ function addPetTableRow(pet) {
     let petTableRow = petTableBody.insertRow(-1); 
     let cellIndex = 0;
     petTableRow.insertCell(cellIndex);
-    addElementToTableRow('PetID', 'hidden', false, (pet !== undefined ? pet.ID : undefined), cellIndex, petTableRow);
+    addElementToTableRow('PetID', 'hidden', undefined, false, (pet !== undefined ? pet.ID : undefined), cellIndex, petTableRow);
     petTableRow.insertCell(cellIndex += 1);
-    addElementToTableRow('PetName', 'text', true, (pet !== undefined ? pet.Name : undefined), cellIndex, petTableRow).onchange = function () { tableRowChanged(petTableRow); }
+    addElementToTableRow('PetName', 'text', 'userInput', true, (pet !== undefined ? pet.Name : undefined), cellIndex, petTableRow).oninput = function () { petTableRowChanged(petTableRow); }
     petTableRow.insertCell(cellIndex += 1);
-    addElementToTableRow('PetDescription', 'text', true, (pet !== undefined ? pet.Description : undefined), cellIndex, petTableRow).onchange = function () { tableRowChanged(petTableRow); }
+    addElementToTableRow('PetDescription', 'text', 'userInput', true, (pet !== undefined ? pet.Description : undefined), cellIndex, petTableRow).oninput = function () { petTableRowChanged(petTableRow); }
 }
-//function petTableElementChanged(petTable) {
-//    //If an input in the Pet table changes, then check to see if all [required] inputs in the table have a value, and if so, add an empty row  
-//    //if (validTableInputs(petTable) === 'some') {
-//    //    makeAllTableInputsRequired(petTable);
-//    //}
-//    //if (validTableInputs(petTable) === 'all') {
-//    //    addPetTableRow(undefined);     
-//    //}
-
-//}
+function petTableRowChanged(petTableRow) {
+    tableRowChanged(petTableRow, addPetTableRow);
+}
 function getCustomers(callBackFunction, refresh) {
     if (customers === undefined || refresh) {
         let xhttp = new XMLHttpRequest();
@@ -147,12 +140,12 @@ function saveCustomer() {
     let pet;
     let petTableBody = document.getElementById('PetTable').getElementsByTagName('tbody')[0];
     let petTableRows = petTableBody.querySelectorAll('tr');
-    for (let i = 0; i < petTableRows.length; i++) {
-        if (allTableRowInputsAreValid(petTableRows[i])) {
+    for (petTableRow of petTableRows) {      
+        if (petTableRow.querySelectorAll("input.userInput[required]").length > 0) { //If row has required elements, then user has input values.  Let the required attribute handle data validation
             pet = {};
-            pet.ID = document.getElementsByName('PetID')[i].value;
-            pet.Name = document.getElementsByName('PetName')[i].value;
-            pet.Description = document.getElementsByName('PetDescription')[i].value;
+            pet.ID = petTableRow.querySelector('[name=PetID]').value;
+            pet.Name = petTableRow.querySelector('[name=PetName]').value;
+            pet.Description = petTableRow.querySelector('[name=PetDescription]').value;
             pets.push(pet);
         }      
     }

@@ -18,10 +18,13 @@ function displaySuccess(successMessage) {
         message.innerHTML = '';
     }, 3000);
 }
-function addElementToTableRow(name, type, required, value, cellIndex, tableRow) {
+function addElementToTableRow(name, type, className, required, value, cellIndex, tableRow) {
     let element = document.createElement('input');
     element.type = type;
     element.name = name;
+    if (className !== undefined) {
+        element.classList.add(className);
+    }
     if (value !== undefined) {
         element.value = value;
         element.required = required;
@@ -43,24 +46,30 @@ function addDeleteButton(tableRow) {
     }
     tableRow.cells[0].appendChild(deleteButton);
 }
-function tableRowChanged(tableRow) {
-    let inputs = tableRow.querySelectorAll("input");
+function tableRowChanged(tableRow, callBackFunction) {
+    let inputs = tableRow.querySelectorAll("input.userInput");
     for (input of inputs) {
         input.required = true;
     }
     if (tableRow.querySelector(".delete") === null) {
         addDeleteButton(tableRow);
-    }
+        callBackFunction();
+     }
 }
-function allTableRowInputsAreValid(tableRow) {
-    let inputs = tableRow.querySelectorAll("input[required]");
-    let allInputsAreValid = true;
-    for (input of inputs) {
-        if (String.isNullOrEmpty(input.value)) {
-            allInputsAreValid = false;
-            break;
-        }
-    }
-    return allInputsAreValid;
-}
+//function allTableRowInputsAreValid(tableRow) {
+//    let inputs = tableRow.querySelectorAll("input.userInput[required]");
+//    let allInputsAreValid = true;
+//    for (input of inputs) {
+//        let testValue = input.value;
+//        //if (String.isNullOrEmpty(input.value)) {
+//        //    allInputsAreValid = false;
+//        //    break;
+//        //}
+//        if (input.value.trim() === '') {
+//            allInputsAreValid = false;
+//            break;
+//        }
+//    }
+//    return allInputsAreValid;
+//}
 
