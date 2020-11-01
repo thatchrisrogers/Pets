@@ -159,7 +159,7 @@ function saveCustomer() {
             if (this.status === 200 || this.status === 204) {
                 displaySuccess('Customer saved');
 
-                let customer = JSON.parse(this.responseText);
+                customer = JSON.parse(this.responseText);
                 if (document.activeElement.id === 'Save') {
                     displayCustomerForm(customer);  //If staying on the form, then refresh with fresh IDs passed back in the response.
                 }

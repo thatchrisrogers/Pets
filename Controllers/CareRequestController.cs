@@ -9,12 +9,21 @@ namespace Pets.Controllers
 {
     public class CareRequestController : ApiController
     {
+        CareRequest careRequest;
+        private CareRequest GetCareRequestFromReader(SqlDataReader reader)
+        {
+            careRequest = new CareRequest();
+            careRequest.ID = ((int)reader["ID"]);
+            careRequest.CustomerID = (int)reader["CustomerID"];
+            careRequest.StartDate = (DateTime)reader["StartDate"];
+            careRequest.EndDate = (DateTime)reader["EndDate"];
+            return careRequest;
+        }
         // GET api/<controller>
         [HttpGet]
         public List<CareRequest> Get()
         {
             List<CareRequest> careRequests = new List<CareRequest>();
-            CareRequest careRequest;
             using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["Pets"].ConnectionString))
             {
                 try
@@ -25,13 +34,37 @@ namespace Pets.Controllers
                         using (SqlDataReader reader = command.ExecuteReader())
                         {
                             while (reader.Read())
+                            {                            
+                                careRequests.Add(GetCareRequestFromReader(reader));
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.Message);
+                }
+            }
+            return careRequests;
+        }
+
+        public List<CareRequest> Get(int month, int year)
+        {
+            List<CareRequest> careRequests = new List<CareRequest>();
+            using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["Pets"].ConnectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    using (SqlCommand command = new SqlCommand("Select * From dbo.CareRequest Where Month(StartDate) = @month And Year(StartDate) = @year Order By StartDate", connection))
+                    {
+                        command.Parameters.AddWithValue("month", month);
+                        command.Parameters.AddWithValue("year", year);
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
                             {
-                                careRequest = new CareRequest();
-                                careRequest.ID = ((int)reader["ID"]);
-                                careRequest.CustomerID = (int)reader["CustomerID"];
-                                careRequest.StartDate = (DateTime)reader["StartDate"];
-                                careRequest.EndDate = (DateTime)reader["EndDate"];
-                                careRequests.Add(careRequest);
+                                careRequests.Add(GetCareRequestFromReader(reader));
                             }
                         }
                     }
@@ -48,7 +81,7 @@ namespace Pets.Controllers
         [HttpGet]
         public CareRequest Get(int id)
         {
-            CareRequest careRequest = new CareRequest();
+            careRequest = new CareRequest();
             using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["Pets"].ConnectionString))
             {
                 try
@@ -62,10 +95,7 @@ namespace Pets.Controllers
                             if (reader.HasRows)
                             {
                                 reader.Read();
-                                careRequest.ID = ((int)reader["ID"]);
-                                careRequest.CustomerID = (int)reader["CustomerID"];
-                                careRequest.StartDate = (DateTime)reader["StartDate"];
-                                careRequest.EndDate = (DateTime)reader["EndDate"];
+                                careRequest = GetCareRequestFromReader(reader);
                             }
                         }
                     }

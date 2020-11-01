@@ -85,6 +85,7 @@
     <Content Include="Images\puppy.png" />
     <Content Include="index.html" />
     <Content Include="Scripts\availability.js" />
+    <Content Include="Scripts\careRequest.js" />
     <Content Include="Scripts\common.js" />
     <Content Include="Scripts\customer.js" />
     <Content Include="Scripts\index.js" />
