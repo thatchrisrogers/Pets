@@ -28,7 +28,7 @@ function loadView(href) {
                     //initHomeView();
                     break;
                 case 'availability':
-                    //initGalleryView();
+                    initAvailabilityView();
                     break;   
                 case 'customer':
                     initCustomerView();

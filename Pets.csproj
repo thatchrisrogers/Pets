@@ -84,6 +84,7 @@
     <Content Include="Global.asax" />
     <Content Include="Images\puppy.png" />
     <Content Include="index.html" />
+    <Content Include="Scripts\availability.js" />
     <Content Include="Scripts\common.js" />
     <Content Include="Scripts\customer.js" />
     <Content Include="Scripts\index.js" />
@@ -95,11 +96,13 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\CareRequestController.cs" />
     <Compile Include="Controllers\CustomerController.cs" />
     <Compile Include="Controllers\PetController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\CareRequest.cs" />
     <Compile Include="Models\Customer.cs" />
     <Compile Include="Models\Pet.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

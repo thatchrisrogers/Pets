@@ -6,7 +6,7 @@ Drop Type If Exists dbo.type_Pet
 Go
 
 Create Type dbo.type_Pet As Table (
-	ID SmallInt Null
+	ID Int Null
 	,Name VarChar(100) Not Null
 	,Description VarChar(500) Not Null
 	--,IsBeingDeleted bit Not Null

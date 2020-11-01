@@ -12,7 +12,7 @@ namespace Pets.Controllers
 {
     public class PetController : ApiController
     {      
-        internal static List<Pet> GetList(Int16 customerID)
+        internal static List<Pet> GetList(int customerID)
         {
             List<Pet> pets = new List<Pet>();
             Pet pet;
@@ -29,7 +29,7 @@ namespace Pets.Controllers
                             while (reader.Read())
                             {
                                 pet = new Pet();
-                                pet.ID = ((Int16)reader["ID"]);
+                                pet.ID = ((int)reader["ID"]);
                                 pet.Name = ((string)reader["Name"]);
                                 pet.Description = ((string)reader["Description"]);
                                 pets.Add(pet);
@@ -44,7 +44,7 @@ namespace Pets.Controllers
                 }
             }
         }
-        internal static void SaveList(Int16 customerID, List<Pet> pets, SqlConnection connection, SqlTransaction transaction)
+        internal static void SaveList(int customerID, List<Pet> pets, SqlConnection connection, SqlTransaction transaction)
         {
             try
             {

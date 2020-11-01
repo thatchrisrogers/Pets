@@ -66,7 +66,7 @@ function displayCustomerForm(customer) {
         customerForm.style.display = 'block';
     }
     catch (e) {
-        displayError('Error displaying customer - ' + e.message);
+        displayError('Error displaying Customer - ' + e.message);
     }
 }
 function closeCustomerForm() {
@@ -99,13 +99,13 @@ function getCustomers(callBackFunction, refresh) {
                     callBackFunction();
                 }
                 else {
-                    displayError('Error getting customers', this);
+                    displayError('Error getting Customers', this);
                 }
             }
         };
         xhttp.send();
         xhttp.onerror = function () {
-            displayError('Error getting customers - onerror event');
+            displayError('Error getting Customers - onerror event');
         };
     } else {
         callBackFunction();
@@ -119,7 +119,7 @@ function getCustomer(customerID, callBackFunction) {
             if (this.status == 200) {
                 callBackFunction(JSON.parse(this.responseText));
             } else {
-                displayError('Error getting customer', this);
+                displayError('Error getting Customer', this);
             }
         }
     };
@@ -171,13 +171,13 @@ function saveCustomer() {
                 
             }
             else {
-                displayError('Error saving customer', this);
+                displayError('Error saving Customer', this);
             }
         }
     };
     xhttp.send(JSON.stringify(customer));
     xhttp.onerror = function () {
-        displayError('Error saving customer - onerror event');
+        displayError('Error saving Customer - onerror event');
     };
 }
 function sortCustomers(sortProperty) {

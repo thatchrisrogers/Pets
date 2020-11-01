@@ -2,6 +2,9 @@
     font-family: 'Comic Sans MS';
     margin: 0;
 }
+input, select, textarea {
+    font-family: inherit;
+}
 .message {
     position: relative;
     z-index: 10; /*Higher number is always on top*/
@@ -62,7 +65,7 @@
     grid-gap: 5px;
 }
 .gridLabelColumn {
-    text-align: left;
+    text-align: right;
     font-weight: bold;
 }
 .gridInputColumn {
@@ -113,6 +116,17 @@ td {
     cursor: pointer;
     background-color: darkcyan;
     color: white;
+}
+
+
+.selecTableCells > tbody > tr > td:hover {
+    cursor: pointer;
+    background-color: darkcyan;
+    color: white;
+}
+
+.selected {
+    background-color: cyan;
 }
 a.delete, a.undo {
     cursor: pointer;

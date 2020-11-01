@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net;
-using System.Net.Http;
 using System.Web.Http;
 using Pets.Models;
 using System.Data.SqlClient;
@@ -29,7 +27,7 @@ namespace Pets.Controllers
                             while (reader.Read())
                             {
                                 customer = new Customer();
-                                customer.ID = ((Int16)reader["ID"]);
+                                customer.ID = ((int)reader["ID"]);
                                 customer.HouseholdName = reader["HouseholdName"] == DBNull.Value ? string.Empty : (string)reader["HouseholdName"];
                                 customer.Address = reader["Address"] == DBNull.Value ? string.Empty : (string)reader["Address"];
                                 customer.Email = reader["Email"] == DBNull.Value ? string.Empty : (string)reader["Email"];
@@ -64,7 +62,7 @@ namespace Pets.Controllers
                             if (reader.HasRows)
                             {
                                 reader.Read();
-                                customer.ID = ((Int16)reader["ID"]);
+                                customer.ID = ((int)reader["ID"]);
                                 customer.HouseholdName = reader["HouseholdName"] == DBNull.Value ? string.Empty : (string)reader["HouseholdName"];
                                 customer.Address = reader["Address"] == DBNull.Value ? string.Empty : (string)reader["Address"];
                                 customer.Email = reader["Email"] == DBNull.Value ? string.Empty : (string)reader["Email"];
@@ -77,7 +75,7 @@ namespace Pets.Controllers
                     throw new Exception(ex.Message);
                 }
             }
-            customer.Pets = PetController.GetList((Int16)customer.ID);
+            customer.Pets = PetController.GetList((int)customer.ID);
             return customer;
         }
 
@@ -102,7 +100,7 @@ namespace Pets.Controllers
                         if (customer.ID == null)
                         {
                             command.CommandText = "Insert Into dbo.Customer (HouseholdName, Address, Email) OUTPUT Inserted.ID Values (@HouseholdName, @Address, @Email);";
-                            customer.ID = (Int16)command.ExecuteScalar();
+                            customer.ID = (int)command.ExecuteScalar();
                         }
                         else
                         {
@@ -111,9 +109,9 @@ namespace Pets.Controllers
                             command.ExecuteNonQuery();
                         }                                            
                     }
-                    PetController.SaveList((Int16)customer.ID, customer.Pets, connection, transaction);
+                    PetController.SaveList((int)customer.ID, customer.Pets, connection, transaction);
                     transaction.Commit();
-                    return Get((Int16)customer.ID); //return the newly created Customer so the caller has fresh IDs, etc.
+                    return Get((int)customer.ID); //return the newly created Customer so the caller has fresh IDs, etc.
                 }
                 catch (Exception ex)
                 {

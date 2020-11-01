@@ -1,0 +1,121 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Web.Http;
+using Pets.Models;
+using System.Configuration;
+using System.Data.SqlClient;
+
+namespace Pets.Controllers
+{
+    public class CareRequestController : ApiController
+    {
+        // GET api/<controller>
+        [HttpGet]
+        public List<CareRequest> Get()
+        {
+            List<CareRequest> careRequests = new List<CareRequest>();
+            CareRequest careRequest;
+            using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["Pets"].ConnectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    using (SqlCommand command = new SqlCommand("Select * From dbo.CareRequest Order By StartDate", connection))
+                    {
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                careRequest = new CareRequest();
+                                careRequest.ID = ((int)reader["ID"]);
+                                careRequest.CustomerID = (int)reader["CustomerID"];
+                                careRequest.StartDate = (DateTime)reader["StartDate"];
+                                careRequest.EndDate = (DateTime)reader["EndDate"];
+                                careRequests.Add(careRequest);
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.Message);
+                }
+            }
+            return careRequests;
+        }
+
+        // GET api/<controller>/5
+        [HttpGet]
+        public CareRequest Get(int id)
+        {
+            CareRequest careRequest = new CareRequest();
+            using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["Pets"].ConnectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    using (SqlCommand command = new SqlCommand("Select * From dbo.CareRequest Where ID = @id", connection))
+                    {
+                        command.Parameters.AddWithValue("id", id);
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            if (reader.HasRows)
+                            {
+                                reader.Read();
+                                careRequest.ID = ((int)reader["ID"]);
+                                careRequest.CustomerID = (int)reader["CustomerID"];
+                                careRequest.StartDate = (DateTime)reader["StartDate"];
+                                careRequest.EndDate = (DateTime)reader["EndDate"];
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.Message);
+                }
+            }
+            return careRequest;
+        }
+
+        // POST api/<controller>
+        [HttpPost]
+        public void Post(CareRequest careRequest)
+        {
+            SqlTransaction transaction;
+            using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["Pets"].ConnectionString))
+            {
+                connection.Open();
+                transaction = connection.BeginTransaction();
+                try
+                {
+                    using (SqlCommand command = new SqlCommand())
+                    {
+                        command.Connection = connection;
+                        command.Transaction = transaction;
+                        command.Parameters.AddWithValue("CustomerID", careRequest.CustomerID);
+                        command.Parameters.AddWithValue("StartDate", careRequest.StartDate);
+                        command.Parameters.AddWithValue("EndDate", careRequest.EndDate);
+                        if (careRequest.ID == null)
+                        {
+                            command.CommandText = "Insert Into dbo.CareRequest (CustomerID, StartDate, EndDate) OUTPUT Inserted.ID Values (@CustomerID, @StartDate, @EndDate);";
+                            careRequest.ID = (int)command.ExecuteScalar();
+                        }
+                        else
+                        {
+                            command.CommandText = "Update dbo.CareRequest Set CustomerID = @CustomerID, StartDate = @StartDate, EndDate = @EndDate Where ID = @ID;";
+                            command.Parameters.AddWithValue("ID", careRequest.ID);
+                            command.ExecuteNonQuery();
+                        }
+                    }
+                    transaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    throw new Exception(ex.Message);
+                }
+            }
+        }
+    }
+}
