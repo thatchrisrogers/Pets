@@ -17,6 +17,7 @@ namespace Pets.Controllers
             careRequest.CustomerID = (int)reader["CustomerID"];
             careRequest.StartDate = (DateTime)reader["StartDate"];
             careRequest.EndDate = (DateTime)reader["EndDate"];
+            careRequest.HouseholdName = reader["HouseholdName"] == DBNull.Value ? string.Empty : (string)reader["HouseholdName"];
             return careRequest;
         }
         // GET api/<controller>
@@ -56,7 +57,7 @@ namespace Pets.Controllers
                 try
                 {
                     connection.Open();
-                    using (SqlCommand command = new SqlCommand("Select * From dbo.CareRequest Where Month(StartDate) = @month And Year(StartDate) = @year Order By StartDate", connection))
+                    using (SqlCommand command = new SqlCommand("Select * From dbo.vwCareRequest Where Month(StartDate) = @month And Year(StartDate) = @year Order By StartDate", connection))
                     {
                         command.Parameters.AddWithValue("month", month);
                         command.Parameters.AddWithValue("year", year);
@@ -87,7 +88,7 @@ namespace Pets.Controllers
                 try
                 {
                     connection.Open();
-                    using (SqlCommand command = new SqlCommand("Select * From dbo.CareRequest Where ID = @id", connection))
+                    using (SqlCommand command = new SqlCommand("Select * From dbo.vwCareRequest Where ID = @id", connection))
                     {
                         command.Parameters.AddWithValue("id", id);
                         using (SqlDataReader reader = command.ExecuteReader())

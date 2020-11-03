@@ -117,18 +117,23 @@ td {
     background-color: darkcyan;
     color: white;
 }
-
-
-.selecTableCells > tbody > tr > td:hover {
-    cursor: pointer;
-    background-color: darkcyan;
-    color: white;
-}
-
 .selected {
     background-color: cyan;
 }
 a.delete, a.undo {
     cursor: pointer;
     padding: 5px;
+}
+.calendarDay {
+    text-decoration: underline;
+}
+.calendarDay:hover {
+    cursor: pointer;
+    background-color: darkcyan;
+    color: white;
+}
+.calendarEntry:hover {
+    cursor: pointer;
+    background-color: darkcyan;
+    color: white;
 }

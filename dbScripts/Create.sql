@@ -1,5 +1,6 @@
 Use Pets
 
+Drop View If Exists dbo.vwCareRequest
 Drop Table If Exists dbo.CareRequest
 Drop Table If Exists dbo.Pet
 Drop Table If Exists dbo.Customer
@@ -26,3 +27,10 @@ Create Table dbo.CareRequest(
 	,EndDate DateTime Not Null
 )
 Alter Table dbo.CareRequest Add Constraint FK_CareRequest_Customer Foreign Key(CustomerID) References dbo.Customer(ID)
+
+Go
+Create View dbo.vwCareRequest
+As
+Select request.*, customer.HouseholdName From dbo.CareRequest request
+Inner Join dbo.Customer customer On request.CustomerID = customer.ID
+Go
