@@ -6,7 +6,7 @@ let careRequests;
 let careRequestForm;
 let selectHouseholdName;
 
-function initAvailabilityView() {
+function initCareCalendarView() {
     let currentMonth = today.getMonth() + 1;
     let currentYear = today.getFullYear();
     selectMonth = document.getElementById("selectMonth");
@@ -30,21 +30,35 @@ function initAvailabilityView() {
         optionYear = document.createElement("option");
     }
     selectYear.value = currentYear;
-    getCareRequests(showCalendar);
+    getCareRequests(loadCalendar);
+
+    let xhttp = new XMLHttpRequest();
+    xhttp.open('GET', 'api/customer', true);
+    xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status === 200) {
+            let customers = JSON.parse(this.responseText); 
+            selectHouseholdName = document.getElementById('HouseholdName');
+            let option;
+            for (customer of customers) {
+                option = document.createElement("option");
+                option.value = customer.ID;
+                option.text = customer.HouseholdName;
+                selectHouseholdName.appendChild(option);
+            }
+        }
+    };
+    xhttp.send();
+    xhttp.onerror = function () {
+        displayError('Error getting Household Names - onerror event');
+    };
 
     document.getElementById('CareRequestForm').onsubmit = function (event) {
         event.preventDefault();       
         saveCareRequest();
-        if (document.activeElement.id === 'Save') {
-            // displayCustomerForm(careRequest);  //If staying on the form, then refresh with fresh IDs passed back in the response.
-        }
-        else if (document.activeElement.id === 'SaveAndClose') {
-            closeCareRequestForm();
-        }
     };
 }
 function changeMonthYear() {
-    getCareRequests(showCalendar);
+    getCareRequests(loadCalendar);
 }
 function changeMonth(gotoMonth) {
     let selectedMonth = parseInt(selectMonth.value);
@@ -60,7 +74,7 @@ function changeMonth(gotoMonth) {
     selectYear.value = gotoYear;
     changeMonthYear();
 }
-function showCalendar() {
+function loadCalendar() {
     let month = parseInt(selectMonth.value - 1);
     let year = parseInt(selectYear.value);
 
@@ -122,7 +136,7 @@ function showCalendar() {
                         hiddenCareRequestId.value = careRequest.ID;
                         pHouseholdName.appendChild(hiddenCareRequestId);
                         pHouseholdName.onclick = function () {
-                            displayCareRequestForm(undefined, loadCareRequest(this.querySelector("input[name='CareRequestId']").value));
+                            displayCareRequestForm(undefined, getCareRequest(this.querySelector("input[name='CareRequestId']").value));
                         }
                         cell.appendChild(pHouseholdName);
                     }
@@ -137,30 +151,12 @@ function showCalendar() {
 }
 function displayCareRequestForm(selectedDay, callBackFunction) {
     careRequestForm = document.forms.namedItem('CareRequestForm');
-    selectHouseholdName = document.getElementById('HouseholdName');
-
-    let xhttp = new XMLHttpRequest();
-    xhttp.open('GET', 'api/customer', true);
-    xhttp.onreadystatechange = function () {
-        if (this.readyState == 4 && this.status === 200) {
-            customers = JSON.parse(this.responseText);
-            let option;
-            for (customer of customers) {
-                option = document.createElement("option");
-                option.value = customer.ID;
-                option.text = customer.HouseholdName;
-                selectHouseholdName.appendChild(option);
-            }
-            if (callBackFunction !== undefined) {
-                callBackFunction();
-            }
-        }
-    };
-    xhttp.send();
-    xhttp.onerror = function () {
-        displayError('Error getting Household Names - onerror event');
-    };
+    
+    if (callBackFunction !== undefined) {
+        callBackFunction();
+    }   
     if (selectedDay !== undefined) {
+        document.getElementById('CareRequestID').value = undefined;
         let selectedDate = new Date(selectYear.value, parseInt(selectMonth.value) - 1, selectedDay);
         document.getElementById('StartDate').value = selectedDate.toISOString().slice(0, 11) + '08:00'; //2020-11-01T15:41:28.027Z
         document.getElementById('EndDate').value = selectedDate.addDays(1).toISOString().slice(0, 11) + '17:00';  
@@ -168,16 +164,13 @@ function displayCareRequestForm(selectedDay, callBackFunction) {
 
     careRequestForm.style.display = 'block';
 }
-function loadCareRequest(careRequestID) {
+function getCareRequest(careRequestID) {
     let xhttp = new XMLHttpRequest();
     xhttp.open('GET', 'api/careRequest/' + careRequestID, true);
     xhttp.onreadystatechange = function () {
         if (this.readyState == 4) {
             if (this.status === 200) {
-                let careRequest = JSON.parse(this.responseText);
-                selectHouseholdName.value = careRequest.CustomerID;
-                document.getElementById('StartDate').value = careRequest.StartDate;
-                document.getElementById('EndDate').value = careRequest.EndDate;
+                loadCareRequest(JSON.parse(this.responseText));
             }
             else {
                 displayError('Error getting Care Request', this);
@@ -189,13 +182,19 @@ function loadCareRequest(careRequestID) {
         displayError('Error getting Care Request - onerror event');
     };
 }
+function loadCareRequest(careRequest) {
+    document.getElementById('CareRequestID').value = careRequest.ID;
+    selectHouseholdName.value = careRequest.CustomerID;
+    document.getElementById('StartDate').value = careRequest.StartDate;
+    document.getElementById('EndDate').value = careRequest.EndDate;
+}
 function closeCareRequestForm() {
     document.getElementById("CareRequestForm").style.display = 'none';
 }
 function saveCareRequest() {
     let formData = document.getElementById('CareRequestForm');
     let careRequest = {};
-    //careRequest.ID = careRequest;
+    careRequest.ID = document.getElementById('CareRequestID').value;
     careRequest.CustomerID = formData.HouseholdName.value;
     careRequest.StartDate = formData.StartDate.value;
     careRequest.EndDate = formData.EndDate.value;
@@ -206,6 +205,13 @@ function saveCareRequest() {
         if (this.readyState === 4) {
             if (this.status === 200 || this.status === 204) {
                 displaySuccess('Care Request saved');
+                if (document.activeElement.id === 'Save') {
+                    loadCareRequest(JSON.parse(this.responseText));
+                }
+                else if (document.activeElement.id === 'SaveAndClose') {
+                    closeCareRequestForm();
+                }   
+                getCareRequests(loadCalendar);
             }
             else {
                 displayError('Error saving Care Request', this);
@@ -237,5 +243,6 @@ function getCareRequests(callBackFunction) {
         displayError('Error getting Care Requests - onerror event');
     };
 }
+
 
 

@@ -28,11 +28,14 @@ function loadView(href) {
                     //initHomeView();
                     break;
                 case 'availability':
-                    initAvailabilityView();
+                    //initAvailabilityView();
                     break;   
                 case 'customer':
                     initCustomerView();
-                    break;                 
+                    break; 
+                case 'careCalendar':
+                    initCareCalendarView();
+                    break;   
             }
             document.getElementById('Message').innerHTML = '';
             document.getElementById('Message').className = '';

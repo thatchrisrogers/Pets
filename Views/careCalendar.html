@@ -1,0 +1,56 @@
+﻿<h1>Care Calendar</h1>
+<table id="calendar" class="selecTableCells">
+    <thead>
+        <tr>
+            <th colspan="7" style="text-align:left">
+                <input type="button" onclick="changeMonth(-1);" value="&lt">
+                <select id="selectMonth" style="font-weight:bold" onchange="changeMonthYear();"></select>
+                <select id="selectYear" style="font-weight:bold" onchange="changeMonthYear();"></select>
+                <input type="button" onclick="changeMonth(1);" value="&gt">
+            </th>
+        </tr>
+        <tr>
+            <th>Sunday</th>
+            <th>Monday</th>
+            <th>Tuesday</th>
+            <th>Wednesday</th>
+            <th>Thursday</th>
+            <th>Friday</th>
+            <th>Saturday</th>
+        </tr>
+    </thead>
+
+    <tbody id="calendarBody">
+    </tbody>
+</table>
+<form class="overlay" id="CareRequestForm">
+    <div class="modalContent">
+        <div class="gridWith2Columns">
+            <div class="gridLabelColumn"></div>
+            <div class="gridInputColumn">
+                <button type="button" class="modalClose" onclick="closeCareRequestForm();">&times;</button>
+            </div>
+            <div class="gridLabelColumn"><label for="HouseholdName">Household Name:</label></div>
+            <div class="gridInputColumn">
+                <input type="hidden" id="CareRequestID" />
+                <select id="HouseholdName" required></select>
+            </div>
+            <div class="gridLabelColumn">
+                <label for="StartDate">Start Date:</label>
+            </div>
+            <div class="gridInputColumn">
+                <input type="datetime-local" id="StartDate" required />
+            </div>
+            <div class="gridLabelColumn">
+                <label for="EndDate">End Date:</label>
+            </div>
+            <div class="gridInputColumn">
+                <input type="datetime-local" id="EndDate" required />
+            </div>
+        </div>
+        <div>
+            <input type="submit" id="Save" value="Save" />
+            <input type="submit" id="SaveAndClose" value="Save & Close" />
+        </div>
+    </div>
+</form>

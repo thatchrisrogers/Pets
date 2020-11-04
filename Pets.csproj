@@ -84,7 +84,7 @@
     <Content Include="Global.asax" />
     <Content Include="Images\puppy.png" />
     <Content Include="index.html" />
-    <Content Include="Scripts\availability.js" />
+    <Content Include="Scripts\careCalendar.js" />
     <Content Include="Scripts\careRequest.js" />
     <Content Include="Scripts\common.js" />
     <Content Include="Scripts\customer.js" />
@@ -92,6 +92,7 @@
     <Content Include="Styles\navigation.css" />
     <Content Include="Styles\site.css" />
     <Content Include="Views\availability.html" />
+    <Content Include="Views\careCalendar.html" />
     <Content Include="Views\customer.html" />
     <Content Include="Views\home.html" />
     <Content Include="Web.config" />

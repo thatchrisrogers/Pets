@@ -111,7 +111,7 @@ namespace Pets.Controllers
 
         // POST api/<controller>
         [HttpPost]
-        public void Post(CareRequest careRequest)
+        public CareRequest Post(CareRequest careRequest)
         {
             SqlTransaction transaction;
             using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["Pets"].ConnectionString))
@@ -140,6 +140,7 @@ namespace Pets.Controllers
                         }
                     }
                     transaction.Commit();
+                    return Get((int)careRequest.ID); //return the newly created Customer so the caller has fresh IDs, etc.
                 }
                 catch (Exception ex)
                 {
