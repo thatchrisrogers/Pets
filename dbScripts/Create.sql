@@ -1,5 +1,6 @@
 Use Pets
 
+Drop View If Exists dbo.vwCustomer
 Drop View If Exists dbo.vwCareRequest
 Drop Table If Exists dbo.CareRequest
 Drop Table If Exists dbo.Pet
@@ -31,6 +32,15 @@ Alter Table dbo.CareRequest Add Constraint FK_CareRequest_Customer Foreign Key(C
 Go
 Create View dbo.vwCareRequest
 As
-Select request.*, customer.HouseholdName From dbo.CareRequest request
+Select request.*, customer.HouseholdName 
+From dbo.CareRequest request
 Inner Join dbo.Customer customer On request.CustomerID = customer.ID
+Go
+
+Create View dbo.vwCustomer
+As
+Select customer.ID, customer.HouseholdName, customer.Address, customer.Email, STRING_AGG(pet.Name, ', ') WITHIN GROUP (ORDER BY pet.Name ASC) AS PetNames
+From dbo.Customer customer
+Inner Join dbo.Pet pet On customer.ID = pet.CustomerID
+Group By customer.ID, customer.HouseholdName, customer.Address, customer.Email
 Go

@@ -9,6 +9,7 @@ namespace Pets.Models
         public string HouseholdName { get; set; }
         public string Address { get; set; }
         public string Email { get; set; }
+        public string PetNames { get; set; }
         public List<Pet> Pets { get; set; }
     }
 }

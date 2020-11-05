@@ -32,6 +32,10 @@ function createCustomerTable() {
         tableCell = customerTableRow.insertCell(1);
         element = document.createElement('label');
         element.innerHTML = customer.Address;
+        tableCell.appendChild(element); 
+        tableCell = customerTableRow.insertCell(2);
+        element = document.createElement('label');
+        element.innerHTML = customer.PetNames
         tableCell.appendChild(element);      
         customerTableRow.onclick = function () {
             customerID = this.cells[0].querySelector('[name=CustomerID]').value;
@@ -199,7 +203,7 @@ function sortCustomers(sortProperty) {
 function filterCustomers(filter) {
     filter = filter.toLowerCase();
     customers = unfilteredCustomers.filter(function (customer) {
-        return customer.Address.toLowerCase().includes(filter) || customer.HouseholdName.toLowerCase().includes(filter);
+        return customer.Address.toLowerCase().includes(filter) || customer.HouseholdName.toLowerCase().includes(filter) || customer.PetNames.toLowerCase().includes(filter);
     });
     createCustomerTable();
 }

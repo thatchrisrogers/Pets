@@ -20,7 +20,7 @@ namespace Pets.Controllers
                 try
                 {
                     connection.Open();
-                    using (SqlCommand command = new SqlCommand("Select * From dbo.Customer Order By HouseholdName", connection))
+                    using (SqlCommand command = new SqlCommand("Select * From dbo.vwCustomer Order By HouseholdName", connection))
                     {
                         using (SqlDataReader reader = command.ExecuteReader())
                         {
@@ -31,6 +31,7 @@ namespace Pets.Controllers
                                 customer.HouseholdName = reader["HouseholdName"] == DBNull.Value ? string.Empty : (string)reader["HouseholdName"];
                                 customer.Address = reader["Address"] == DBNull.Value ? string.Empty : (string)reader["Address"];
                                 customer.Email = reader["Email"] == DBNull.Value ? string.Empty : (string)reader["Email"];
+                                customer.PetNames = reader["PetNames"] == DBNull.Value ? string.Empty : (string)reader["PetNames"];
                                 customers.Add(customer);
                             }
                         }
