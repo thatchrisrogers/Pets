@@ -20,7 +20,7 @@ namespace Pets.Controllers
                 try
                 {
                     connection.Open();
-                    using (SqlCommand command = new SqlCommand("Select * From dbo.vwCustomer Order By HouseholdName", connection))
+                    using (SqlCommand command = new SqlCommand("Select * From dbo.vwCustomer Order By Name", connection))
                     {
                         using (SqlDataReader reader = command.ExecuteReader())
                         {
@@ -28,7 +28,7 @@ namespace Pets.Controllers
                             {
                                 customer = new Customer();
                                 customer.ID = ((int)reader["ID"]);
-                                customer.HouseholdName = reader["HouseholdName"] == DBNull.Value ? string.Empty : (string)reader["HouseholdName"];
+                                customer.Name = reader["Name"] == DBNull.Value ? string.Empty : (string)reader["Name"];
                                 customer.Address = reader["Address"] == DBNull.Value ? string.Empty : (string)reader["Address"];
                                 customer.Email = reader["Email"] == DBNull.Value ? string.Empty : (string)reader["Email"];
                                 customer.PetNames = reader["PetNames"] == DBNull.Value ? string.Empty : (string)reader["PetNames"];
@@ -64,7 +64,7 @@ namespace Pets.Controllers
                             {
                                 reader.Read();
                                 customer.ID = ((int)reader["ID"]);
-                                customer.HouseholdName = reader["HouseholdName"] == DBNull.Value ? string.Empty : (string)reader["HouseholdName"];
+                                customer.Name = reader["Name"] == DBNull.Value ? string.Empty : (string)reader["Name"];
                                 customer.Address = reader["Address"] == DBNull.Value ? string.Empty : (string)reader["Address"];
                                 customer.Email = reader["Email"] == DBNull.Value ? string.Empty : (string)reader["Email"];
                             }
@@ -95,17 +95,17 @@ namespace Pets.Controllers
                     {
                         command.Connection = connection;
                         command.Transaction = transaction;
-                        command.Parameters.AddWithValue("HouseholdName", customer.HouseholdName);
+                        command.Parameters.AddWithValue("Name", customer.Name);
                         command.Parameters.AddWithValue("Address", customer.Address);
                         command.Parameters.AddWithValue("Email", customer.Email);
                         if (customer.ID == null)
                         {
-                            command.CommandText = "Insert Into dbo.Customer (HouseholdName, Address, Email) OUTPUT Inserted.ID Values (@HouseholdName, @Address, @Email);";
+                            command.CommandText = "Insert Into dbo.Customer (Name, Address, Email) OUTPUT Inserted.ID Values (@Name, @Address, @Email);";
                             customer.ID = (int)command.ExecuteScalar();
                         }
                         else
                         {
-                            command.CommandText = "Update dbo.Customer Set HouseholdName = @HouseholdName, Address = @Address, Email = @Email Where ID = @ID;";
+                            command.CommandText = "Update dbo.Customer Set Name = @Name, Address = @Address, Email = @Email Where ID = @ID;";
                             command.Parameters.AddWithValue("ID", customer.ID);
                             command.ExecuteNonQuery();
                         }                                            

@@ -36,6 +36,9 @@ function loadView(href) {
                 case 'careCalendar':
                     initCareCalendarView();
                     break;   
+                case 'careRequest':  //ToDo - This is temporary while you build out the functionality
+                    initCareRequestView();
+                    break;   
             }
             document.getElementById('Message').innerHTML = '';
             document.getElementById('Message').className = '';

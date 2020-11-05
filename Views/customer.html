@@ -7,7 +7,7 @@
             </th>
         </tr>
         <tr>
-            <th onclick="sortCustomers('HouseholdName');" class="stickyHeader">Household</th>
+            <th onclick="sortCustomers('Name');" class="stickyHeader">Name</th>
             <th onclick="sortCustomers('Address');" class="stickyHeader">Address</th>
             <th onclick="sortCustomers('PetNames');" class="stickyHeader">Pets</th>
         </tr>
@@ -22,12 +22,12 @@
             <div class="gridInputColumn">
                 <button type="button" class="modalClose" onclick="closeCustomerForm();">&times;</button>
             </div>
-            <div class="gridLabelColumn"><label for="HouseholdName">Household Name:</label></div>
+            <div class="gridLabelColumn"><label for="CustomerName">Name:</label></div>
             <div class="gridInputColumn">
-                <input type="text" id="HouseholdName" required />
+                <input type="text" id="CustomerName" required />
             </div>
             <div class="gridLabelColumn">
-                <label for="Email">Address:</label>
+                <label for="Address">Address:</label>
             </div>
             <div class="gridInputColumn">
                 <input type="Text" id="Address" required />

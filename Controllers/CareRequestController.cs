@@ -17,7 +17,7 @@ namespace Pets.Controllers
             careRequest.CustomerID = (int)reader["CustomerID"];
             careRequest.StartDate = (DateTime)reader["StartDate"];
             careRequest.EndDate = (DateTime)reader["EndDate"];
-            careRequest.HouseholdName = reader["HouseholdName"] == DBNull.Value ? string.Empty : (string)reader["HouseholdName"];
+            careRequest.CustomerName = reader["CustomerName"] == DBNull.Value ? string.Empty : (string)reader["CustomerName"];
             return careRequest;
         }
         // GET api/<controller>

@@ -4,7 +4,7 @@ let selectMonth;
 let selectYear;
 let careRequests;
 let careRequestForm;
-let selectHouseholdName;
+let selectCustomerName;
 
 function initCareCalendarView() {
     let currentMonth = today.getMonth() + 1;
@@ -32,26 +32,9 @@ function initCareCalendarView() {
     selectYear.value = currentYear;
     getCareRequests(loadCalendar);
 
-    let xhttp = new XMLHttpRequest();
-    xhttp.open('GET', 'api/customer', true);
-    xhttp.onreadystatechange = function () {
-        if (this.readyState == 4 && this.status === 200) {
-            let customers = JSON.parse(this.responseText); 
-            selectHouseholdName = document.getElementById('HouseholdName');
-            let option;
-            for (customer of customers) {
-                option = document.createElement("option");
-                option.value = customer.ID;
-                option.text = customer.HouseholdName;
-                selectHouseholdName.appendChild(option);
-            }
-        }
-    };
-    xhttp.send();
-    xhttp.onerror = function () {
-        displayError('Error getting Household Names - onerror event');
-    };
-
+    selectCustomerName = document.getElementById('CustomerName');
+    loadSelectElement(selectCustomerName, 'customer');
+   
     document.getElementById('CareRequestForm').onsubmit = function (event) {
         event.preventDefault();       
         saveCareRequest();
@@ -89,7 +72,7 @@ function loadCalendar() {
     let startDay;
     let endDay;
     let cell;
-    let pHouseholdName, hiddenCareRequestId;
+    let pCustomerName, hiddenCareRequestId;
     let cellHeading;
 
     for (let i = 0; i < 6; i++) {
@@ -127,18 +110,18 @@ function loadCalendar() {
                     startDay = new Date(careRequest.StartDate).getDate();
                     endDay = new Date(careRequest.EndDate).getDate();
                     if (dayOfMonth >= startDay && dayOfMonth <= endDay) {
-                        pHouseholdName = document.createElement('p');
-                        pHouseholdName.classList.add('calendarEntry');
-                        pHouseholdName.innerHTML = careRequest.HouseholdName;
+                        pCustomerName = document.createElement('p');
+                        pCustomerName.classList.add('calendarEntry');
+                        pCustomerName.innerHTML = careRequest.CustomerName;
                         hiddenCareRequestId = document.createElement('input');
                         hiddenCareRequestId.type = 'hidden';
                         hiddenCareRequestId.name = 'CareRequestId';
                         hiddenCareRequestId.value = careRequest.ID;
-                        pHouseholdName.appendChild(hiddenCareRequestId);
-                        pHouseholdName.onclick = function () {
+                        pCustomerName.appendChild(hiddenCareRequestId);
+                        pCustomerName.onclick = function () {
                             displayCareRequestForm(undefined, getCareRequest(this.querySelector("input[name='CareRequestId']").value));
                         }
-                        cell.appendChild(pHouseholdName);
+                        cell.appendChild(pCustomerName);
                     }
                 }
                 
@@ -184,7 +167,7 @@ function getCareRequest(careRequestID) {
 }
 function loadCareRequest(careRequest) {
     document.getElementById('CareRequestID').value = careRequest.ID;
-    selectHouseholdName.value = careRequest.CustomerID;
+    selectCustomerName.value = careRequest.CustomerID;
     document.getElementById('StartDate').value = careRequest.StartDate;
     document.getElementById('EndDate').value = careRequest.EndDate;
 }
@@ -195,7 +178,7 @@ function saveCareRequest() {
     let formData = document.getElementById('CareRequestForm');
     let careRequest = {};
     careRequest.ID = document.getElementById('CareRequestID').value;
-    careRequest.CustomerID = formData.HouseholdName.value;
+    careRequest.CustomerID = formData.CustomerName.value;
     careRequest.StartDate = formData.StartDate.value;
     careRequest.EndDate = formData.EndDate.value;
     let xhttp = new XMLHttpRequest();

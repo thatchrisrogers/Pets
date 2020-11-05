@@ -61,20 +61,24 @@ function tableRowChanged(tableRow, callBackFunction) {
         callBackFunction();
      }
 }
-//function allTableRowInputsAreValid(tableRow) {
-//    let inputs = tableRow.querySelectorAll("input.userInput[required]");
-//    let allInputsAreValid = true;
-//    for (input of inputs) {
-//        let testValue = input.value;
-//        //if (String.isNullOrEmpty(input.value)) {
-//        //    allInputsAreValid = false;
-//        //    break;
-//        //}
-//        if (input.value.trim() === '') {
-//            allInputsAreValid = false;
-//            break;
-//        }
-//    }
-//    return allInputsAreValid;
-//}
+function loadSelectElement(selectElement, apiName) {
+    let xhttp = new XMLHttpRequest();
+    xhttp.open('GET', 'api/' + apiName, true);
+    xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status === 200) {
+            let items = JSON.parse(this.responseText);
+            let option;
+            for (item of items) {
+                option = document.createElement("option");
+                option.value = item.ID;
+                option.text = item.Name;
+                selectElement.appendChild(option);
+            }
+        }
+    };
+    xhttp.send();
+    xhttp.onerror = function () {
+        displayError('loadSelectElement - onerror event');
+    };
+}
 

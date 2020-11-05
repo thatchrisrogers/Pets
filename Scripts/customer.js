@@ -27,7 +27,7 @@ function createCustomerTable() {
         element.value = customer.ID;
         tableCell.appendChild(element);
         element = document.createElement('label');
-        element.innerHTML = customer.HouseholdName;
+        element.innerHTML = customer.Name;
         tableCell.appendChild(element);
         tableCell = customerTableRow.insertCell(1);
         element = document.createElement('label');
@@ -49,7 +49,7 @@ function displayCustomerForm(customer) {
         let petTable = document.getElementById("PetTable");
         if (customer !== null) {
             customerID = customer.ID;
-            customerForm.HouseholdName.value = customer.HouseholdName;
+            customerForm.CustomerName.value = customer.Name;
             customerForm.Address.value = customer.Address;
             customerForm.Email.value = customer.Email;
             petTable.removeChild(petTable.getElementsByTagName('tbody')[0]); //remove tbody first to delete any rows (empty petTable)
@@ -60,7 +60,7 @@ function displayCustomerForm(customer) {
         }
         else { //Display empty Customer Form
             customerID = null;
-            customerForm.HouseholdName.value = '';
+            customerForm.CustomerName.value = '';
             customerForm.Address.value = '';
             customerForm.Email.value = '';
             petTable.removeChild(petTable.getElementsByTagName('tbody')[0]);
@@ -136,7 +136,7 @@ function saveCustomer() {
     let formData = document.getElementById('CustomerForm');
     let customer = {};
     customer.ID = customerID;
-    customer.HouseholdName = formData.HouseholdName.value;
+    customer.Name = formData.CustomerName.value;
     customer.Address = formData.Address.value;
     customer.Email = formData.Email.value;
 
@@ -203,7 +203,7 @@ function sortCustomers(sortProperty) {
 function filterCustomers(filter) {
     filter = filter.toLowerCase();
     customers = unfilteredCustomers.filter(function (customer) {
-        return customer.Address.toLowerCase().includes(filter) || customer.HouseholdName.toLowerCase().includes(filter) || customer.PetNames.toLowerCase().includes(filter);
+        return customer.Address.toLowerCase().includes(filter) || customer.Name.toLowerCase().includes(filter) || customer.PetNames.toLowerCase().includes(filter);
     });
     createCustomerTable();
 }
