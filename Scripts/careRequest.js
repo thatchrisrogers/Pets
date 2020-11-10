@@ -1,7 +1,6 @@
 ﻿function initCareRequestView() {
-
-   
-    loadSelectElement(document.getElementById('CustomerName'), 'customer');
+    loadSelectElement(document.getElementById('Customer'), 'customer');
+    getCareRequest(3); //  ToDo - This is hard coded for testing.  Fix!
 } 
 function getCareRequest(careRequestID) {
     let xhttp = new XMLHttpRequest();
@@ -22,8 +21,9 @@ function getCareRequest(careRequestID) {
     };
 }
 function loadCareRequest(careRequest) {
-    document.getElementById('CareRequestID').value = careRequest.ID;
-    selectCustomerName.value = careRequest.CustomerID;
-    document.getElementById('StartDate').value = careRequest.StartDate;
-    document.getElementById('EndDate').value = careRequest.EndDate;
+    let careRequestForm = document.forms.namedItem("CareRequestForm");
+    careRequestForm.CareRequestID.value = careRequest.ID;
+    careRequestForm.Customer.value = careRequest.CustomerID;
+    careRequestForm.StartDate.value = careRequest.StartDate;
+    careRequestForm.EndDate.value = careRequest.EndDate;
 }

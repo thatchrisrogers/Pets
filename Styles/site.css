@@ -64,6 +64,11 @@ input, select, textarea {
     grid-template-columns: fit-content(200px) auto;
     grid-gap: 5px;
 }
+.gridWith4Columns {
+    display: grid;
+    grid-template-columns: max-content max-content max-content max-content;
+    grid-gap: 5px;
+}
 .gridLabelColumn {
     text-align: right;
     font-weight: bold;

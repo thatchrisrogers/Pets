@@ -1,27 +1,27 @@
 ﻿<h1>Care Request</h1>
 <!-- ToDo - This page is a placeholder to build out all of the Care Request functionality.  Consider replacing the similar functionality on the CareCalendar when this is complete -->
-
-<div class="gridWith2Columns">
-    <div class="gridLabelColumn"></div>  
-    <div class="gridLabelColumn"><label for="CustomerName">Customer Name:</label></div>
-    <div class="gridInputColumn">
-        <input type="hidden" id="CareRequestID" />
-        <select id="CustomerName" required></select>
+<form id="CareRequestForm">
+    <div class="gridWith4Columns">
+        <div class="gridLabelColumn"><label for="Customer">Customer Name:</label></div>
+        <div class="gridInputColumn">          
+            <select id="Customer" required></select>
+        </div>
+        <div></div><div><input type="hidden" id="CareRequestID" /></div>
+        <div class="gridLabelColumn">
+            <label for="StartDate">Start Date:</label>
+        </div>
+        <div class="gridInputColumn">
+            <input type="datetime-local" id="StartDate" required />
+        </div>
+        <div class="gridLabelColumn">
+            <label for="EndDate">End Date:</label>
+        </div>
+        <div class="gridInputColumn">
+            <input type="datetime-local" id="EndDate" required />
+        </div>
     </div>
-    <div class="gridLabelColumn">
-        <label for="StartDate">Start Date:</label>
+    <div>
+        <input type="submit" id="Save" value="Save" />
+        <input type="submit" id="SaveAndClose" value="Save & Close" />
     </div>
-    <div class="gridInputColumn">
-        <input type="datetime-local" id="StartDate" required />
-    </div>
-    <div class="gridLabelColumn">
-        <label for="EndDate">End Date:</label>
-    </div>
-    <div class="gridInputColumn">
-        <input type="datetime-local" id="EndDate" required />
-    </div>
-</div>
-<div>
-    <input type="submit" id="Save" value="Save" />
-    <input type="submit" id="SaveAndClose" value="Save & Close" />
-</div>
+</form>
