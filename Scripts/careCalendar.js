@@ -33,7 +33,7 @@ function initCareCalendarView() {
     getCareRequests(loadCalendar);
 
     selectCustomerName = document.getElementById('CustomerName');
-    loadSelectElement(selectCustomerName, 'customer');
+    loadSelectElement(selectCustomerName, customerListItems);
    
     document.getElementById('CareRequestForm').onsubmit = function (event) {
         event.preventDefault();       
@@ -63,7 +63,7 @@ function loadCalendar() {
 
     let firstDayOfMonth = (new Date(year, month)).getDay();
 
-    calendarBody = document.getElementById("calendarBody");
+    let calendarBody = document.getElementById("calendarBody");
     calendarBody.innerHTML = "";   // clearing all previous cells
 
     // creating all cells

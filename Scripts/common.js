@@ -1,4 +1,26 @@
-﻿Object.prototype.isNullOrEmpty = function (value) {
+﻿var customerListItems = [];
+var careProviderListItems = [];
+
+function initValidValues() {
+    getValidValues('customer', customerListItems);
+    getValidValues('careProvider', careProviderListItems);
+}
+function getValidValues(apiName, validValues) {
+    let xhttp = new XMLHttpRequest();
+    xhttp.open('GET', 'api/' + apiName, true);
+    xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status === 200) {
+            for (item of JSON.parse(this.responseText)) {
+                validValues.push({ ID: item.ID, Name: item.Name });
+            }
+        }
+    };
+    xhttp.send();
+    xhttp.onerror = function () {
+        displayError('getValidValues - onerror event');
+    };
+}
+Object.prototype.isNullOrEmpty = function (value) {
     return (!value);  //Extend the native string prototype to return a boolean indicator for a valid value (not undefined, empty, etc)
 }
 Date.prototype.addDays = function (days) {
@@ -6,6 +28,10 @@ Date.prototype.addDays = function (days) {
     date.setDate(date.getDate() + days);
     return date;
 }
+Date.prototype.toISOLocaleString = function () {  //Extend the native Date prototype to return the ISO format for a date that is offset for local timezone
+    return new Date(this.getTime() - (this.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+}
+
 function displayError(errorMessage, response) {
     let message = document.getElementById('Message');
     message.className = 'message messageError';
@@ -23,12 +49,15 @@ function displaySuccess(successMessage) {
         message.innerHTML = '';
     }, 3000);
 }
-function addElementToTableRow(name, type, className, required, value, cellIndex, tableRow) {
-    let element = document.createElement('input');
+function addElementToTableRow(name, tagName, type, className, required, validValues, value, cellIndex, tableRow) {
+    let element = document.createElement(tagName);
     element.type = type;
     element.name = name;
     if (className !== undefined) {
         element.classList.add(className);
+    }
+    if (element.type === 'select-one' && validValues !== undefined) {
+        loadSelectElement(element, validValues);
     }
     if (value !== undefined) {
         element.value = value;
@@ -61,24 +90,34 @@ function tableRowChanged(tableRow, callBackFunction) {
         callBackFunction();
      }
 }
-function loadSelectElement(selectElement, apiName) {
-    let xhttp = new XMLHttpRequest();
-    xhttp.open('GET', 'api/' + apiName, true);
-    xhttp.onreadystatechange = function () {
-        if (this.readyState == 4 && this.status === 200) {
-            let items = JSON.parse(this.responseText);
-            let option;
-            for (item of items) {
-                option = document.createElement("option");
-                option.value = item.ID;
-                option.text = item.Name;
-                selectElement.appendChild(option);
-            }
-        }
-    };
-    xhttp.send();
-    xhttp.onerror = function () {
-        displayError('loadSelectElement - onerror event');
-    };
+function loadSelectElement(selectElement, selectListItems) {
+    for (item of selectListItems) {
+        option = document.createElement("option");
+        option.value = item.ID;
+        option.text = item.Name;
+        selectElement.appendChild(option);
+    }
 }
+
+//function getValidValues(apiName) {
+//    let xhttp = new XMLHttpRequest();
+//    xhttp.open('GET', 'api/' + apiName, true);
+//    xhttp.onreadystatechange = function () {
+//        if (this.readyState == 4 && this.status === 200) {
+//            let validValues = [];
+//            let validValue;
+//            for (item of JSON.parse(this.responseText)) {
+//                validValue = {};
+//                validValue.ID = item.ID;
+//                validValue.Name = item.Name;
+//                validValues.push(validValue);
+//            }
+//            return validValues;
+//        }
+//    };
+//    xhttp.send();
+//    xhttp.onerror = function () {
+//        displayError('getValidValues - onerror event');
+//    };
+//}
 

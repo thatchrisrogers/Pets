@@ -82,11 +82,11 @@ function addPetTableRow(pet) {
     let petTableRow = petTableBody.insertRow(-1); 
     let cellIndex = 0;
     petTableRow.insertCell(cellIndex);
-    addElementToTableRow('PetID', 'hidden', undefined, false, (pet !== undefined ? pet.ID : undefined), cellIndex, petTableRow);
+    addElementToTableRow('PetID', 'input', 'hidden', undefined, false, undefined,  (pet !== undefined ? pet.ID : undefined), cellIndex, petTableRow);
     petTableRow.insertCell(cellIndex += 1);
-    addElementToTableRow('PetName', 'text', 'userInput', true, (pet !== undefined ? pet.Name : undefined), cellIndex, petTableRow).oninput = function () { petTableRowChanged(petTableRow); }
+    addElementToTableRow('PetName', 'input', 'text', 'userInput', true, undefined, (pet !== undefined ? pet.Name : undefined), cellIndex, petTableRow).oninput = function () { petTableRowChanged(petTableRow); }
     petTableRow.insertCell(cellIndex += 1);
-    addElementToTableRow('PetDescription', 'text', 'userInput', true, (pet !== undefined ? pet.Description : undefined), cellIndex, petTableRow).oninput = function () { petTableRowChanged(petTableRow); }
+    addElementToTableRow('PetDescription', 'input', 'text', 'userInput', true, undefined, (pet !== undefined ? pet.Description : undefined), cellIndex, petTableRow).oninput = function () { petTableRowChanged(petTableRow); }
 }
 function petTableRowChanged(petTableRow) {
     tableRowChanged(petTableRow, addPetTableRow);

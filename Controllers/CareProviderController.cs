@@ -9,7 +9,8 @@ namespace Pets.Controllers
 {
     public class CareProviderController : ApiController
     {
-        internal static List<CareProvider> GetList()
+        [HttpGet]
+        public List<CareProvider> Get()
         {
             List<CareProvider> careProviders = new List<CareProvider>();
             CareProvider careProvider;
@@ -18,7 +19,7 @@ namespace Pets.Controllers
                 try
                 {
                     connection.Open();
-                    using (SqlCommand command = new SqlCommand("Select * From dbo.Pet Where CustomerID = @customerID;", connection))
+                    using (SqlCommand command = new SqlCommand("Select * From dbo.CareProvider Order By Name;", connection))
                     {
                         using (SqlDataReader reader = command.ExecuteReader())
                         {

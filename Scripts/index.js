@@ -1,13 +1,17 @@
 ﻿window.addEventListener("load", function (e) {
+    initValidValues();
+
     if (window.location.href.split('?')[1] === undefined) { //If no query string parameters were passed...
         loadView('?view=home');
     } else {
         loadView(window.location.href);
     }
-    let navLinks = document.querySelectorAll('a.topNavItem, a.topNavLogo');
+    //Init SPA behavior
+    let navLinks = document.querySelectorAll('a.topNavLink, a.topNavLogo');
     for (var i = 0; i < navLinks.length; i++) {
         navLinks[i].addEventListener('click', function (event) {
             event.preventDefault();
+            loadView(this.href);
             document.querySelector('.topNav').classList.remove('responsive'); //Collapse the navbar after clicking a link.  This applies only to mobile / small screen view
         });
     }
@@ -25,7 +29,7 @@ function loadView(href) {
             document.querySelector('main').innerHTML = this.responseText;
             switch (view) {
                 case 'home':
-                    //initHomeView();
+                    initHomeView();
                     break;
                 case 'availability':
                     //initAvailabilityView();

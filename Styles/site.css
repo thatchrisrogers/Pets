@@ -20,6 +20,26 @@ input, select, textarea {
     background-color: #f2dede;
     border-color: #ebccd1;
 }
+
+.gridWith2Columns {
+    display: grid;
+    grid-template-columns: max-content max-content;
+    margin: 0 auto;
+    grid-gap: 5px;
+}
+.gridWith4Columns {
+    display: grid;
+    grid-template-columns: max-content max-content max-content max-content;
+    margin: 0 auto;
+    grid-gap: 5px;
+}
+.gridLabelColumn {
+    text-align: left;
+    font-weight: bold;
+}
+.gridInputColumn {
+    text-align: left;
+}
 .overlay {
     position: fixed; /*Sit on top of pge content*/
     display: none;
@@ -32,6 +52,7 @@ input, select, textarea {
     background-color: rgba(0,0,0,0.4);
     z-index: 1; /*Specify a stack order in case you are using a different order for other elements*/
 }
+
 .modalContent {
     background-color: #fefefe;
     margin: 5% auto; /*20% from top and centered*/
@@ -40,12 +61,17 @@ input, select, textarea {
     border-radius: 4px;
     width: 60%
 }
+
 @media screen and (max-width:600px) {
     .modalContent {
         width: 100%;
         margin: 20% auto;
     }
+    .gridWith4Columns {
+        grid-template-columns: max-content max-content;
+    }
 }
+
 .modalClose {
     color: #676767;
     float: right;
@@ -59,23 +85,6 @@ input, select, textarea {
         text-decoration: none;
         cursor: pointer;
     }
-.gridWith2Columns {
-    display: grid;
-    grid-template-columns: fit-content(200px) auto;
-    grid-gap: 5px;
-}
-.gridWith4Columns {
-    display: grid;
-    grid-template-columns: max-content max-content max-content max-content;
-    grid-gap: 5px;
-}
-.gridLabelColumn {
-    text-align: right;
-    font-weight: bold;
-}
-.gridInputColumn {
-    text-align: left;
-}
 table {
     border-collapse: collapse;
     table-layout: auto;
