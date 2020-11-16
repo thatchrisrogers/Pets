@@ -24,7 +24,7 @@ function getCareRequest(careRequestID) {
     };
 }
 function loadCareRequest(careRequest) {
-    let careRequestForm = document.forms.namedItem("CareRequestForm");
+    careRequestForm = document.forms.namedItem("CareRequestForm");
     careRequestForm.CareRequestID.value = careRequest.ID;
     careRequestForm.Customer.value = careRequest.CustomerID;
     careRequestForm.StartDate.value = careRequest.StartDate;
@@ -45,12 +45,23 @@ function addVisitTableRow(visit) {
     visitTableRow.insertCell(cellIndex);
     addElementToTableRow('VisitID', 'input', 'hidden', undefined, false, undefined, (visit !== undefined ? visit.ID : undefined), cellIndex, visitTableRow);
     visitTableRow.insertCell(cellIndex += 1);
-    addElementToTableRow('VisitDate', 'input', 'datetime-local', 'userInput', true, undefined, (visit !== undefined ? visit.VisitDate : guessNextVisitDate.toISOLocaleString()), cellIndex, visitTableRow).oninput = function () { visitTableRowChanged(visitTableRow); }
+    let element = addElementToTableRow('VisitDate', 'input', 'datetime-local', 'userInput', true, undefined, (visit !== undefined ? visit.VisitDate : guessNextVisitDate.toISOLocaleString()), cellIndex, visitTableRow);
+    element.oninput = function () { visitTableRowChanged(visitTableRow); }
     visitTableRow.insertCell(cellIndex += 1);
-    addElementToTableRow('CareProvider', 'select', undefined, 'userInput', true, careProviderListItems, (visit !== undefined ? visit.CareProviderID : 1), cellIndex, visitTableRow).oninput = function () { visitTableRowChanged(visitTableRow); }
+    element = addElementToTableRow('CareProvider', 'select', undefined, 'userInput', true, careProviderListItems, (visit !== undefined ? visit.CareProviderID : 1), cellIndex, visitTableRow);
+    element.oninput = function () { visitTableRowChanged(visitTableRow); }
+    element.onblur = function () { visitTableRowChanged(visitTableRow); }
+    element.focus();
 }
 function visitTableRowChanged(visitTableRow) {
     guessNextVisitDate = new Date(visitTableRow.querySelector('[name=VisitDate]').value);
-    guessNextVisitDate.setHours(guessNextVisitDate.getHours() + 8);
+    if (guessNextVisitDate.getHours() <= 10) {
+        guessNextVisitDate.setHours(guessNextVisitDate.getHours() + 9);
+    } else if (guessNextVisitDate.getHours() > 10 && guessNextVisitDate.getHours() <= 17) {
+        guessNextVisitDate.setHours(guessNextVisitDate.getHours() + 5);
+    }
+    else {
+        guessNextVisitDate.setHours(guessNextVisitDate.getHours() + 10);
+    }
     tableRowChanged(visitTableRow, addVisitTableRow);
 }

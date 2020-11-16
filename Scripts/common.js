@@ -99,25 +99,4 @@ function loadSelectElement(selectElement, selectListItems) {
     }
 }
 
-//function getValidValues(apiName) {
-//    let xhttp = new XMLHttpRequest();
-//    xhttp.open('GET', 'api/' + apiName, true);
-//    xhttp.onreadystatechange = function () {
-//        if (this.readyState == 4 && this.status === 200) {
-//            let validValues = [];
-//            let validValue;
-//            for (item of JSON.parse(this.responseText)) {
-//                validValue = {};
-//                validValue.ID = item.ID;
-//                validValue.Name = item.Name;
-//                validValues.push(validValue);
-//            }
-//            return validValues;
-//        }
-//    };
-//    xhttp.send();
-//    xhttp.onerror = function () {
-//        displayError('getValidValues - onerror event');
-//    };
-//}
 
