@@ -37,6 +37,13 @@ function loadCareRequest(careRequest) {
     //    addVisitTableRow(visitTableBody, visit);
     //}
 
+    //if (visit.careRequest.Visits === null)
+    do {
+        initVisitTableRows();
+    }
+    while (guessNextVisitDate <= new Date(careRequest.EndDate));
+    
+
     addVisitTableRow(undefined);
 }
 function addVisitTableRow(visit) {
@@ -45,16 +52,19 @@ function addVisitTableRow(visit) {
     visitTableRow.insertCell(cellIndex);
     addElementToTableRow('VisitID', 'input', 'hidden', undefined, false, undefined, (visit !== undefined ? visit.ID : undefined), cellIndex, visitTableRow);
     visitTableRow.insertCell(cellIndex += 1);
-    let element = addElementToTableRow('VisitDate', 'input', 'datetime-local', 'userInput', true, undefined, (visit !== undefined ? visit.VisitDate : guessNextVisitDate.toISOLocaleString()), cellIndex, visitTableRow);
-    element.oninput = function () { visitTableRowChanged(visitTableRow); }
+    addElementToTableRow('VisitDate', 'input', 'datetime-local', 'userInput', true, undefined, (visit !== undefined ? visit.VisitDate : undefined), cellIndex, visitTableRow).oninput = function () { visitTableRowChanged(visitTableRow); }
     visitTableRow.insertCell(cellIndex += 1);
-    element = addElementToTableRow('CareProvider', 'select', undefined, 'userInput', true, careProviderListItems, (visit !== undefined ? visit.CareProviderID : 1), cellIndex, visitTableRow);
-    element.oninput = function () { visitTableRowChanged(visitTableRow); }
-    element.onblur = function () { visitTableRowChanged(visitTableRow); }
-    element.focus();
+    addElementToTableRow('CareProvider', 'select', undefined, 'userInput', true, careProviderListItems, (visit !== undefined ? visit.CareProviderID : undefined), cellIndex, visitTableRow).oninput = function () { visitTableRowChanged(visitTableRow); }
+    return visitTableRow;
 }
 function visitTableRowChanged(visitTableRow) {
-    guessNextVisitDate = new Date(visitTableRow.querySelector('[name=VisitDate]').value);
+    tableRowChanged(visitTableRow, addVisitTableRow);
+}
+function initVisitTableRows() { 
+    let visitTableRow = addVisitTableRow(undefined);
+    addDeleteButton(visitTableRow);
+    visitTableRow.querySelector('[name=VisitDate]').value = guessNextVisitDate.toISOLocaleString();
+    visitTableRow.querySelector('[name=CareProvider]').value = 1;
     if (guessNextVisitDate.getHours() <= 10) {
         guessNextVisitDate.setHours(guessNextVisitDate.getHours() + 9);
     } else if (guessNextVisitDate.getHours() > 10 && guessNextVisitDate.getHours() <= 17) {
@@ -63,5 +73,4 @@ function visitTableRowChanged(visitTableRow) {
     else {
         guessNextVisitDate.setHours(guessNextVisitDate.getHours() + 10);
     }
-    tableRowChanged(visitTableRow, addVisitTableRow);
 }

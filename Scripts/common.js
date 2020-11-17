@@ -10,6 +10,7 @@ function getValidValues(apiName, validValues) {
     xhttp.open('GET', 'api/' + apiName, true);
     xhttp.onreadystatechange = function () {
         if (this.readyState == 4 && this.status === 200) {
+            validValues.push({ ID: '', Name: '' });
             for (item of JSON.parse(this.responseText)) {
                 validValues.push({ ID: item.ID, Name: item.Name });
             }
