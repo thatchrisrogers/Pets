@@ -3,7 +3,7 @@ let months = [{ value: 1, text: "January" }, { value: 2, text: "February" }, { v
 let selectMonth;
 let selectYear;
 let careRequests;
-let careRequestForm;
+let careCalendarRequestForm;
 let selectCustomerName;
 
 function initCareCalendarView() {
@@ -34,8 +34,9 @@ function initCareCalendarView() {
 
     selectCustomerName = document.getElementById('CustomerName');
     loadSelectElement(selectCustomerName, customerListItems);
-   
-    document.getElementById('CareRequestForm').onsubmit = function (event) {
+
+    careCalendarRequestForm = document.getElementById('CareCalendarRequestForm')
+    careCalendarRequestForm.onsubmit = function (event) {
         event.preventDefault();       
         saveCareRequest();
     };
@@ -95,10 +96,10 @@ function loadCalendar() {
                 cellHeading.innerHTML = dayOfMonth;
                 cellHeading.onclick = function () {
                     try {
-                        displayCareRequestForm(this.innerHTML, undefined);
+                        displayCareCalendarRequestForm(this.innerHTML);
                     }
                     catch (e) {
-                        displayError('Error displaying Care Request - ' + e.message);
+                        displayError('Error displaying Care Calendar Request Form - ' + e.message);
                     }
                 }
                 cell.appendChild(cellHeading);
@@ -119,7 +120,7 @@ function loadCalendar() {
                         hiddenCareRequestId.value = careRequest.ID;
                         pCustomerName.appendChild(hiddenCareRequestId);
                         pCustomerName.onclick = function () {
-                            displayCareRequestForm(undefined, getCareRequest(this.querySelector("input[name='CareRequestId']").value));
+                            loadView('?view=careRequest&id=' + this.querySelector("input[name='CareRequestId']").value);
                         }
                         cell.appendChild(pCustomerName);
                     }
@@ -132,12 +133,7 @@ function loadCalendar() {
         calendarBody.appendChild(row); // appending each row into calendar body.
     }
 }
-function displayCareRequestForm(selectedDay, callBackFunction) {
-    careRequestForm = document.forms.namedItem('CareRequestForm');
-    
-    if (callBackFunction !== undefined) {
-        callBackFunction();
-    }   
+function displayCareCalendarRequestForm(selectedDay) {  
     if (selectedDay !== undefined) {
         document.getElementById('CareRequestID').value = undefined;
         let selectedDate = new Date(selectYear.value, parseInt(selectMonth.value) - 1, selectedDay);
@@ -145,25 +141,7 @@ function displayCareRequestForm(selectedDay, callBackFunction) {
         document.getElementById('EndDate').value = selectedDate.addDays(1).toISOString().slice(0, 11) + '17:00';  
     }
 
-    careRequestForm.style.display = 'block';
-}
-function getCareRequest(careRequestID) {
-    let xhttp = new XMLHttpRequest();
-    xhttp.open('GET', 'api/careRequest/' + careRequestID, true);
-    xhttp.onreadystatechange = function () {
-        if (this.readyState == 4) {
-            if (this.status === 200) {
-                loadCareRequest(JSON.parse(this.responseText));
-            }
-            else {
-                displayError('Error getting Care Request', this);
-            }
-        }
-    };
-    xhttp.send();
-    xhttp.onerror = function () {
-        displayError('Error getting Care Request - onerror event');
-    };
+    careCalendarRequestForm.style.display = 'block';
 }
 function loadCareRequest(careRequest) {
     document.getElementById('CareRequestID').value = careRequest.ID;
@@ -171,11 +149,8 @@ function loadCareRequest(careRequest) {
     document.getElementById('StartDate').value = careRequest.StartDate;
     document.getElementById('EndDate').value = careRequest.EndDate;
 }
-function closeCareRequestForm() {
-    document.getElementById("CareRequestForm").style.display = 'none';
-}
-function saveCareRequest() {
-    let formData = document.getElementById('CareRequestForm');
+function saveCareCalendarRequestForm() {
+    let formData = document.getElementById('CareCalendarRequestForm');
     let careRequest = {};
     careRequest.ID = document.getElementById('CareRequestID').value;
     careRequest.CustomerID = formData.CustomerName.value;
@@ -193,7 +168,7 @@ function saveCareRequest() {
                 }
                 else if (document.activeElement.id === 'SaveAndClose') {
                     closeCareRequestForm();
-                }   
+                }
                 getCareRequests(loadCalendar);
             }
             else {
@@ -206,26 +181,11 @@ function saveCareRequest() {
         displayError('Error saving Care Request - onerror event');
     };
 }
-function getCareRequests(callBackFunction) {
-    let xhttp = new XMLHttpRequest();
-    xhttp.open('GET', 'api/careRequest?month=' + selectMonth.value + '&' + 'year=' + selectYear.value, true);
-    xhttp.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
-    xhttp.onreadystatechange = function () {
-        if (this.readyState == 4) {
-            if (this.status === 200) {
-                careRequests = JSON.parse(this.responseText); 
-                callBackFunction();
-            }
-            else {
-                displayError('Error getting Care Requests', this);
-            }
-        }
-    };
-    xhttp.send();
-    xhttp.onerror = function () {
-        displayError('Error getting Care Requests - onerror event');
-    };
+function closeCareCalendarRequestForm() {
+    careCalendarRequestForm.style.display = 'none';
 }
+
+
 
 
 

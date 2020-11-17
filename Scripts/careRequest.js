@@ -1,28 +1,10 @@
 ﻿let guessNextVisitDate;
 let visitTableBody;
 
-function initCareRequestView() {
+function initCareRequestView(id) {
     loadSelectElement(document.getElementById('Customer'), customerListItems);
-    getCareRequest(3); //  ToDo - This is hard coded for testing.  Fix!
+    getCareRequest(id); 
 } 
-function getCareRequest(careRequestID) {
-    let xhttp = new XMLHttpRequest();
-    xhttp.open('GET', 'api/careRequest/' + careRequestID, true);
-    xhttp.onreadystatechange = function () {
-        if (this.readyState == 4) {
-            if (this.status === 200) {
-                loadCareRequest(JSON.parse(this.responseText));
-            }
-            else {
-                displayError('Error getting Care Request', this);
-            }
-        }
-    };
-    xhttp.send();
-    xhttp.onerror = function () {
-        displayError('Error getting Care Request - onerror event');
-    };
-}
 function loadCareRequest(careRequest) {
     careRequestForm = document.forms.namedItem("CareRequestForm");
     careRequestForm.CareRequestID.value = careRequest.ID;
@@ -74,3 +56,43 @@ function initVisitTableRows() {
         guessNextVisitDate.setHours(guessNextVisitDate.getHours() + 10);
     }
 }
+
+function getCareRequests(callBackFunction) {
+    let xhttp = new XMLHttpRequest();
+    xhttp.open('GET', 'api/careRequest?month=' + selectMonth.value + '&' + 'year=' + selectYear.value, true);
+    xhttp.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+    xhttp.onreadystatechange = function () {
+        if (this.readyState == 4) {
+            if (this.status === 200) {
+                careRequests = JSON.parse(this.responseText);
+                callBackFunction();
+            }
+            else {
+                displayError('Error getting Care Requests', this);
+            }
+        }
+    };
+    xhttp.send();
+    xhttp.onerror = function () {
+        displayError('Error getting Care Requests - onerror event');
+    };
+}
+function getCareRequest(careRequestID) {
+    let xhttp = new XMLHttpRequest();
+    xhttp.open('GET', 'api/careRequest/' + careRequestID, true);
+    xhttp.onreadystatechange = function () {
+        if (this.readyState == 4) {
+            if (this.status === 200) {
+                loadCareRequest(JSON.parse(this.responseText));
+            }
+            else {
+                displayError('Error getting Care Request', this);
+            }
+        }
+    };
+    xhttp.send();
+    xhttp.onerror = function () {
+        displayError('Error getting Care Request - onerror event');
+    };
+}
+

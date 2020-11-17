@@ -1,6 +1,20 @@
 ﻿var customerListItems = [];
 var careProviderListItems = [];
 
+function findQueryStringValueByKey(href, key) {
+    let queryString = href.split('?')[1];
+    let queryStringParams = [];
+    let keyValues = queryString.split('&');
+    for (let i = 0; i < keyValues.length; i++) {
+        queryStringParams.push({ key: keyValues[i].split('=')[0], value: keyValues[i].split('=')[1] });
+    }
+    for (let i = 0; i < queryStringParams.length; i++) {
+        if (queryStringParams[i]['key'] === key) {
+            return queryStringParams[i]['value'];
+        }
+    }
+    return null;
+}
 function initValidValues() {
     getValidValues('customer', customerListItems);
     getValidValues('careProvider', careProviderListItems);

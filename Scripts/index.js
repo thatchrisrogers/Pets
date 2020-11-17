@@ -20,8 +20,7 @@ function topNavToggle() {
     document.querySelector('.topNav').classList.toggle('responsive');
 }
 function loadView(href) {
-    let queryString = href.split('?')[1];
-    let view = findQueryStringValueByKey(queryString, 'view');
+    let view = findQueryStringValueByKey(href, 'view');
     let xhttp = new XMLHttpRequest();
     xhttp.open('GET', 'Views/' + view + '.html', true);
     xhttp.onreadystatechange = function () {
@@ -41,7 +40,7 @@ function loadView(href) {
                     initCareCalendarView();
                     break;   
                 case 'careRequest':  //ToDo - This is temporary while you build out the functionality
-                    initCareRequestView();
+                    initCareRequestView(findQueryStringValueByKey(href, 'id'));
                     break;   
             }
             document.getElementById('Message').innerHTML = '';
@@ -51,16 +50,3 @@ function loadView(href) {
     }
     xhttp.send();
 };
-function findQueryStringValueByKey(queryString, key) {
-    let queryStringParams = [];
-    let keyValues = queryString.split('&');
-    for (let i = 0; i < keyValues.length; i++) {
-        queryStringParams.push({ key: keyValues[i].split('=')[0], value: keyValues[i].split('=')[1] });
-    }
-    for (let i = 0; i < queryStringParams.length; i++) {
-        if (queryStringParams[i]['key'] === key) {
-            return queryStringParams[i]['value'];
-        }
-    }
-    return null;
-}
