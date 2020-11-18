@@ -86,6 +86,8 @@ function addPetTableRow(pet) {
     petTableRow.insertCell(cellIndex += 1);
     addElementToTableRow('PetName', 'input', 'text', 'userInput', true, undefined, (pet !== undefined ? pet.Name : undefined), cellIndex, petTableRow).oninput = function () { petTableRowChanged(petTableRow); }
     petTableRow.insertCell(cellIndex += 1);
+    addElementToTableRow('PetType', 'select', undefined, 'userInput', true, petTypeListItems, (pet !== undefined ? pet.Type.ID : undefined), cellIndex, petTableRow).oninput = function () { petTableRowChanged(petTableRow); }
+    petTableRow.insertCell(cellIndex += 1);
     addElementToTableRow('PetDescription', 'input', 'text', 'userInput', true, undefined, (pet !== undefined ? pet.Description : undefined), cellIndex, petTableRow).oninput = function () { petTableRowChanged(petTableRow); }
 }
 function petTableRowChanged(petTableRow) {
@@ -149,6 +151,7 @@ function saveCustomer() {
             pet = {};
             pet.ID = petTableRow.querySelector('[name=PetID]').value;
             pet.Name = petTableRow.querySelector('[name=PetName]').value;
+            pet.Type = { ID: petTableRow.querySelector('[name=PetType]').value };
             pet.Description = petTableRow.querySelector('[name=PetDescription]').value;
             pets.push(pet);
         }      

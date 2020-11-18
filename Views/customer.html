@@ -17,11 +17,8 @@
 <input type="submit" value="New Customer" onclick="displayCustomerForm(null);" />
 <form class="overlay" id="CustomerForm">
     <div class="modalContent">
+        <button type="button" class="modalClose" onclick="closeCustomerForm();">&times;</button>
         <div class="gridWith2Columns">
-            <div class="gridLabelColumn"></div>
-            <div class="gridInputColumn">
-                <button type="button" class="modalClose" onclick="closeCustomerForm();">&times;</button>
-            </div>
             <div class="gridLabelColumn"><label for="CustomerName">Name:</label></div>
             <div class="gridInputColumn">
                 <input type="text" id="CustomerName" required />
@@ -43,13 +40,14 @@
             <table id="PetTable">
                 <thead>
                     <tr>
-                        <th colspan="3" class="tableHeading">
+                        <th colspan="4" class="tableHeading">
                             Pets:
                         </th>
                     </tr>
                     <tr>
                         <th></th>
                         <th>Name</th>
+                        <th>Type</th>
                         <th>Description</th>
                     </tr>
                 </thead>

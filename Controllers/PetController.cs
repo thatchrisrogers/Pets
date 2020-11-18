@@ -9,7 +9,7 @@ using System.Data;
 namespace Pets.Controllers
 {
     public class PetController : ApiController
-    {      
+    {
         internal static List<Pet> GetList(int customerID)
         {
             List<Pet> pets = new List<Pet>();
@@ -29,6 +29,7 @@ namespace Pets.Controllers
                                 pet = new Pet();
                                 pet.ID = ((int)reader["ID"]);
                                 pet.Name = ((string)reader["Name"]);
+                                pet.Type = new PetType((int)reader["TypeID"]);
                                 pet.Description = ((string)reader["Description"]);
                                 pets.Add(pet);
                             }
@@ -49,6 +50,7 @@ namespace Pets.Controllers
                 DataTable petTable = new DataTable();
                 petTable.Columns.Add("ID");
                 petTable.Columns.Add("Name");
+                petTable.Columns.Add("TypeID");
                 petTable.Columns.Add("Description");
                 DataRow petRow;
                 foreach (Pet pet in pets)
@@ -56,6 +58,7 @@ namespace Pets.Controllers
                     petRow = petTable.NewRow();
                     petRow["ID"] = pet.ID;
                     petRow["Name"] = pet.Name;
+                    petRow["TypeID"] = pet.Type.ID;
                     petRow["Description"] = pet.Description;
                     petTable.Rows.Add(petRow);
                 }
@@ -71,6 +74,36 @@ namespace Pets.Controllers
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
+            }
+        }
+    }
+    public class PetTypeController : ApiController
+    {
+        [HttpGet]
+        public List<PetType> Get()
+        {
+            List<PetType> petTypes = new List<PetType>();
+            using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["Pets"].ConnectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    using (SqlCommand command = new SqlCommand("Select * From dbo.PetType Order By Name;", connection))
+                    {
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                petTypes.Add(new PetType((int)reader["ID"], (string)reader["Name"]));
+                            }
+                        }
+                    }
+                    return petTypes;
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.Message);
+                }
             }
         }
     }

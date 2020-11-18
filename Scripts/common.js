@@ -1,5 +1,6 @@
 ﻿var customerListItems = [];
 var careProviderListItems = [];
+var petTypeListItems = [];
 
 function findQueryStringValueByKey(href, key) {
     let queryString = href.split('?')[1];
@@ -18,6 +19,7 @@ function findQueryStringValueByKey(href, key) {
 function initValidValues() {
     getValidValues('customer', customerListItems);
     getValidValues('careProvider', careProviderListItems);
+    getValidValues('petType', petTypeListItems);
 }
 function getValidValues(apiName, validValues) {
     let xhttp = new XMLHttpRequest();

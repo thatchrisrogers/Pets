@@ -7,6 +7,7 @@ Drop Table If Exists dbo.CareVisit
 Drop Table If Exists dbo.CareRequest
 Drop Table If Exists dbo.CareProvider
 Drop Table If Exists dbo.Pet
+Drop Table If Exists dbo.PetType
 Drop Table If Exists dbo.Customer
 
 Create Table dbo.Customer (
@@ -16,13 +17,25 @@ Create Table dbo.Customer (
 	,Email VarChar(100) Null
 )
 
+Create Table dbo.PetType(
+	ID Int Identity(1,1) Primary Key Not Null
+	,Name VarChar(100) Not Null
+)
+Insert Into dbo.PetType Values ('Dog')
+Insert Into dbo.PetType Values ('Cat')
+Insert Into dbo.PetType Values ('Rabbit')
+Insert Into dbo.PetType Values ('Reptile')
+Insert Into dbo.PetType Values ('Bird')
+
 Create Table dbo.Pet(
 	ID Int Identity(1,1) Primary Key Not Null
 	,CustomerID Int Not Null
+	,TypeID Int Not Null
 	,Name VarChar(100) Not Null
 	,Description VarChar(500) Not Null
 )
 Alter Table dbo.Pet Add Constraint FK_Pet_Customer Foreign Key(CustomerID) References dbo.Customer(ID)
+Alter Table dbo.Pet Add Constraint FK_Pet_PetType Foreign Key(TypeID) References dbo.PetType(ID)
 
 Create Table dbo.CareRequest(
 	ID Int Identity(1,1) Primary Key Not Null
