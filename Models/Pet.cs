@@ -12,7 +12,8 @@
         public int? ID { get; set; }
         public string Name { get; set; }
 
-        public PetType(int id)
+        public PetType() { }
+        public PetType(int? id)
         {
             ID = id;
         }

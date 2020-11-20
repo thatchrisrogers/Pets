@@ -26,7 +26,7 @@ function getValidValues(apiName, validValues) {
     xhttp.open('GET', 'api/' + apiName, true);
     xhttp.onreadystatechange = function () {
         if (this.readyState == 4 && this.status === 200) {
-            validValues.push({ ID: '', Name: '' });
+            validValues.push({ ID: '', Name: 'select' });
             for (item of JSON.parse(this.responseText)) {
                 validValues.push({ ID: item.ID, Name: item.Name });
             }
@@ -98,7 +98,7 @@ function addDeleteButton(tableRow) {
     tableRow.cells[0].appendChild(deleteButton);
 }
 function tableRowChanged(tableRow, callBackFunction) {
-    let inputs = tableRow.querySelectorAll("input.userInput");
+    let inputs = tableRow.querySelectorAll(".userInput");
     for (input of inputs) {
         input.required = true;
     }

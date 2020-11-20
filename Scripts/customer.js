@@ -151,7 +151,10 @@ function saveCustomer() {
             pet = {};
             pet.ID = petTableRow.querySelector('[name=PetID]').value;
             pet.Name = petTableRow.querySelector('[name=PetName]').value;
-            pet.Type = { ID: petTableRow.querySelector('[name=PetType]').value };
+            pet.Type = { ID: petTableRow.querySelector('[name=PetType]').value } ;     
+            //testType = {};
+            //testType.ID = petTableRow.querySelector('[name=PetType]').value;
+            //pet.Type = testType;
             pet.Description = petTableRow.querySelector('[name=PetDescription]').value;
             pets.push(pet);
         }      
