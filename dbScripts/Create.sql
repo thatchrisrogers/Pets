@@ -2,10 +2,11 @@ Use Pets
 
 Drop View If Exists dbo.vwCustomer
 Drop View If Exists dbo.vwCareRequest
-Drop Table If Exists dbo.CareTask
+Drop Table If Exists dbo.CareVisitTask
 Drop Table If Exists dbo.CareVisit
 Drop Table If Exists dbo.CareRequest
 Drop Table If Exists dbo.CareProvider
+Drop Table If Exists dbo.PetTask
 Drop Table If Exists dbo.Pet
 Drop Table If Exists dbo.PetType
 Drop Table If Exists dbo.Customer
@@ -37,6 +38,13 @@ Create Table dbo.Pet(
 Alter Table dbo.Pet Add Constraint FK_Pet_Customer Foreign Key(CustomerID) References dbo.Customer(ID)
 Alter Table dbo.Pet Add Constraint FK_Pet_PetType Foreign Key(TypeID) References dbo.PetType(ID)
 
+Create Table dbo.PetTask(
+	ID Int Identity(1,1) Primary Key Not Null
+	,PetID Int Not Null
+	,Description VarChar(Max) Not Null
+)
+Alter Table dbo.PetTask Add Constraint FK_PetTask_Pet Foreign Key(PetID) References dbo.Pet(ID) On Delete Cascade
+
 Create Table dbo.CareRequest(
 	ID Int Identity(1,1) Primary Key Not Null
 	,CustomerID Int Not Null
@@ -63,7 +71,7 @@ Create Table dbo.CareVisit(
 Alter Table dbo.CareVisit Add Constraint FK_CareVisit_CareRequest Foreign Key(CareRequestID) References dbo.CareRequest(ID)
 Alter Table dbo.CareVisit Add Constraint FK_CareVisit_CareProvider Foreign Key(CareProviderID) References dbo.CareProvider(ID)
 
-Create Table dbo.CareTask(
+Create Table dbo.CareVisitTask(
 	ID Int Identity(1,1) Primary Key Not Null
 	,CareVisitID Int Not Null
 	,Description VarChar(500) Not Null
@@ -71,8 +79,8 @@ Create Table dbo.CareTask(
 	,CompletedByCareProviderID Int Null
 	,DateCompleted DateTime Null
 )
-Alter Table dbo.CareTask Add Constraint FK_CareTask_CareVisit Foreign Key(CareVisitID) References dbo.CareVisit(ID)
-Alter Table dbo.CareTask Add Constraint FK_CareTask_CareProvider Foreign Key(CompletedByCareProviderID) References dbo.CareProvider(ID)
+Alter Table dbo.CareVisitTask Add Constraint FK_CareVisitTask_CareVisit Foreign Key(CareVisitID) References dbo.CareVisit(ID)
+Alter Table dbo.CareVisitTask Add Constraint FK_CareVisitTask_CareProvider Foreign Key(CompletedByCareProviderID) References dbo.CareProvider(ID)
 
 Go
 Create View dbo.vwCareRequest

@@ -1,4 +1,6 @@
-﻿namespace Pets.Models
+﻿using System.Collections.Generic;
+
+namespace Pets.Models
 {
     public class Pet
     {
@@ -6,6 +8,7 @@
         public PetType Type { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+        public List<PetTask> Tasks { get; set; }
     }
     public class PetType
     {
@@ -17,10 +20,26 @@
         {
             ID = id;
         }
-        public PetType (int id, string name)
+        public PetType(int id, string name)
         {
             ID = id;
             Name = name;
+        }
+    }
+    public class PetTask
+    {
+        public int? ID { get; set; }
+        public string Description { get; set; }
+
+        public PetTask() { }
+        public PetTask(int? id)
+        {
+            ID = id;
+        }
+        public PetTask(int id, string description)
+        {
+            ID = id;
+            Description = description;
         }
     }
 }
