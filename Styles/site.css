@@ -151,3 +151,28 @@ a.delete, a.undo {
     background-color: darkcyan;
     color: white;
 }
+.petTable{
+    margin-bottom:  5px;
+    border-bottom:  1px solid; 
+}
+.petTableRow > td {
+    padding: 0px;
+}
+.petTaskTable {
+    margin: 0px;
+    width: 100%;
+}
+.petTaskTableRow > td {
+    padding:  0px 0px 0px 0px;
+}
+    .petTaskTableRow > td:first-child {
+       padding-left:  50px;
+       width:  5%;
+    }
+    .petTaskTableRow > td:last-child  {
+        width: 95%;
+    }
+        .petTaskTableRow > td:last-child > input {
+            width:  95%;
+        }
+    

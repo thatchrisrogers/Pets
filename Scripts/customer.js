@@ -78,9 +78,10 @@ function closeCustomerForm() {
 }
 function addPetTableRow(pet) {
     let petTable = document.getElementById('PetTable');
+    petTable.className = 'petTable';
     let petTableBody = petTable.getElementsByTagName('tbody')[0];
     let petTableRow = petTableBody.insertRow(-1); 
-    petTableRow.className = 'petRow';  //This is the top row for each pet
+    petTableRow.className = 'petTableRow';  //This is the top row for each pet
     let cellIndex = 0;
     petTableRow.insertCell(cellIndex);
     addElementToTableRow('PetID', 'input', 'hidden', undefined, false, undefined,  (pet !== undefined ? pet.ID : undefined), cellIndex, petTableRow);
@@ -92,11 +93,12 @@ function addPetTableRow(pet) {
     addElementToTableRow('PetDescription', 'input', 'text', 'userInput', true, undefined, (pet !== undefined ? pet.Description : undefined), cellIndex, petTableRow).oninput = function () { petTableRowChanged(petTableRow); }
 
     //Pet Tasks
-    petTableRow = petTableBody.insertRow(-1);
-    let petTableCell = petTableRow.insertCell(0);
-    petTableCell.colSpan = 4;
+    let petTaskTableRow = petTableBody.insertRow(-1);
+    petTaskTableRow.className = 'petTaskTableRow';  //This is the bottom row for each pet
+    let petTaskTableCell = petTaskTableRow.insertCell(0);
+    petTaskTableCell.colSpan = 4;
     let petTaskTable = document.createElement('table');
-    petTaskTable.name = 'PetTaskTable';
+    petTaskTable.className = 'petTaskTable';
     let petTaskTableBody = document.createElement('tbody');
     if (pet !== undefined) {
         for (petTask of pet.Tasks) {
@@ -105,15 +107,13 @@ function addPetTableRow(pet) {
     } 
     addPetTaskTableRow(undefined, petTaskTableBody);
     petTaskTable.appendChild(petTaskTableBody);
-    petTableCell.appendChild(petTaskTable);
+    petTaskTableCell.appendChild(petTaskTable);
 }
 function petTableRowChanged(petTableRow) {
     tableRowChanged(petTableRow, addPetTableRow);
 }
 function addPetTaskTableRow(petTask, petTaskTableBody) {
-    //pet tasks - Can you use grid?
     let petTaskTableRow = petTaskTableBody.insertRow(-1);
-    petTaskTableRow.className = 'petTasksRow';  //This is the bottom row for each pet
     let cellIndex = 0;
     petTaskTableRow.insertCell(cellIndex);
     addElementToTableRow('PetTaskID', 'input', 'hidden', undefined, false, undefined, (petTask !== undefined ? petTask.ID : undefined), cellIndex, petTaskTableRow);
@@ -180,7 +180,7 @@ function saveCustomer() {
     let pets = [];
     let pet;
     let petTableBody = document.getElementById('PetTable').getElementsByTagName('tbody')[0];
-    let petTableRows = petTableBody.querySelectorAll('tr.petRow');
+    let petTableRows = petTableBody.querySelectorAll('tr.petTableRow');
     for (petTableRow of petTableRows) {      
         if (petTableRow.querySelectorAll("input.userInput[required]").length > 0) { //If row has required elements, then user has input values.  Let the required attribute handle data validation
             pet = {};
