@@ -55,7 +55,7 @@ function displayCustomerForm(customer) {
             petTable.removeChild(petTable.getElementsByTagName('tbody')[0]); //remove tbody first to delete any rows (empty petTable)
             petTable.appendChild(document.createElement('tbody'));
             for (pet of customer.Pets) {
-                addPetTableRow(pet);
+                addPetRow(pet);
             }
         }
         else { //Display empty Customer Form
@@ -66,7 +66,7 @@ function displayCustomerForm(customer) {
             petTable.removeChild(petTable.getElementsByTagName('tbody')[0]);
             petTable.appendChild(document.createElement('tbody'));
         }
-        addPetTableRow(undefined);
+        addPetRow(undefined);
         customerForm.style.display = 'block';
     }
     catch (e) {
@@ -76,56 +76,57 @@ function displayCustomerForm(customer) {
 function closeCustomerForm() {
     document.getElementById("CustomerForm").style.display = 'none';
 }
-function addPetTableRow(pet) {
+function addPetRow(pet) {
     let petTable = document.getElementById('PetTable');
     petTable.className = 'petTable';
-    let petTableBody = petTable.getElementsByTagName('tbody')[0];
-    let petTableRow = petTableBody.insertRow(-1); 
-    petTableRow.className = 'petTableRow';  //This is the top row for each pet
+    let petBody = petTable.getElementsByTagName('tbody')[0];
+    let petRow = petBody.insertRow(-1); 
+    petRow.className = 'petRow';  //This is the top row for each pet
     let cellIndex = 0;
-    petTableRow.insertCell(cellIndex);
-    addElementToTableRow('PetID', 'input', 'hidden', undefined, false, undefined,  (pet !== undefined ? pet.ID : undefined), cellIndex, petTableRow);
-    petTableRow.insertCell(cellIndex += 1);
-    addElementToTableRow('PetName', 'input', 'text', 'userInput', true, undefined, (pet !== undefined ? pet.Name : undefined), cellIndex, petTableRow).oninput = function () { petTableRowChanged(petTableRow); }
-    petTableRow.insertCell(cellIndex += 1);
-    addElementToTableRow('PetType', 'select', undefined, 'userInput', true, petTypeListItems, (pet !== undefined ? pet.Type.ID : undefined), cellIndex, petTableRow).oninput = function () { petTableRowChanged(petTableRow); }
-    petTableRow.insertCell(cellIndex += 1);
-    addElementToTableRow('PetDescription', 'input', 'text', 'userInput', true, undefined, (pet !== undefined ? pet.Description : undefined), cellIndex, petTableRow).oninput = function () { petTableRowChanged(petTableRow); }
+    petRow.insertCell(cellIndex);
+    addElementToTableRow('PetID', 'input', 'hidden', undefined, false, undefined,  (pet !== undefined ? pet.ID : undefined), cellIndex, petRow);
+    petRow.insertCell(cellIndex += 1);
+    addElementToTableRow('PetName', 'input', 'text', 'userInput', true, undefined, (pet !== undefined ? pet.Name : undefined), cellIndex, petRow).oninput = function () { petRowChanged(petRow); }
+    petRow.insertCell(cellIndex += 1);
+    addElementToTableRow('PetType', 'select', undefined, 'userInput', true, petTypeListItems, (pet !== undefined ? pet.Type.ID : undefined), cellIndex, petRow).oninput = function () { petRowChanged(petRow); }
+    petRow.insertCell(cellIndex += 1);
+    addElementToTableRow('PetDescription', 'input', 'text', 'userInput', true, undefined, (pet !== undefined ? pet.Description : undefined), cellIndex, petRow).oninput = function () { petRowChanged(petRow); }
 
     //Pet Tasks
-    let petTaskTableRow = petTableBody.insertRow(-1);
-    petTaskTableRow.className = 'petTaskTableRow';  //This is the bottom row for each pet
+    let petTaskTableRow = petBody.insertRow(-1);
+    petTaskTableRow.className = 'petTaskTableRow';  //This is the bottom row for each pet that holds the PetTask table
     let petTaskTableCell = petTaskTableRow.insertCell(0);
     petTaskTableCell.colSpan = 4;
     let petTaskTable = document.createElement('table');
     petTaskTable.className = 'petTaskTable';
-    let petTaskTableBody = document.createElement('tbody');
+    let addPetTaskBody = document.createElement('tbody');
     if (pet !== undefined) {
         for (petTask of pet.Tasks) {
-            addPetTaskTableRow(petTask, petTaskTableBody);
+            addPetTaskRow(petTask, addPetTaskBody);
         }
     } 
-    addPetTaskTableRow(undefined, petTaskTableBody);
-    petTaskTable.appendChild(petTaskTableBody);
+    addPetTaskRow(undefined, addPetTaskBody);
+    petTaskTable.appendChild(addPetTaskBody);
     petTaskTableCell.appendChild(petTaskTable);
 }
-function petTableRowChanged(petTableRow) {
-    tableRowChanged(petTableRow, addPetTableRow);
+function petRowChanged(petRow) {
+    tableRowChanged(petRow, addPetRow);
 }
-function addPetTaskTableRow(petTask, petTaskTableBody) {
-    let petTaskTableRow = petTaskTableBody.insertRow(-1);
+function addPetTaskRow(petTask, addPetTaskBody) {
+    let petTaskRow = addPetTaskBody.insertRow(-1);
+    petTaskRow.className = 'petTaskRow';
     let cellIndex = 0;
-    petTaskTableRow.insertCell(cellIndex);
-    addElementToTableRow('PetTaskID', 'input', 'hidden', undefined, false, undefined, (petTask !== undefined ? petTask.ID : undefined), cellIndex, petTaskTableRow);
-    petTaskTableRow.insertCell(cellIndex += 1);
-    addElementToTableRow('PetTaskDescription', 'input', 'text', 'userInput', true, undefined, (petTask !== undefined ? petTask.Description : undefined), cellIndex, petTaskTableRow)
+    petTaskRow.insertCell(cellIndex);
+    addElementToTableRow('PetTaskID', 'input', 'hidden', undefined, false, undefined, (petTask !== undefined ? petTask.ID : undefined), cellIndex, petTaskRow);
+    petTaskRow.insertCell(cellIndex += 1);
+    addElementToTableRow('PetTaskDescription', 'input', 'text', 'userInput', true, undefined, (petTask !== undefined ? petTask.Description : undefined), cellIndex, petTaskRow)
         .oninput = function () {
-            petTaskTableRowChanged(petTaskTableRow);
+            petTaskRowChanged(petTaskRow);
         }
 }
-function petTaskTableRowChanged(petTaskTableRow) {
-    let petTaskTableBody = petTaskTableRow.parentElement;
-    tableRowChanged(petTaskTableRow, function () { addPetTaskTableRow(undefined, petTaskTableBody) });
+function petTaskRowChanged(petTaskRow) {
+    let petTaskBody = petTaskRow.parentElement;
+    tableRowChanged(petTaskRow, function () { addPetTaskRow(undefined, petTaskBody) });
 }
 
 function getCustomers(callBackFunction, refresh) {
@@ -179,18 +180,33 @@ function saveCustomer() {
 
     let pets = [];
     let pet;
-    let petTableBody = document.getElementById('PetTable').getElementsByTagName('tbody')[0];
-    let petTableRows = petTableBody.querySelectorAll('tr.petTableRow');
-    for (petTableRow of petTableRows) {      
-        if (petTableRow.querySelectorAll("input.userInput[required]").length > 0) { //If row has required elements, then user has input values.  Let the required attribute handle data validation
+    let petBody = document.getElementById('PetTable').getElementsByTagName('tbody')[0];
+    let petRows = petBody.querySelectorAll('tr.petRow');
+    let petTaskRows;
+    let petTasks;
+    let petTask;
+    for (petRow of petRows) {      
+        if (petRow.querySelectorAll("input.userInput[required]").length > 0) { //If row has required elements, then user has input values.  Let the required attribute handle data validation
             pet = {};
-            pet.ID = petTableRow.querySelector('[name=PetID]').value;
-            pet.Name = petTableRow.querySelector('[name=PetName]').value;
-            pet.Type = { ID: petTableRow.querySelector('[name=PetType]').value } ;     
+            pet.ID = petRow.querySelector('[name=PetID]').value;
+            pet.Name = petRow.querySelector('[name=PetName]').value;
+            pet.Type = { ID: petRow.querySelector('[name=PetType]').value } ;     
             //testType = {};
-            //testType.ID = petTableRow.querySelector('[name=PetType]').value;
+            //testType.ID = petRow.querySelector('[name=PetType]').value;
             //pet.Type = testType;
-            pet.Description = petTableRow.querySelector('[name=PetDescription]').value;
+            pet.Description = petRow.querySelector('[name=PetDescription]').value;
+
+            petTasks = [];
+            petTaskRows = petRow.nextSibling.querySelectorAll('tr.petTaskRow');
+            for (petTaskRow of petTaskRows) {
+                if (petTaskRow.querySelectorAll("input.userInput[required]").length > 0) {
+                    petTask = {};
+                    petTask.ID = petTaskRow.querySelector('[name=PetTaskID]').value;
+                    petTask.Description = petTaskRow.querySelector('[name=PetTaskDescription]').value;
+                    petTasks.push(petTask);
+                }
+            }
+            pet.Tasks = petTasks;
             pets.push(pet);
         }      
     }

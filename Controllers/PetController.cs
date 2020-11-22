@@ -31,10 +31,13 @@ namespace Pets.Controllers
                                 pet.Name = ((string)reader["Name"]);
                                 pet.Type = new PetType((int)reader["TypeID"]);
                                 pet.Description = ((string)reader["Description"]);
-                                pet.Tasks = PetTaskController.GetList((int)pet.ID, connection);
                                 pets.Add(pet);
                             }
                         }
+                    }
+                    foreach (Pet selectedPet in pets)
+                    {
+                        selectedPet.Tasks = PetTaskController.GetList((int)selectedPet.ID, connection);
                     }
                     return pets;
                 }
@@ -48,32 +51,48 @@ namespace Pets.Controllers
         {
             try
             {
-                DataTable petTable = new DataTable();
-                petTable.Columns.Add("ID");
-                petTable.Columns.Add("Name");
-                petTable.Columns.Add("TypeID");
-                petTable.Columns.Add("Description");
-                DataRow petRow;
+                DataTable petIDs = new DataTable();
+                petIDs.Columns.Add(new DataColumn("ID", typeof(int)));
+
+                //Step 1 - Insert or Update Pets and collect IDs
                 foreach (Pet pet in pets)
                 {
-                    petRow = petTable.NewRow();
-                    petRow["ID"] = pet.ID;
-                    if (pet.ID != null)
+                    using (SqlCommand command = new SqlCommand())
                     {
-                        PetTaskController.SaveList((int)pet.ID, pet.Tasks, connection, transaction);
-                    }
-                    petRow["Name"] = pet.Name;
-                    petRow["TypeID"] = pet.Type.ID;
-                    petRow["Description"] = pet.Description;
-                    petTable.Rows.Add(petRow);
+                        command.Connection = connection;
+                        command.Transaction = transaction;
+                        command.Parameters.AddWithValue("Name",pet.Name);
+                        command.Parameters.AddWithValue("CustomerID", customerID);
+                        command.Parameters.AddWithValue("TypeID",pet.Type.ID);
+                        command.Parameters.AddWithValue("Description",pet.Description);
+                        if (pet.ID == null)
+                        {
+                            command.CommandText = "Insert Into dbo.Pet (Name, CustomerID, TypeID, Description) OUTPUT Inserted.ID Values (@Name, @CustomerID, @TypeID, @Description); ";
+                            pet.ID = (int)command.ExecuteScalar();
+                        }
+                        else
+                        {
+                            command.Parameters.AddWithValue("ID", pet.ID);
+                            command.CommandText = "Update dbo.Pet Set Name = @Name, TypeID = @TypeID, Description = @Description Where ID = @ID;";
+                            command.ExecuteNonQuery();
+                        }
+                        petIDs.Rows.Add(pet.ID);
+                    }                
                 }
-                using (SqlCommand command = new SqlCommand("dbo.MergePets", connection, transaction))
+                //Step 2 - Delete Pets removed via UI
+                using (SqlCommand command = new SqlCommand("Delete From dbo.Pet Where CustomerID = @customerID And ID Not In (Select ID From @petIDs);", connection, transaction))
                 {
-                    command.CommandType = CommandType.StoredProcedure;
                     command.Parameters.AddWithValue("customerID", customerID);
-                    SqlParameter tableParameter = command.Parameters.AddWithValue("pets", petTable);
-                    tableParameter.SqlDbType = SqlDbType.Structured;
+                    SqlParameter tableTypeParameter = command.Parameters.AddWithValue("petIDs", petIDs);
+                    tableTypeParameter.SqlDbType = SqlDbType.Structured;
+                    tableTypeParameter.TypeName = "dbo.typeID";
+
                     command.ExecuteNonQuery();
+                }
+                //Step 3 - Save Pet Tasks
+                foreach (Pet pet in pets)
+                {
+                    PetTaskController.SaveList((int)pet.ID, pet.Tasks, connection, transaction);
                 }
             }
             catch (Exception ex)
@@ -126,7 +145,7 @@ namespace Pets.Controllers
                 {
                     command.CommandType = CommandType.StoredProcedure;
                     command.Parameters.AddWithValue("petID", petID);
-                    SqlParameter tableParameter = command.Parameters.AddWithValue("petTasks", petTasks);
+                    SqlParameter tableParameter = command.Parameters.AddWithValue("petTasks", petTaskTable);
                     tableParameter.SqlDbType = SqlDbType.Structured;
                     command.ExecuteNonQuery();
                 }

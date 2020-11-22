@@ -97,3 +97,43 @@ From dbo.Customer customer
 Inner Join dbo.Pet pet On customer.ID = pet.CustomerID
 Group By customer.ID, customer.Name, customer.Address, customer.Email
 Go
+
+Drop Type If Exists dbo.typeID
+Go
+Create Type dbo.typeID As Table (
+	ID Int Null
+)
+Go
+
+Drop Procedure If Exists dbo.MergePetTasks
+Drop Type If Exists dbo.typePetTasks
+Go
+
+Create Type dbo.typePetTasks As Table (
+	ID Int Null
+	,Description VarChar(Max) Not Null
+)
+Go
+
+Create Procedure dbo.MergePetTasks (@petID smallint, @petTasks dbo.typePetTasks ReadOnly)
+As
+Merge dbo.PetTask targetPetTasks
+Using @petTasks sourcePetTasks
+On targetPetTasks.ID = sourcePetTasks.ID
+When Not Matched By Target
+	Then Insert 
+	(
+		PetID		
+		,Description
+	) 
+	Values
+	(
+		@petID
+		,sourcePetTasks.Description
+	)
+When Matched
+	Then Update Set
+		Description = sourcePetTasks.Description
+When Not Matched By Source And PetID = @petID
+	Then Delete;
+Go

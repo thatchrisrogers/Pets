@@ -13,7 +13,8 @@ input, select, textarea {
 }
 .messageSuccess {
     color: green;
-    background-color: lawngreen;
+    background-color: lightgreen;
+    border-color: green;
 }
 .messageError {
     color: #a94442;
@@ -151,28 +152,30 @@ a.delete, a.undo {
     background-color: darkcyan;
     color: white;
 }
-.petTable{
-    margin-bottom:  5px;
-    border-bottom:  1px solid; 
+
+.petTable td {
+    padding: 1px;
 }
-.petTableRow > td {
-    padding: 0px;
+.petRow td {
+    padding-top:  10px;
 }
+
 .petTaskTable {
-    margin: 0px;
-    width: 100%;
+    margin: 1px 0px 5px 25px;
+    width: 95%;
 }
-.petTaskTableRow > td {
-    padding:  0px 0px 0px 0px;
+.petTaskTableRow {
+    border-bottom: 1px solid;
 }
-    .petTaskTableRow > td:first-child {
-       padding-left:  50px;
-       width:  5%;
+.petTaskRow > td:first-child {
+    width: 5%;
+}
+.petTaskRow > td:last-child {
+    width: 98%;
+}
+    .petTaskRow > td:last-child > input {
+        width: 98%;
     }
-    .petTaskTableRow > td:last-child  {
-        width: 95%;
-    }
-        .petTaskTableRow > td:last-child > input {
-            width:  95%;
-        }
+
+
     

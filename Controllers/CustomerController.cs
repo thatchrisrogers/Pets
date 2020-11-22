@@ -70,13 +70,13 @@ namespace Pets.Controllers
                             }
                         }
                     }
+                    customer.Pets = PetController.GetList((int)customer.ID);
                 }
                 catch (Exception ex)
                 {
                     throw new Exception(ex.Message);
                 }
             }
-            customer.Pets = PetController.GetList((int)customer.ID);
             return customer;
         }
 
