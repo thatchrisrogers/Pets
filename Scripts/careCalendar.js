@@ -4,7 +4,7 @@ let selectMonth;
 let selectYear;
 let careRequests;
 let careCalendarRequestForm;
-let selectCustomerName;
+let selectCustomer;
 
 function initCareCalendarView() {
     let currentMonth = today.getMonth() + 1;
@@ -32,8 +32,8 @@ function initCareCalendarView() {
     selectYear.value = currentYear;
     getCareRequests(loadCalendar);
 
-    selectCustomerName = document.getElementById('CustomerName');
-    loadSelectElement(selectCustomerName, customerListItems);
+    selectCustomer = document.getElementById('Customer');
+    loadSelectElement(selectCustomer, customerListItems);
 
     careCalendarRequestForm = document.getElementById('CareCalendarRequestForm')
     careCalendarRequestForm.onsubmit = function (event) {
@@ -113,7 +113,7 @@ function loadCalendar() {
                     if (dayOfMonth >= startDay && dayOfMonth <= endDay) {
                         pCustomerName = document.createElement('p');
                         pCustomerName.classList.add('calendarEntry');
-                        pCustomerName.innerHTML = careRequest.CustomerName;
+                        pCustomerName.innerHTML = careRequest.Customer.Name;
                         hiddenCareRequestId = document.createElement('input');
                         hiddenCareRequestId.type = 'hidden';
                         hiddenCareRequestId.name = 'CareRequestId';
@@ -145,7 +145,7 @@ function displayCareCalendarRequestForm(selectedDay) {
 }
 function loadCareCalendarRequestForm(careRequest) {
     document.getElementById('CareRequestID').value = careRequest.ID;
-    selectCustomerName.value = careRequest.CustomerID;
+    selectCustomer.value = careRequest.Customer.ID;
     document.getElementById('StartDate').value = careRequest.StartDate;
     document.getElementById('EndDate').value = careRequest.EndDate;
 }
@@ -153,7 +153,7 @@ function saveCareCalendarRequestForm() {
     let formData = document.getElementById('CareCalendarRequestForm');
     let careRequest = {};
     careRequest.ID = document.getElementById('CareRequestID').value;
-    careRequest.CustomerID = formData.CustomerName.value;
+    careRequest.Customer = { ID: formData.Customer.value };  
     careRequest.StartDate = formData.StartDate.value;
     careRequest.EndDate = formData.EndDate.value;
     let xhttp = new XMLHttpRequest();

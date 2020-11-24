@@ -8,11 +8,28 @@ function initCareRequestView(id) {
 function loadCareRequest(careRequest) {
     careRequestForm = document.forms.namedItem("CareRequestForm");
     careRequestForm.CareRequestID.value = careRequest.ID;
-    careRequestForm.Customer.value = careRequest.CustomerID;
+    careRequestForm.Customer.value = careRequest.Customer.ID;
     careRequestForm.StartDate.value = careRequest.StartDate;
     guessNextVisitDate = new Date(careRequest.StartDate);
     careRequestForm.EndDate.value = careRequest.EndDate;
-    //loadSelectElement(document.getElementById('Pets'), customer.Pets);
+    //loadSelectElement(document.getElementById('Pets'), careRequest.Customer.Pets);
+    let divPets = document.getElementById('divPets');
+    let checkBox;
+    let label;
+    for (pet of careRequest.Customer.Pets) {
+        checkBox = document.createElement('input');
+        checkBox.type = 'checkbox';
+        checkBox.id = 'cb' + pet.ID;
+        checkBox.value = pet.ID;
+        checkBox.onclick = function() {
+            alert(this.value);
+        }
+        label = document.createElement('label');
+        label.innerHTML = pet.Name;
+        label.htmlFor = checkBox.id;
+        divPets.appendChild(checkBox);
+        divPets.appendChild(label);
+    }
 
 
     //visitTableBody = document.getElementById("VisitTable").getElementsByTagName('tbody')[0];

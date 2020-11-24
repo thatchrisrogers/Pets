@@ -11,5 +11,16 @@ namespace Pets.Models
         public string Email { get; set; }
         public string PetNames { get; set; }
         public List<Pet> Pets { get; set; }
+
+        public Customer() { }
+        public Customer(int? id)
+        {
+            ID = id;
+        }
+        public Customer(int id, string name)
+        {
+            ID = id;
+            Name = name;
+        }
     }
 }

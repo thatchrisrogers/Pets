@@ -14,10 +14,9 @@ namespace Pets.Controllers
         {
             careRequest = new CareRequest();
             careRequest.ID = ((int)reader["ID"]);
-            careRequest.CustomerID = (int)reader["CustomerID"];
+            careRequest.Customer = new Customer((int)reader["CustomerID"], (string)reader["CustomerName"]);
             careRequest.StartDate = (DateTime)reader["StartDate"];
-            careRequest.EndDate = (DateTime)reader["EndDate"];
-            careRequest.CustomerName = reader["CustomerName"] == DBNull.Value ? string.Empty : (string)reader["CustomerName"];
+            careRequest.EndDate = (DateTime)reader["EndDate"];          
             return careRequest;
         }
         // GET api/<controller>
@@ -100,7 +99,7 @@ namespace Pets.Controllers
                             }
                         }
                     }
-                    careRequest.Customer = CustomerController.FindByID(careRequest.CustomerID);
+                    careRequest.Customer = CustomerController.FindByID((int)careRequest.Customer.ID);
                 }              
                 catch (Exception ex)
                 {
@@ -125,7 +124,7 @@ namespace Pets.Controllers
                     {
                         command.Connection = connection;
                         command.Transaction = transaction;
-                        command.Parameters.AddWithValue("CustomerID", careRequest.CustomerID);
+                        command.Parameters.AddWithValue("CustomerID", careRequest.Customer.ID);
                         command.Parameters.AddWithValue("StartDate", careRequest.StartDate);
                         command.Parameters.AddWithValue("EndDate", careRequest.EndDate);
                         if (careRequest.ID == null)
