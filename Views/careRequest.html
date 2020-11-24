@@ -3,8 +3,8 @@
 <form id="CareRequestForm">
     <div class="gridWith4Columns">
         <div class="gridLabelColumn"><label for="Customer">Customer Name:</label></div>
-        <div class="gridInputColumn">          
-            <select id="Customer" required></select>
+        <div class="gridInputColumn">
+            <select id="Customer" disabled></select>
         </div>
         <div></div><div><input type="hidden" id="CareRequestID" /></div>
         <div class="gridLabelColumn">
@@ -18,6 +18,12 @@
         </div>
         <div class="gridInputColumn">
             <input type="datetime-local" id="EndDate" required />
+        </div>
+        <div class="gridLabelColumn">
+            <label for="Pets">Pets needing care:</label>
+        </div>
+        <div class="gridInputColumn">
+            <select id="Pets" multiple required />
         </div>
     </div>
     <div style="overflow-x: auto;">

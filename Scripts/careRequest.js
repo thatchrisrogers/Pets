@@ -12,21 +12,23 @@ function loadCareRequest(careRequest) {
     careRequestForm.StartDate.value = careRequest.StartDate;
     guessNextVisitDate = new Date(careRequest.StartDate);
     careRequestForm.EndDate.value = careRequest.EndDate;
+    //loadSelectElement(document.getElementById('Pets'), customer.Pets);
 
-    visitTableBody = document.getElementById("VisitTable").getElementsByTagName('tbody')[0];
-    visitTableBody.innerHTML = '';  //delete all cells
+
+    //visitTableBody = document.getElementById("VisitTable").getElementsByTagName('tbody')[0];
+    //visitTableBody.innerHTML = '';  //delete all cells
     //for (visit of careRequest.Visits) {
     //    addVisitTableRow(visitTableBody, visit);
     //}
 
     //if (visit.careRequest.Visits === null)
-    do {
-        initVisitTableRows();
-    }
-    while (guessNextVisitDate <= new Date(careRequest.EndDate));
+    //do {
+    //    initVisitTableRows();
+    //}
+    //while (guessNextVisitDate <= new Date(careRequest.EndDate));
     
 
-    addVisitTableRow(undefined);
+    //addVisitTableRow(undefined);
 }
 function addVisitTableRow(visit) {
     let visitTableRow = visitTableBody.insertRow(-1);

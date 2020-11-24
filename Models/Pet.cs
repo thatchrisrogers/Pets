@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Pets.Models
 {
@@ -29,6 +30,7 @@ namespace Pets.Models
     public class PetTask
     {
         public int? ID { get; set; }
+        public TimeSpan PreferredTime { get; set;}
         public string Description { get; set; }
 
         public PetTask() { }
@@ -36,9 +38,10 @@ namespace Pets.Models
         {
             ID = id;
         }
-        public PetTask(int id, string description)
+        public PetTask(int id, TimeSpan preferredTime, string description)
         {
             ID = id;
+            PreferredTime = preferredTime;
             Description = description;
         }
     }

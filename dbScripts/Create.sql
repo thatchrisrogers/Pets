@@ -41,6 +41,7 @@ Alter Table dbo.Pet Add Constraint FK_Pet_PetType Foreign Key(TypeID) References
 Create Table dbo.PetTask(
 	ID Int Identity(1,1) Primary Key Not Null
 	,PetID Int Not Null
+	,PreferredTime Time Not Null
 	,Description VarChar(Max) Not Null
 )
 Alter Table dbo.PetTask Add Constraint FK_PetTask_Pet Foreign Key(PetID) References dbo.Pet(ID) On Delete Cascade
@@ -111,6 +112,7 @@ Go
 
 Create Type dbo.typePetTasks As Table (
 	ID Int Null
+	,PreferredTime Time Not Null
 	,Description VarChar(Max) Not Null
 )
 Go
@@ -123,17 +125,20 @@ On targetPetTasks.ID = sourcePetTasks.ID
 When Not Matched By Target
 	Then Insert 
 	(
-		PetID		
+		PetID
+		,PreferredTime
 		,Description
 	) 
 	Values
 	(
 		@petID
+		,sourcePetTasks.PreferredTime
 		,sourcePetTasks.Description
 	)
 When Matched
 	Then Update Set
-		Description = sourcePetTasks.Description
+		PreferredTime = sourcePetTasks.PreferredTime
+		,Description = sourcePetTasks.Description
 When Not Matched By Source And PetID = @petID
 	Then Delete;
 Go

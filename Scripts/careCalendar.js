@@ -38,7 +38,7 @@ function initCareCalendarView() {
     careCalendarRequestForm = document.getElementById('CareCalendarRequestForm')
     careCalendarRequestForm.onsubmit = function (event) {
         event.preventDefault();       
-        saveCareRequest();
+        saveCareCalendarRequestForm();
     };
 }
 function changeMonthYear() {
@@ -143,7 +143,7 @@ function displayCareCalendarRequestForm(selectedDay) {
 
     careCalendarRequestForm.style.display = 'block';
 }
-function loadCareRequest(careRequest) {
+function loadCareCalendarRequestForm(careRequest) {
     document.getElementById('CareRequestID').value = careRequest.ID;
     selectCustomerName.value = careRequest.CustomerID;
     document.getElementById('StartDate').value = careRequest.StartDate;
@@ -164,10 +164,10 @@ function saveCareCalendarRequestForm() {
             if (this.status === 200 || this.status === 204) {
                 displaySuccess('Care Request saved');
                 if (document.activeElement.id === 'Save') {
-                    loadCareRequest(JSON.parse(this.responseText));
+                    loadCareCalendarRequestForm(JSON.parse(this.responseText));
                 }
                 else if (document.activeElement.id === 'SaveAndClose') {
-                    closeCareRequestForm();
+                    closeCareCalendarRequestForm();
                 }
                 getCareRequests(loadCalendar);
             }

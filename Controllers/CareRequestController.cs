@@ -100,7 +100,8 @@ namespace Pets.Controllers
                             }
                         }
                     }
-                }
+                    careRequest.Customer = CustomerController.FindByID(careRequest.CustomerID);
+                }              
                 catch (Exception ex)
                 {
                     throw new Exception(ex.Message);

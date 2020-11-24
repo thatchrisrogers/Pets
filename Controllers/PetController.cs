@@ -115,7 +115,7 @@ namespace Pets.Controllers
                     {
                         while (reader.Read())
                         {
-                            petTasks.Add(new PetTask(((int)reader["ID"]), (string)reader["Description"]));
+                            petTasks.Add(new PetTask(((int)reader["ID"]), (TimeSpan)reader["PreferredTime"], (string)reader["Description"]));
                         }
                     }
                 }
@@ -132,12 +132,14 @@ namespace Pets.Controllers
             {
                 DataTable petTaskTable = new DataTable();
                 petTaskTable.Columns.Add("ID");
+                petTaskTable.Columns.Add("PreferredTime");
                 petTaskTable.Columns.Add("Description");
                 DataRow petTaskRow;
                 foreach (PetTask petTask in petTasks)
                 {
                     petTaskRow = petTaskTable.NewRow();
                     petTaskRow["ID"] = petTask.ID;
+                    petTaskRow["PreferredTime"] = petTask.PreferredTime;
                     petTaskRow["Description"] = petTask.Description;
                     petTaskTable.Rows.Add(petTaskRow);
                 }

@@ -49,6 +49,10 @@ namespace Pets.Controllers
         [HttpGet]
         public Customer Get(int id)
         {
+            return FindByID(id);
+        }   
+        internal static Customer FindByID(int id)
+        {
             Customer customer = new Customer();
             using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["Pets"].ConnectionString))
             {
@@ -57,7 +61,7 @@ namespace Pets.Controllers
                     connection.Open();
                     using (SqlCommand command = new SqlCommand("Select * From dbo.Customer Where ID = @id", connection))
                     {
-                        command.Parameters.AddWithValue("id",id);
+                        command.Parameters.AddWithValue("id", id);
                         using (SqlDataReader reader = command.ExecuteReader())
                         {
                             if (reader.HasRows)
