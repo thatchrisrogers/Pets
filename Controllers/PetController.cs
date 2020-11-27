@@ -108,7 +108,7 @@ namespace Pets.Controllers
             List<PetTask> petTasks = new List<PetTask>();
             try
             {
-                using (SqlCommand command = new SqlCommand("Select * From dbo.PetTask Where PetID = @petID;", connection))
+                using (SqlCommand command = new SqlCommand("Select * From dbo.PetTask Where PetID = @petID Order By PreferredTime;", connection))
                 {
                     command.Parameters.AddWithValue("petID", petID);
                     using (SqlDataReader reader = command.ExecuteReader())

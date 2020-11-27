@@ -1,16 +1,22 @@
-﻿let guessNextVisitDate;
-let visitTableBody;
+﻿let careVisitDate;
+let careVisitTableBody;
+let careRequest = {};
+let careRequests = [];
+let careVisit = {};
+let careVisits = [];
+let careVisitTask = {};
+let careVisitTasks = [];
 
 function initCareRequestView(id) {
     loadSelectElement(document.getElementById('Customer'), customerListItems);
-    getCareRequest(id); 
+    getCareRequest(id, loadCareRequest); 
 } 
-function loadCareRequest(careRequest) {
+function loadCareRequest() {
     careRequestForm = document.forms.namedItem("CareRequestForm");
     careRequestForm.CareRequestID.value = careRequest.ID;
     careRequestForm.Customer.value = careRequest.Customer.ID;
     careRequestForm.StartDate.value = careRequest.StartDate;
-    guessNextVisitDate = new Date(careRequest.StartDate);
+    careVisitDate = new Date(careRequest.StartDate);
     careRequestForm.EndDate.value = careRequest.EndDate;
     //loadSelectElement(document.getElementById('Pets'), careRequest.Customer.Pets);
     let divPets = document.getElementById('divPets');
@@ -21,61 +27,73 @@ function loadCareRequest(careRequest) {
         checkBox.type = 'checkbox';
         checkBox.id = 'cb' + pet.ID;
         checkBox.value = pet.ID;
-        checkBox.onclick = function() {
-            alert(this.value);
-        }
-        label = document.createElement('label');
-        label.innerHTML = pet.Name;
-        label.htmlFor = checkBox.id;
-        divPets.appendChild(checkBox);
-        divPets.appendChild(label);
+        checkBox.onclick = function () { initCareVisitTasks(this.value, loadCareVisitTable); }
+            label = document.createElement('label');
+            label.innerHTML = pet.Name;
+            label.htmlFor = checkBox.id;
+            divPets.appendChild(checkBox);
+            divPets.appendChild(label);
     }
-
-
-    //visitTableBody = document.getElementById("VisitTable").getElementsByTagName('tbody')[0];
-    //visitTableBody.innerHTML = '';  //delete all cells
-    //for (visit of careRequest.Visits) {
-    //    addVisitTableRow(visitTableBody, visit);
-    //}
-
-    //if (visit.careRequest.Visits === null)
-    //do {
-    //    initVisitTableRows();
-    //}
-    //while (guessNextVisitDate <= new Date(careRequest.EndDate));
-    
-
-    //addVisitTableRow(undefined);
+    //loadCareVisitTable();
 }
-function addVisitTableRow(visit) {
-    let visitTableRow = visitTableBody.insertRow(-1);
+function initCareVisitTasks(petID, callBackFunction) {
+    careVisits = [];
+    //This function is used to prime the CareVisitTable with predefined PetTasks.  Once primed, the Tasks cane be edited to become the CareVisitTasks.  Basically, PetTasks are a template for CareVisitTasks
+    //Step 1 - For each date between Start and End date.
+    let pet = careRequest.Customer.Pets.find(item => item.id = petID);
+    let tasks = pet.Tasks.sort(function (a, b) {
+        return (a['PreferredTime'] > b['PreferredTime']) ? 1 : ((a['PreferredTime'] < b['PreferredTime']) ? -1 : 0);
+    });
+    let uniquePreferredTimes = [];
+    for (task of tasks) {
+        if (uniquePreferredTimes.includes(task.PreferredTime) === false) {
+            uniquePreferredTimes.push(task.PreferredTime);
+        }
+    }
+    do {
+        //Create a careVisit object for each date + preferredTime (VistDate) combo   
+        for (uniquePreferredTime of uniquePreferredTimes) {
+            careVisitDate.setHours(uniquePreferredTime.split(':')[0]);
+            careVisitDate.setMinutes(uniquePreferredTime.split(':')[1]);
+            careVisit = { CareRequestID: careRequest.ID, VisitDate: new Date(careVisitDate), CareProviderID: 1 };
+            careVisit.Tasks = tasks.filter(item => item.PreferredTime.substring(0, 5) === uniquePreferredTime.substring(0, 5));
+            careVisits.push(careVisit);
+        }
+        careVisitDate.setDate(careVisitDate.getDate() + 1);
+    } while (careVisitDate <= new Date(careRequest.EndDate));
+    callBackFunction();
+}
+function loadCareVisitTable() {
+    careVisitTableBody = document.getElementById("CareVisitTable").getElementsByTagName('tbody')[0];
+    for (visit of careVisits) {
+        addCareVisitRow(visit);
+    }
+}
+function addCareVisitRow(visit) {
+    let visitTableRow = careVisitTableBody.insertRow(-1);
+    visitTableRow.className = 'careVisitRow';
     let cellIndex = 0; 
     visitTableRow.insertCell(cellIndex);
     addElementToTableRow('VisitID', 'input', 'hidden', undefined, false, undefined, (visit !== undefined ? visit.ID : undefined), cellIndex, visitTableRow);
     visitTableRow.insertCell(cellIndex += 1);
-    addElementToTableRow('VisitDate', 'input', 'datetime-local', 'userInput', true, undefined, (visit !== undefined ? visit.VisitDate : undefined), cellIndex, visitTableRow).oninput = function () { visitTableRowChanged(visitTableRow); }
+    addElementToTableRow('VisitDate', 'input', 'datetime-local', 'userInput', true, undefined, (visit !== undefined ? visit.VisitDate.toISOLocaleString() : undefined), cellIndex, visitTableRow).oninput = function () { visitTableRowChanged(visitTableRow); }
     visitTableRow.insertCell(cellIndex += 1);
     addElementToTableRow('CareProvider', 'select', undefined, 'userInput', true, careProviderListItems, (visit !== undefined ? visit.CareProviderID : undefined), cellIndex, visitTableRow).oninput = function () { visitTableRowChanged(visitTableRow); }
+
+}
+function addCareVisitTaskRow(visit) {
+    let visitTableRow = careVisitTableBody.insertRow(-1);
+    visitTableRow.className = 'careVisitTaskRow';
+    let cellIndex = 0; 
+    visitTableRow.insertCell(cellIndex);
+    addElementToTableRow('TaskID', 'input', 'hidden', undefined, false, undefined, (visit !== undefined ? visit.ID : undefined), cellIndex, visitTableRow);
+    visitTableRow.insertCell(cellIndex += 1);
+    addElementToTableRow('CareNeeded', 'input', 'text', 'userInput', true, undefined, (visit !== undefined ? visit.Task.Description : undefined), cellIndex, visitTableRow).oninput = function () { visitTableRowChanged(visitTableRow); }
     return visitTableRow;
 }
 function visitTableRowChanged(visitTableRow) {
-    tableRowChanged(visitTableRow, addVisitTableRow);
+    tableRowChanged(visitTableRow, addCareVisitTaskRow);
 }
-function initVisitTableRows() { 
-    let visitTableRow = addVisitTableRow(undefined);
-    addDeleteButton(visitTableRow);
-    visitTableRow.querySelector('[name=VisitDate]').value = guessNextVisitDate.toISOLocaleString();
-    visitTableRow.querySelector('[name=CareProvider]').value = 1;
-    if (guessNextVisitDate.getHours() <= 10) {
-        guessNextVisitDate.setHours(guessNextVisitDate.getHours() + 9);
-    } else if (guessNextVisitDate.getHours() > 10 && guessNextVisitDate.getHours() <= 17) {
-        guessNextVisitDate.setHours(guessNextVisitDate.getHours() + 5);
-    }
-    else {
-        guessNextVisitDate.setHours(guessNextVisitDate.getHours() + 10);
-    }
-}
-
 function getCareRequests(callBackFunction) {
     let xhttp = new XMLHttpRequest();
     xhttp.open('GET', 'api/careRequest?month=' + selectMonth.value + '&' + 'year=' + selectYear.value, true);
@@ -96,13 +114,14 @@ function getCareRequests(callBackFunction) {
         displayError('Error getting Care Requests - onerror event');
     };
 }
-function getCareRequest(careRequestID) {
+function getCareRequest(careRequestID, callBackFunction) {
     let xhttp = new XMLHttpRequest();
     xhttp.open('GET', 'api/careRequest/' + careRequestID, true);
     xhttp.onreadystatechange = function () {
         if (this.readyState == 4) {
             if (this.status === 200) {
-                loadCareRequest(JSON.parse(this.responseText));
+                careRequest = JSON.parse(this.responseText);
+                callBackFunction();
             }
             else {
                 displayError('Error getting Care Request', this);
@@ -114,4 +133,3 @@ function getCareRequest(careRequestID) {
         displayError('Error getting Care Request - onerror event');
     };
 }
-
