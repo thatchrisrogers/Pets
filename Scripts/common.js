@@ -48,6 +48,17 @@ Date.prototype.addDays = function (days) {
 Date.prototype.toISOLocaleString = function () {  //Extend the native Date prototype to return the ISO format for a date that is offset for local timezone
     return new Date(this.getTime() - (this.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
 }
+Date.prototype.toWeekday = function () {
+    let weekday = new Array(7);
+    weekday[0] = "Sunday";
+    weekday[1] = "Monday";
+    weekday[2] = "Tuesday";
+    weekday[3] = "Wednesday";
+    weekday[4] = "Thursday";
+    weekday[5] = "Friday";
+    weekday[6] = "Saturday";
+    return weekday[this.getDay()];
+}
 
 function displayError(errorMessage, response) {
     let message = document.getElementById('Message');
@@ -76,13 +87,13 @@ function addElementToTableRow(name, tagName, type, className, required, validVal
     if (element.type === 'select-one' && validValues !== undefined) {
         loadSelectElement(element, validValues);
     }
-    if (value !== undefined) {
+    if (value !== undefined) {      
         element.value = value;
         element.required = required;
         if (cellIndex === 0) {
             addDeleteButton(tableRow);
         }
-    }    
+    }   
     tableRow.cells[cellIndex].appendChild(element);
     return element;
 }
