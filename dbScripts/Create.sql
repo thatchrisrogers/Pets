@@ -95,7 +95,7 @@ Create View dbo.vwCustomer
 As
 Select customer.ID, customer.Name, customer.Address, customer.Email, STRING_AGG(pet.Name, ', ') WITHIN GROUP (ORDER BY pet.Name ASC) AS PetNames
 From dbo.Customer customer
-Inner Join dbo.Pet pet On customer.ID = pet.CustomerID
+Left Join dbo.Pet pet On customer.ID = pet.CustomerID
 Group By customer.ID, customer.Name, customer.Address, customer.Email
 Go
 

@@ -34,7 +34,6 @@ function loadCareRequest() {
             divPets.appendChild(checkBox);
             divPets.appendChild(label);
     }
-    //loadCareVisitTable();
 }
 function initCareVisits(callBackFunction) {
     careVisits = [];
@@ -78,6 +77,7 @@ function initCareVisits(callBackFunction) {
 }
 function loadCareVisitTable() {
     let careVisitTable = document.getElementById("CareVisitTable");
+    careVisitTable.className = 'parentTable';
     careVisitTable.removeChild(careVisitTable.getElementsByTagName('tbody')[0]);
     careVisitTableBody = careVisitTable.appendChild(document.createElement('tbody'));
     for (visit of careVisits) {
@@ -86,7 +86,7 @@ function loadCareVisitTable() {
 }
 function addCareVisitRow(visit) {
     let visitTableRow = careVisitTableBody.insertRow(-1);
-    visitTableRow.className = 'careVisitRow';
+    visitTableRow.className = 'parentRow';
     let cellIndex = 0; 
     visitTableRow.insertCell(cellIndex);
     addElementToTableRow('VisitID', 'input', 'hidden', undefined, false, undefined, (visit !== undefined ? visit.ID : undefined), cellIndex, visitTableRow);
@@ -100,22 +100,38 @@ function addCareVisitRow(visit) {
     addElementToTableRow('VisitTime', 'input', 'time', 'userInput', true, undefined, (visit !== undefined ? visit.VisitDate.toISOLocaleString().split('T')[1]  : undefined), cellIndex, visitTableRow).oninput = function () { visitTableRowChanged(visitTableRow); }
     visitTableRow.insertCell(cellIndex += 1);
     addElementToTableRow('CareProvider', 'select', undefined, 'userInput', true, careProviderListItems, (visit !== undefined ? visit.CareProviderID : undefined), cellIndex, visitTableRow).oninput = function () { visitTableRowChanged(visitTableRow); }
+
+    //Tasks
+    let taskTableContainerRow = careVisitTableBody.insertRow(-1);
+    taskTableContainerRow.className = 'childTableContainerRow';
+    let taskTableContainerCell = taskTableContainerRow.insertCell(0);
+    taskTableContainerCell.colSpan = 3;
+    let taskTable = document.createElement('table');
+    taskTable.className = 'childTable';
+    let taskBody = document.createElement('tbody');
     for (task of visit.Tasks) {
-        addCareVisitTaskRow(task);
+        addCareVisitTaskRow(task, taskBody);
     }
-}
-function addCareVisitTaskRow(task) {
-    let visitTableRow = careVisitTableBody.insertRow(-1);
-    visitTableRow.className = 'careVisitTaskRow';
-    let cellIndex = 0; 
-    let visitTableCell = visitTableRow.insertCell(cellIndex);
-    visitTableCell.colSpan = 3;
-    addElementToTableRow('TaskID', 'input', 'hidden', undefined, false, undefined, (task !== undefined ? task.ID : undefined), cellIndex, visitTableRow);
-    addElementToTableRow('CareNeeded', 'input', 'text', 'userInput', true, undefined, (task !== undefined ? task.Description : undefined), cellIndex, visitTableRow).oninput = function () { visitTableRowChanged(visitTableRow); }
-    return visitTableRow;
+    addCareVisitTaskRow(undefined, taskBody);
+    taskTable.appendChild(taskBody);
+    taskTableContainerCell.appendChild(taskTable);
 }
 function visitTableRowChanged(visitTableRow) {
     tableRowChanged(visitTableRow, addCareVisitTaskRow);
+}
+function addCareVisitTaskRow(task, taskBody) {
+    let taskRow = taskBody.insertRow(-1);
+    taskRow.className = 'childRow';
+    let cellIndex = 0;
+    taskRow.insertCell(cellIndex);
+    addElementToTableRow('TaskID', 'input', 'hidden', undefined, false, undefined, (task !== undefined ? task.ID : undefined), cellIndex, taskRow);
+    taskRow.insertCell(cellIndex += 1);
+    addElementToTableRow('CareNeeded', 'input', 'text', 'userInput', true, undefined, (task !== undefined ? task.Description : undefined), cellIndex, taskRow).oninput = function () { taskTableRowChanged(taskRow); } 
+    return taskRow;
+}
+function taskTableRowChanged(taskRow) {
+    let taskBody = taskRow.parentElement;
+    tableRowChanged(taskRow, function () { addCareVisitTaskRow(undefined, taskBody) });
 }
 function getCareRequests(callBackFunction) {
     let xhttp = new XMLHttpRequest();

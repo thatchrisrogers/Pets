@@ -79,10 +79,10 @@ function closeCustomerForm() {
 }
 function addPetRow(pet) {
     let petTable = document.getElementById('PetTable');
-    petTable.className = 'petTable';
+    petTable.className = 'parentTable';
     let petBody = petTable.getElementsByTagName('tbody')[0];
     let petRow = petBody.insertRow(-1); 
-    petRow.className = 'petRow';  //This is the top row for each pet
+    petRow.className = 'parentRow';  //This is the parent row for each pet
     let cellIndex = 0;
     petRow.insertCell(cellIndex);
     addElementToTableRow('PetID', 'input', 'hidden', undefined, false, undefined,  (pet !== undefined ? pet.ID : undefined), cellIndex, petRow);
@@ -95,11 +95,11 @@ function addPetRow(pet) {
 
     //Pet Tasks
     let petTaskTableRow = petBody.insertRow(-1);
-    petTaskTableRow.className = 'petTaskTableRow';  //This is the bottom row for each pet that holds the PetTask table
+    petTaskTableRow.className = 'childTableContainerRow';  //This is the child row for each pet that holds the PetTask table
     let petTaskTableCell = petTaskTableRow.insertCell(0);
     petTaskTableCell.colSpan = 4;
     let petTaskTable = document.createElement('table');
-    petTaskTable.className = 'petTaskTable';
+    petTaskTable.className = 'childTable';
     let addPetTaskBody = document.createElement('tbody');
     if (pet !== undefined) {
         for (petTask of pet.Tasks) {
@@ -115,7 +115,7 @@ function petRowChanged(petRow) {
 }
 function addPetTaskRow(petTask, addPetTaskBody) {
     let petTaskRow = addPetTaskBody.insertRow(-1);
-    petTaskRow.className = 'petTaskRow';
+    petTaskRow.className = 'childRow';
     let cellIndex = 0;
     petTaskRow.insertCell(cellIndex);
     addElementToTableRow('PetTaskID', 'input', 'hidden', undefined, false, undefined, (petTask !== undefined ? petTask.ID : undefined), cellIndex, petTaskRow);
@@ -187,7 +187,7 @@ function saveCustomer() {
     let pets = [];
     let pet;
     let petBody = document.getElementById('PetTable').getElementsByTagName('tbody')[0];
-    let petRows = petBody.querySelectorAll('tr.petRow');
+    let petRows = petBody.querySelectorAll('tr.parentRow');
     let petTaskRows;
     let petTasks;
     let petTask;
@@ -197,13 +197,10 @@ function saveCustomer() {
             pet.ID = petRow.querySelector('[name=PetID]').value;
             pet.Name = petRow.querySelector('[name=PetName]').value;
             pet.Type = { ID: petRow.querySelector('[name=PetType]').value } ;     
-            //testType = {};
-            //testType.ID = petRow.querySelector('[name=PetType]').value;
-            //pet.Type = testType;
             pet.Description = petRow.querySelector('[name=PetDescription]').value;
 
             petTasks = [];
-            petTaskRows = petRow.nextSibling.querySelectorAll('tr.petTaskRow');
+            petTaskRows = petRow.nextSibling.querySelectorAll('tr.childRow');
             for (petTaskRow of petTaskRows) {
                 if (petTaskRow.querySelectorAll("input.userInput[required]").length > 0) {
                     petTask = {};

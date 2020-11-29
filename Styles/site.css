@@ -152,45 +152,31 @@ a.delete, a.undo {
     background-color: darkcyan;
     color: white;
 }
-
-.petTable td {
+.parentTable td {
     padding: 1px;
 }
-.petRow td {
+.parentRow td {
     padding-top:  10px;
+    /*border: 1px solid black;*/
 }
 
-.petTaskTable {
+.childTableContainerRow {
+    border-bottom: 1px solid;
+}
+.childTable {
     margin: 1px 0px 5px 25px;
     width: 95%;
 }
-.petTaskTableRow {
-    border-bottom: 1px solid;
-}
-.petTaskRow > td:first-child {
+.childRow > td:first-child {
     width: 5%;
 }
-.petTaskRow > td:last-child {
+.childRow > td:last-child {
     width: 98%;
 }
-    .petTaskRow > td:last-child > input {
+    .childRow > td:last-child > input {
         width: 98%;
     }
 
-.careVisitRow > td {
-    padding-top: 10px;
-    padding-bottom: 1px;
-    /*border: 1px solid black;*/
-}
-.careVisitTaskRow > td {
-    padding-top: 1px;
-    padding-bottom: 1px;
-    padding-left: 20px;
-    /*border: 1px solid black;*/
-}
-    .careVisitTaskRow > td > input.userInput {
-        width: auto;
-    }
 
 
     
