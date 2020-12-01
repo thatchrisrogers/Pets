@@ -90,7 +90,7 @@ function addElementToTableRow(name, tagName, type, className, required, validVal
     if (value !== undefined) {      
         element.value = value;
         element.required = required;
-        if (cellIndex === 0) {
+        if (tableRow.querySelector(".delete") === null) {
             addDeleteButton(tableRow);
         }
     }   
@@ -105,6 +105,7 @@ function addDeleteButton(tableRow) {
     deleteButton.onclick = function () {
         let table = tableRow.parentElement;
         table.removeChild(tableRow);
+        //ToDo - If tableRow .className = parentRow then delete subsequent childRows
     }
     tableRow.cells[0].appendChild(deleteButton);
 }

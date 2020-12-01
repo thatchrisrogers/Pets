@@ -3,7 +3,6 @@ var customerID;
 var unfilteredCustomers;
 var prevSortProperty;
 var sortDirection;
-var defaultTime = '07:00';
 
 function initCustomerView() {
     getCustomers(createCustomerTable);
@@ -120,9 +119,9 @@ function addPetTaskRow(petTask, addPetTaskBody) {
     petTaskRow.insertCell(cellIndex);
     addElementToTableRow('PetTaskID', 'input', 'hidden', undefined, false, undefined, (petTask !== undefined ? petTask.ID : undefined), cellIndex, petTaskRow);
     petTaskRow.insertCell(cellIndex += 1);
-    addElementToTableRow('PetTaskPreferredTime', 'input', 'time', undefined, true, undefined, (petTask !== undefined ? petTask.PreferredTime : defaultTime), cellIndex, petTaskRow)
-        .onchange = function () {
-            defaultTime = this.value;
+    addElementToTableRow('PetTaskPreferredTime', 'input', 'time', undefined, true, undefined, (petTask !== undefined ? petTask.PreferredTime : undefined), cellIndex, petTaskRow)
+        .oninput = function () {
+            petTaskRowChanged(petTaskRow);
         }
     petTaskRow.insertCell(cellIndex += 1);
     addElementToTableRow('PetTaskDescription', 'input', 'text', 'userInput', true, undefined, (petTask !== undefined ? petTask.Description : undefined), cellIndex, petTaskRow)
