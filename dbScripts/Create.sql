@@ -75,12 +75,14 @@ Alter Table dbo.CareVisit Add Constraint FK_CareVisit_CareProvider Foreign Key(C
 Create Table dbo.CareVisitTask(
 	ID Int Identity(1,1) Primary Key Not Null
 	,CareVisitID Int Not Null
+	,PetID Int Not Null
 	,Description VarChar(500) Not Null
 	,IsComplete Bit Not Null Default 0
 	,CompletedByCareProviderID Int Null
 	,DateCompleted DateTime Null
 )
 Alter Table dbo.CareVisitTask Add Constraint FK_CareVisitTask_CareVisit Foreign Key(CareVisitID) References dbo.CareVisit(ID)
+Alter Table dbo.CareVisitTask Add Constraint FK_CareVisitTask_Pet Foreign Key(PetID) References dbo.Pet(ID)
 Alter Table dbo.CareVisitTask Add Constraint FK_CareVisitTask_CareProvider Foreign Key(CompletedByCareProviderID) References dbo.CareProvider(ID)
 
 Go

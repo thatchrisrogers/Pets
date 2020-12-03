@@ -7,11 +7,6 @@ let careVisits = [];
 let careVisitTask = {};
 let careVisitTasks = [];
 
-//Try this - Check all of the Pet boxes on initial load and then load petTasks
-//Then load all of the Tasks.  
-//If they deselect one, then simply remove those rows from petTasks and call loadCareVisitTable() again
-//Don't ever remove all of the petTasks after the initial load in case they have made changes.  Just remove the rows associated with the deselected pet
-
 function initCareRequestView(id) {
     loadSelectElement(document.getElementById('Customer'), customerListItems);
     getCareRequest(id, loadCareRequest); 
@@ -22,7 +17,6 @@ function loadCareRequest() {
     careRequestForm.Customer.value = careRequest.Customer.ID;
     careRequestForm.StartDate.value = careRequest.StartDate;
     careRequestForm.EndDate.value = careRequest.EndDate;
-    //loadSelectElement(document.getElementById('Pets'), careRequest.Customer.Pets);
     let divPets = document.getElementById('divPets');
     let checkBox;
     let label;
@@ -40,16 +34,19 @@ function loadCareRequest() {
         divPets.appendChild(label);
     }
     if (careRequest.Visits === undefined) {
-        initCareVisits(initCareVisitTable); 
+        initCareVisits(loadCareVisitTable);
+    }
+    else {
+        loadCareVisitTable();
     }
 }
 function addRemovePetTasks() {
-    //add code here to simply add/remove tasks specificall associated with a pet - do not rebuild all petTasks in case user has made changes
+    //add code here to simply add/remove tasks specifically associated with a pet - do not rebuild all petTasks in case user has made changes
+    //i need a PetID in the careVisit.Tasks list.  This means I also need it in the CareVisitTaskTable.  Make these changes first.  Also change CareNeeded to Description.  That was stupid idea.
 }
 function initCareVisits(callBackFunction) {
     careVisits = [];
     //This function is used to prime the CareVisitTable with predefined PetTasks.  Once primed, the Tasks can be edited to become the CareVisitTasks.  Basically, PetTasks are a template for CareVisitTasks
-    //Step 1 - For each date between Start and End date.
     let pet = {};
     let petTasks = [];
     let petCheckboxes = document.getElementsByName('petCheckboxes');
@@ -58,7 +55,7 @@ function initCareVisits(callBackFunction) {
         pet = careRequest.Customer.Pets.find(item => item.ID === parseInt(petCheckbox.value));
         //petTasks.push.apply(petTasks, pet.Tasks);
         for (task of pet.Tasks) {
-            petTasks.push({ PreferredTime: task.PreferredTime, Description: pet.Name + ' - ' + task.Description });
+            petTasks.push({ PreferredTime: task.PreferredTime, PetID: pet.ID, Description: task.Description });
         }         
     }
 
@@ -72,6 +69,9 @@ function initCareVisits(callBackFunction) {
         }
     }
     careVisitDate = new Date(careRequest.StartDate);
+    let careVisitEndDate = new Date(careRequest.EndDate);
+    careVisitEndDate.setHours(23);
+    careVisitEndDate.setMinutes(59);
     do {
         //Create a careVisit object for each date + preferredTime (VistDate) combo   
         for (uniquePreferredTime of uniquePreferredTimes) {
@@ -82,10 +82,10 @@ function initCareVisits(callBackFunction) {
             careVisits.push(careVisit);
         }
         careVisitDate.setDate(careVisitDate.getDate() + 1);
-    } while (careVisitDate <= new Date(careRequest.EndDate));
+    } while (careVisitDate <= careVisitEndDate)
     callBackFunction();
 }
-function initCareVisitTable() {
+function loadCareVisitTable() {
     let careVisitTable = document.getElementById("CareVisitTable");
     careVisitTable.className = 'parentTable';
     careVisitTable.removeChild(careVisitTable.getElementsByTagName('tbody')[0]);
@@ -95,24 +95,7 @@ function initCareVisitTable() {
     }
     addCareVisitRow(undefined);
 }
-function addCareVisitRow(visit) {
-    let visitTableRow = careVisitTableBody.insertRow(-1);
-    visitTableRow.className = 'parentRow';
-    let cellIndex = 0; 
-    visitTableRow.insertCell(cellIndex);
-    addElementToTableRow('VisitID', 'input', 'hidden', undefined, false, undefined, (visit !== undefined ? visit.ID : undefined), cellIndex, visitTableRow);
-    visitTableRow.insertCell(cellIndex += 1);
-    addElementToTableRow('VisitDate', 'input', 'hidden', undefined, false, undefined, (visit !== undefined ? visit.VisitDate : undefined), cellIndex, visitTableRow);
-
-    let weekdayLabel = document.createElement('label'); 
-    weekdayLabel.innerHTML = visit.VisitDate.toWeekday() + ' ';
-    visitTableRow.cells[cellIndex].appendChild(weekdayLabel);
-
-    addElementToTableRow('VisitTime', 'input', 'time', 'userInput', true, undefined, (visit !== undefined ? visit.VisitDate.toISOLocaleString().split('T')[1] : undefined), cellIndex, visitTableRow);
-    visitTableRow.insertCell(cellIndex += 1);
-    addElementToTableRow('CareProvider', 'select', undefined, 'userInput', true, careProviderListItems, (visit !== undefined ? visit.CareProviderID : undefined), cellIndex, visitTableRow);
-
-    //Tasks
+function loadCareVisitTaskTable(visit, careVisitTableBody) {
     let taskTableContainerRow = careVisitTableBody.insertRow(-1);
     taskTableContainerRow.className = 'childTableContainerRow';
     let taskTableContainerCell = taskTableContainerRow.insertCell(0);
@@ -120,15 +103,41 @@ function addCareVisitRow(visit) {
     let taskTable = document.createElement('table');
     taskTable.className = 'childTable';
     let taskBody = document.createElement('tbody');
-    for (task of visit.Tasks) {
-        addCareVisitTaskRow(task, taskBody);
+    if (visit !== undefined) {
+        for (task of visit.Tasks) {
+            addCareVisitTaskRow(task, taskBody);
+        }
+        addCareVisitTaskRow(undefined, taskBody);
     }
-    addCareVisitTaskRow(undefined, taskBody);
     taskTable.appendChild(taskBody);
     taskTableContainerCell.appendChild(taskTable);
 }
-function visitTableRowChanged(visitTableRow) {
-    tableRowChanged(visitTableRow, addCareVisitTaskRow);
+function addCareVisitRow(visit) {
+    let visitTableRow = careVisitTableBody.insertRow(-1);
+    visitTableRow.className = 'parentRow';
+    let cellIndex = 0; 
+    visitTableRow.insertCell(cellIndex);
+    addElementToTableRow('VisitID', 'input', 'hidden', undefined, false, undefined, (visit !== undefined ? visit.ID : undefined), cellIndex, visitTableRow);
+    visitTableRow.insertCell(cellIndex += 1);
+
+    let weekdayLabel = document.createElement('label');
+    weekdayLabel.name = 'VisitDayOfWeek';
+    weekdayLabel.innerHTML = (visit !== undefined ? visit.VisitDate.toWeekday() + ', ' : ''); 
+    visitTableRow.cells[cellIndex].appendChild(weekdayLabel);
+
+    let visitDateElement = addElementToTableRow('VisitDate', 'input', 'datetime-local', 'userInput,hasDefaultValue', false, undefined, (visit !== undefined ? visit.VisitDate.toISOLocaleString() : undefined), cellIndex, visitTableRow);
+    visitDateElement.oninput = function () {
+            this.previousSibling.innerHTML = new Date(this.value).toWeekday() + ', ';
+    }
+    visitDateElement.onchange = function () {
+        getCareVisitsFromPage(loadCareVisitTable);
+    }
+
+    visitTableRow.insertCell(cellIndex += 1);
+    addElementToTableRow('CareProvider', 'select', undefined, 'userInput', true, careProviderListItems, (visit !== undefined ? visit.CareProviderID : undefined), cellIndex, visitTableRow);
+
+    //Tasks
+    loadCareVisitTaskTable(visit, careVisitTableBody);
 }
 function addCareVisitTaskRow(task, taskBody) {
     let taskRow = taskBody.insertRow(-1);
@@ -137,12 +146,44 @@ function addCareVisitTaskRow(task, taskBody) {
     taskRow.insertCell(cellIndex);
     addElementToTableRow('TaskID', 'input', 'hidden', undefined, false, undefined, (task !== undefined ? task.ID : undefined), cellIndex, taskRow);
     taskRow.insertCell(cellIndex += 1);
-    addElementToTableRow('CareNeeded', 'input', 'text', 'userInput', true, undefined, (task !== undefined ? task.Description : undefined), cellIndex, taskRow).oninput = function () { taskTableRowChanged(taskRow); } 
+    addElementToTableRow('Pet', 'select', undefined, 'userInput', true, careRequest.Customer.Pets, (task !== undefined ? task.PetID : undefined), cellIndex, taskRow).oninput = function () { taskTableRowChanged(taskRow); } 
+    taskRow.insertCell(cellIndex += 1);
+    addElementToTableRow('TaskDescription', 'input', 'text', 'userInput', true, undefined, (task !== undefined ? task.Description : undefined), cellIndex, taskRow).oninput = function () { taskTableRowChanged(taskRow); } 
     return taskRow;
 }
 function taskTableRowChanged(taskRow) {
     let taskBody = taskRow.parentElement;
     tableRowChanged(taskRow, function () { addCareVisitTaskRow(undefined, taskBody) });
+}
+function getCareVisitsFromPage(callBackFunction) {
+    careVisits = [];
+    let careVisitTable = document.getElementById("CareVisitTable");
+    for (parentRow of careVisitTable.getElementsByClassName('parentRow')) {
+
+        careVisit = {};
+        careVisit.ID = parentRow.querySelector('[name=VisitID]').value;
+        careVisit.VisitDate = new Date(parentRow.querySelector('[name=VisitDate]').value);
+        careVisit.CareProviderID = parentRow.querySelector('[name=CareProvider]').value;
+
+        careVisitTasks = [];
+        let childTableContainerRow = parentRow.nextSibling;
+        if (childTableContainerRow.classList.contains('childTableContainerRow')) {
+            for (childRow of childTableContainerRow.getElementsByClassName('childTable')[0].getElementsByClassName('childRow')) {
+                if (childRow.querySelector('[name=TaskDescription]').value.trim() !== '') {
+                    careVisitTask = {};
+                    careVisitTask.ID = childRow.querySelector('[name=TaskID]').value;
+                    careVisitTask.Description = childRow.querySelector('[name=TaskDescription]').value.trim();
+                    careVisitTasks.push(careVisitTask);
+                }                  
+            }
+        }
+        careVisit.Tasks = careVisitTasks;
+        careVisits.push(careVisit);
+    }
+    careVisits = careVisits.sort(function (a, b) {
+        return (a['VisitDate'] > b['VisitDate']) ? 1 : ((a['VisitDate'] < b['VisitDate']) ? -1 : 0);
+    });
+    callBackFunction();
 }
 function getCareRequests(callBackFunction) {
     let xhttp = new XMLHttpRequest();

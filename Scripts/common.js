@@ -77,12 +77,14 @@ function displaySuccess(successMessage) {
         message.innerHTML = '';
     }, 3000);
 }
-function addElementToTableRow(name, tagName, type, className, required, validValues, value, cellIndex, tableRow) {
+function addElementToTableRow(name, tagName, type, classNames, required, validValues, value, cellIndex, tableRow) {
     let element = document.createElement(tagName);
     element.type = type;
     element.name = name;
-    if (className !== undefined) {
-        element.classList.add(className);
+    if (classNames !== undefined) {
+        for (className of classNames.split(',')) {
+            element.classList.add(className);
+        }        
     }
     if (element.type === 'select-one' && validValues !== undefined) {
         loadSelectElement(element, validValues);
@@ -90,7 +92,7 @@ function addElementToTableRow(name, tagName, type, className, required, validVal
     if (value !== undefined) {      
         element.value = value;
         element.required = required;
-        if (tableRow.querySelector(".delete") === null) {
+        if (tableRow.querySelector(".delete") === null && element.classList.contains('hasDefaultValue') === false) {
             addDeleteButton(tableRow);
         }
     }   
