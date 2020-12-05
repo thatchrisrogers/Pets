@@ -119,7 +119,7 @@ function addPetTaskRow(petTask, addPetTaskBody) {
     petTaskRow.insertCell(cellIndex);
     addElementToTableRow('PetTaskID', 'input', 'hidden', undefined, false, undefined, (petTask !== undefined ? petTask.ID : undefined), cellIndex, petTaskRow);
     petTaskRow.insertCell(cellIndex += 1);
-    addElementToTableRow('PetTaskPreferredTime', 'input', 'time', undefined, true, undefined, (petTask !== undefined ? petTask.PreferredTime : undefined), cellIndex, petTaskRow)
+    addElementToTableRow('PetTaskPreferredTime', 'input', 'time', (petTask !== undefined ? 'userInput' : 'userInput,hasDefaultValue'), true, undefined, (petTask !== undefined ? petTask.PreferredTime : '07:00'), cellIndex, petTaskRow)
         .oninput = function () {
             petTaskRowChanged(petTaskRow);
         }

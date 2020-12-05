@@ -91,7 +91,7 @@ function addElementToTableRow(name, tagName, type, classNames, required, validVa
     }
     if (value !== undefined) {      
         element.value = value;
-        element.required = required;
+        element.required = (required && element.classList.contains('hasDefaultValue') === false) ? true : false;
         if (tableRow.querySelector(".delete") === null && element.classList.contains('hasDefaultValue') === false) {
             addDeleteButton(tableRow);
         }
@@ -115,6 +115,7 @@ function tableRowChanged(tableRow, callBackFunction) {
     let inputs = tableRow.querySelectorAll(".userInput");
     for (input of inputs) {
         input.required = true;
+        input.classList.remove('hasDefaultValue');
     }
     if (tableRow.querySelector(".delete") === null) {
         addDeleteButton(tableRow);

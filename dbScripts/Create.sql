@@ -27,6 +27,7 @@ Insert Into dbo.PetType Values ('Cat')
 Insert Into dbo.PetType Values ('Rabbit')
 Insert Into dbo.PetType Values ('Reptile')
 Insert Into dbo.PetType Values ('Bird')
+Insert Into dbo.PetType Values ('etc.')
 
 Create Table dbo.Pet(
 	ID Int Identity(1,1) Primary Key Not Null
