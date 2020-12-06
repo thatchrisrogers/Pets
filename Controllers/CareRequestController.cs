@@ -140,7 +140,7 @@ namespace Pets.Controllers
                         }
                     }
                     transaction.Commit();
-                    return Get((int)careRequest.ID); //return the newly created Customer so the caller has fresh IDs, etc.
+                    return Get((int)careRequest.ID); //return the newly created CareRequest so the caller has fresh IDs, etc.
                 }
                 catch (Exception ex)
                 {

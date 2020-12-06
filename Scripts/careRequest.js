@@ -7,6 +7,10 @@ let careVisits = [];
 let careVisitTask = {};
 let careVisitTasks = [];
 
+//I think you need to ask which Pets Need Care before showing the VisitTable.  After that, Show the VistsTable and hide the Pet CheckBoxList
+//Build the following out for Lucy first.  Then decide how to handle a more simplifed form for the Customer where they specify the Stare and End Dates and Pets needing Care.
+//The Pet needing Care at this levle is not in the model
+
 function initCareRequestView(id) {
     loadSelectElement(document.getElementById('Customer'), customerListItems);
     getCareRequest(id, loadCareRequest); 
@@ -40,10 +44,6 @@ function loadCareRequest() {
         loadCareVisitTable();
     }
 }
-function addRemovePetTasks() {
-    //add code here to simply add/remove tasks specifically associated with a pet - do not rebuild all petTasks in case user has made changes
-    //i need a PetID in the careVisit.Tasks list.  This means I also need it in the CareVisitTaskTable.  Make these changes first.  Also change CareNeeded to Description.  That was stupid idea.
-}
 function initCareVisits(callBackFunction) {
     careVisits = [];
     //This function is used to prime the CareVisitTable with predefined PetTasks.  Once primed, the Tasks can be edited to become the CareVisitTasks.  Basically, PetTasks are a template for CareVisitTasks
@@ -73,7 +73,7 @@ function initCareVisits(callBackFunction) {
     careVisitEndDate.setHours(23);
     careVisitEndDate.setMinutes(59);
     do {
-        //Create a careVisit object for each date + preferredTime (VistDate) combo   
+        //Create a careVisit object for each date + preferredTime (VisitDate) combo   
         for (uniquePreferredTime of uniquePreferredTimes) {
             careVisitDate.setHours(uniquePreferredTime.split(':')[0]);
             careVisitDate.setMinutes(uniquePreferredTime.split(':')[1]);
@@ -84,6 +84,14 @@ function initCareVisits(callBackFunction) {
         careVisitDate.setDate(careVisitDate.getDate() + 1);
     } while (careVisitDate <= careVisitEndDate)
     callBackFunction();
+}
+function addRemovePetTasks() {
+    //let petsToInclude = [];
+    //for (petCheckbox of petCheckboxes) {
+    //    if (petCheckbox.checked) { petsToInclude.push(petCheckbox.value);}
+    //}
+    //petTasks = petTasks.filter(task => petsToInclude.includes(task.PetID));
+
 }
 function loadCareVisitTable() {
     let careVisitTable = document.getElementById("CareVisitTable");
@@ -130,7 +138,22 @@ function addCareVisitRow(visit) {
             this.previousSibling.innerHTML = new Date(this.value).toWeekday() + ', ';
     }
     visitDateElement.onchange = function () {
+        let visitDateElementThatChanged = this;
         getCareVisitsFromPage(loadCareVisitTable);
+
+        //find the row that was moved so the user can eassily find it after table reloads
+        for (visitDateElement of document.querySelectorAll('[name=VisitDate]')) {
+            if (visitDateElement.value === visitDateElementThatChanged.value) {
+                let elementParentRow = visitDateElement.closest('.parentRow');
+                let elementSiblingRow = elementParentRow.nextElementSibling;
+                elementParentRow.classList.add('messageSuccess');
+                elementSiblingRow.classList.add('messageSuccess');
+                setTimeout(function () {
+                    elementParentRow.classList.remove('messageSuccess');
+                    elementSiblingRow.classList.remove('messageSuccess');
+                }, 3000);
+            }
+        }
     }
 
     visitTableRow.insertCell(cellIndex += 1);
@@ -172,6 +195,7 @@ function getCareVisitsFromPage(callBackFunction) {
                 if (childRow.querySelector('[name=TaskDescription]').value.trim() !== '') {
                     careVisitTask = {};
                     careVisitTask.ID = childRow.querySelector('[name=TaskID]').value;
+                    careVisitTask.PetID = childRow.querySelector('[name=Pet]').value;
                     careVisitTask.Description = childRow.querySelector('[name=TaskDescription]').value.trim();
                     careVisitTasks.push(careVisitTask);
                 }                  
@@ -183,7 +207,44 @@ function getCareVisitsFromPage(callBackFunction) {
     careVisits = careVisits.sort(function (a, b) {
         return (a['VisitDate'] > b['VisitDate']) ? 1 : ((a['VisitDate'] < b['VisitDate']) ? -1 : 0);
     });
-    callBackFunction();
+    if (callBackFunction !== undefined) {
+        callBackFunction();
+    }
+}
+function saveCareRequest() {
+    let formData = document.getElementById('CareRequestForm');
+    careRequest = {};
+    careRequest.ID = formData.CareRequestID.value;
+    careRequest.Customer = { ID: formData.Customer.value };
+    careRequest.StartDate = formData.StartDate.value;
+    careRequest.EndDate = formData.EndDate.value;
+    careRequest.CareVisits = getCareVisitsFromPage(undefined);
+    let xhttp = new XMLHttpRequest();
+    xhttp.open("POST", "api/careRequest", true);
+    xhttp.setRequestHeader('Content-Type', 'application/json;charset=UTF-8')
+    xhttp.onreadystatechange = function () {
+        if (this.readyState === 4) {
+            if (this.status === 200 || this.status === 204) {
+                displaySuccess('Care Request saved');
+
+
+                if (document.activeElement.id === 'Save') {
+                    //Load page from dB to get fresh IDs
+                }
+                else if (document.activeElement.id === 'SaveAndClose') {
+                    //Close the form
+                }
+                //Once this is embedded in the Calendar, then refresh the Calendar underneath the modalContent
+            }
+            else {
+                displayError('Error saving Care Request', this);
+            }
+        }
+    };
+    xhttp.send(JSON.stringify(careRequest));
+    xhttp.onerror = function () {
+        displayError('Error saving Care Request - onerror event');
+    };
 }
 function getCareRequests(callBackFunction) {
     let xhttp = new XMLHttpRequest();

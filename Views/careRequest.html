@@ -4,6 +4,7 @@
     <div class="gridWith4Columns">
         <div class="gridLabelColumn"><label for="Customer">Customer Name:</label></div>
         <div class="gridInputColumn">
+            <input type="hidden" id="CareRequestID" />
             <select id="Customer" disabled></select>
         </div>
         <div></div><div><input type="hidden" id="CareRequestID" /></div>
@@ -20,11 +21,11 @@
             <input type="datetime-local" id="EndDate" required />
         </div>
         <div class="gridLabelColumn">
-            <label for="Pets">Pets needing care:</label>
+            <label for="Pets">Pets, etc. needing care:</label>
         </div>
         <div class="gridInputColumn" id="divPets"></div>
     </div>
-    <div style="overflow-x: auto;">
+    <div>
         <table id="CareVisitTable">
             <thead>
                 <tr>

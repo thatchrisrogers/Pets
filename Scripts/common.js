@@ -106,8 +106,13 @@ function addDeleteButton(tableRow) {
     deleteButton.classList.add('delete');
     deleteButton.onclick = function () {
         let table = tableRow.parentElement;
+        if (tableRow.classList.contains = 'parentRow') {
+            let childTableContainerRow = tableRow.nextElementSibling;
+            if (childTableContainerRow.matches('.childTableContainerRow')) {
+                table.removeChild(childTableContainerRow);
+            }
+        }
         table.removeChild(tableRow);
-        //ToDo - If tableRow .className = parentRow then delete subsequent childRows
     }
     tableRow.cells[0].appendChild(deleteButton);
 }
