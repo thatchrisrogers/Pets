@@ -1,5 +1,7 @@
 ﻿.topNav {
     overflow: hidden;
+    position: sticky;
+    top: 0; /* required */
     background-color: cyan;
 }
 

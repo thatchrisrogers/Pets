@@ -40,8 +40,8 @@ function loadView(href) {
                     initCareCalendarView();
                     break;   
                 case 'careRequest':  //ToDo - This is temporary while you build out the functionality
-                    initCareRequestView(findQueryStringValueByKey(href, 'id'));
-                    //initCareRequestView(6);
+                    initCareRequestForm(findQueryStringValueByKey(href, 'id'));
+                    //initCareRequestForm(6);
                     break;   
             }
             document.getElementById('Message').innerHTML = '';

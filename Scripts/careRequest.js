@@ -1,5 +1,6 @@
 ﻿let careVisitDate;
 let careVisitTableBody;
+//let customer = {};
 let careRequest = {};
 let careRequests = [];
 let careVisit = {};
@@ -11,32 +12,59 @@ let careVisitTasks = [];
 //Build the following out for Lucy first.  Then decide how to handle a more simplifed form for the Customer where they specify the Stare and End Dates and Pets needing Care.
 //The Pet needing Care at this levle is not in the model
 
-function initCareRequestView(id) {
+function initCareRequestForm(selectedDay, id) {
     loadSelectElement(document.getElementById('Customer'), customerListItems);
-    getCareRequest(id, loadCareRequest); 
+    if (id === undefined) {
+        if (selectedDay !== undefined) {
+            document.getElementById('CareRequestID').value = undefined;
+            careRequest = {};
+            careRequest.ID = undefined;
+            careRequest.StartDate = new Date(selectYear.value, parseInt(selectMonth.value) - 1, selectedDay, 7, 0, 0, 0);
+            careRequest.EndDate = new Date(careRequest.StartDate.addDays(1));
+            careRequest.EndDate.setHours(17, 0, 0, 0);
+            document.getElementById('StartDate').value = careRequest.StartDate.toISOLocaleString(); 
+            document.getElementById('EndDate').value = careRequest.EndDate.toISOLocaleString();
+            //document.getElementById('StartDate').value = selectedDate.toISOString().slice(0, 11) + '08:00'; //2020-11-01T15:41:28.027Z
+            //document.getElementById('EndDate').value = selectedDate.addDays(1).toISOString().slice(0, 11) + '17:00';
+        }
+    }
+    else {
+        getCareRequest(id, loadCareRequest);
+    }
+    
 } 
+function careRequestCustomerChanged(customerID) {
+    getCustomer(customerID, loadPets);  
+}
+function loadPets() {
+    document.getElementById('petsLabel').style.display = 'block';
+    let petsCheckboxContainer = document.getElementById('petsCheckboxContainer');
+    let checkBox;
+    let label;
+    for (pet of customer.Pets) {
+        checkBox = document.createElement('input');
+        checkBox.type = 'checkbox';
+        checkBox.name = 'petCheckboxes';
+        checkBox.id = 'petCheckbox' + pet.ID;
+        checkBox.value = pet.ID;
+        checkBox.onclick = function () {
+            initCareVisits(loadCareVisitTable);
+        }
+        label = document.createElement('label');
+        label.innerHTML = pet.Name;
+        label.htmlFor = checkBox.id;
+        petsCheckboxContainer.appendChild(checkBox);
+        petsCheckboxContainer.appendChild(label);
+    }
+    
+}
 function loadCareRequest() {
     careRequestForm = document.forms.namedItem("CareRequestForm");
     careRequestForm.CareRequestID.value = careRequest.ID;
     careRequestForm.Customer.value = careRequest.Customer.ID;
     careRequestForm.StartDate.value = careRequest.StartDate;
     careRequestForm.EndDate.value = careRequest.EndDate;
-    let divPets = document.getElementById('divPets');
-    let checkBox;
-    let label;
-    for (pet of careRequest.Customer.Pets) {
-        checkBox = document.createElement('input');
-        checkBox.type = 'checkbox';
-        checkBox.name = 'petCheckboxes';
-        checkBox.id = 'petCheckbox' + pet.ID;
-        checkBox.value = pet.ID;
-        checkBox.onclick = function () { addRemovePetTasks(); }
-        label = document.createElement('label');
-        label.innerHTML = pet.Name;
-        label.htmlFor = checkBox.id;
-        divPets.appendChild(checkBox);
-        divPets.appendChild(label);
-    }
+    
     if (careRequest.Visits === undefined) {
         initCareVisits(loadCareVisitTable);
     }
@@ -51,12 +79,13 @@ function initCareVisits(callBackFunction) {
     let petTasks = [];
     let petCheckboxes = document.getElementsByName('petCheckboxes');
     for (petCheckbox of petCheckboxes) {
-        petCheckbox.checked = true;
-        pet = careRequest.Customer.Pets.find(item => item.ID === parseInt(petCheckbox.value));
-        //petTasks.push.apply(petTasks, pet.Tasks);
-        for (task of pet.Tasks) {
-            petTasks.push({ PreferredTime: task.PreferredTime, PetID: pet.ID, Description: task.Description });
-        }         
+        if (petCheckbox.checked) {
+            pet = customer.Pets.find(item => item.ID === parseInt(petCheckbox.value));
+            //petTasks.push.apply(petTasks, pet.Tasks);
+            for (task of pet.Tasks) {
+                petTasks.push({ PreferredTime: task.PreferredTime, PetID: pet.ID, Description: task.Description });
+            }         
+        }     
     }
 
     petTasks = petTasks.sort(function (a, b) {
@@ -85,16 +114,9 @@ function initCareVisits(callBackFunction) {
     } while (careVisitDate <= careVisitEndDate)
     callBackFunction();
 }
-function addRemovePetTasks() {
-    //let petsToInclude = [];
-    //for (petCheckbox of petCheckboxes) {
-    //    if (petCheckbox.checked) { petsToInclude.push(petCheckbox.value);}
-    //}
-    //petTasks = petTasks.filter(task => petsToInclude.includes(task.PetID));
-
-}
 function loadCareVisitTable() {
     let careVisitTable = document.getElementById("CareVisitTable");
+    careVisitTable.style.display = 'block';
     careVisitTable.className = 'parentTable';
     careVisitTable.removeChild(careVisitTable.getElementsByTagName('tbody')[0]);
     careVisitTableBody = careVisitTable.appendChild(document.createElement('tbody'));
@@ -169,7 +191,7 @@ function addCareVisitTaskRow(task, taskBody) {
     taskRow.insertCell(cellIndex);
     addElementToTableRow('TaskID', 'input', 'hidden', undefined, false, undefined, (task !== undefined ? task.ID : undefined), cellIndex, taskRow);
     taskRow.insertCell(cellIndex += 1);
-    addElementToTableRow('Pet', 'select', undefined, 'userInput', true, careRequest.Customer.Pets, (task !== undefined ? task.PetID : undefined), cellIndex, taskRow).oninput = function () { taskTableRowChanged(taskRow); } 
+    addElementToTableRow('Pet', 'select', undefined, 'userInput', true, customer.Pets, (task !== undefined ? task.PetID : undefined), cellIndex, taskRow).oninput = function () { taskTableRowChanged(taskRow); } 
     taskRow.insertCell(cellIndex += 1);
     addElementToTableRow('TaskDescription', 'input', 'text', 'userInput', true, undefined, (task !== undefined ? task.Description : undefined), cellIndex, taskRow).oninput = function () { taskTableRowChanged(taskRow); } 
     return taskRow;

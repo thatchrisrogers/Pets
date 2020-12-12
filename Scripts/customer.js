@@ -1,8 +1,9 @@
-﻿var customers;
-var customerID;
-var unfilteredCustomers;
-var prevSortProperty;
-var sortDirection;
+﻿let customers;
+let customer;
+let customerID;
+let unfilteredCustomers;
+let prevSortProperty;
+let sortDirection;
 
 function initCustomerView() {
     getCustomers(createCustomerTable);
@@ -43,7 +44,7 @@ function createCustomerTable() {
         }
     }
 }
-function displayCustomerForm(customer) {
+function displayCustomerForm() {
     try {
         let customerForm = document.forms.namedItem("CustomerForm");
         let petTable = document.getElementById("PetTable");
@@ -163,8 +164,9 @@ function getCustomer(customerID, callBackFunction) {
     xhttp.open('GET', 'api/customer/' + customerID, true);
     xhttp.onreadystatechange = function () {
         if (this.readyState == 4) {
-            if (this.status == 200) {
-                callBackFunction(JSON.parse(this.responseText));
+            if (this.status == 200) {               
+                customer = JSON.parse(this.responseText);   
+                callBackFunction();
             } else {
                 displayError('Error getting Customer', this);
             }
@@ -177,7 +179,7 @@ function getCustomer(customerID, callBackFunction) {
 }
 function saveCustomer() {
     let formData = document.getElementById('CustomerForm');
-    let customer = {};
+    customer = {};
     customer.ID = customerID;
     customer.Name = formData.CustomerName.value;
     customer.Address = formData.Address.value;
@@ -266,4 +268,8 @@ function filterCustomers(filter) {
         return customer.Address.toLowerCase().includes(filter) || customer.Name.toLowerCase().includes(filter) || customer.PetNames.toLowerCase().includes(filter);
     });
     createCustomerTable();
+}
+function createNewCustomer() {
+    customer = null;
+    displayCustomerForm();
 }

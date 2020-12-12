@@ -1,52 +1,53 @@
-﻿<h1>Care Request</h1>
-<!-- ToDo - This page is a placeholder to build out all of the Care Request functionality.  Consider replacing the similar functionality on the CareCalendar when this is complete -->
-<form id="CareRequestForm">
-    <div class="gridWith4Columns">
-        <div class="gridLabelColumn"><label for="Customer">Customer Name:</label></div>
-        <div class="gridInputColumn">
-            <input type="hidden" id="CareRequestID" />
-            <select id="Customer" disabled></select>
+﻿<form id="CareRequestForm" class="overlay">
+    <div class="modalContent">
+        <button type="button" class="modalClose" onclick="closeCareRequestForm();">&times;</button>
+        <div class="gridWith4Columns">
+            <div class="gridLabelColumn"><label for="Customer">Customer Name:</label></div>
+            <div class="gridInputColumn">
+                <input type="hidden" id="CareRequestID" />
+                <select id="Customer" required onchange="careRequestCustomerChanged(this.value);"></select>
+            </div>
+            <div></div><div><input type="hidden" id="CareRequestID" /></div>
+            <div class="gridLabelColumn">
+                <label for="StartDate">Start Date:</label>
+            </div>
+            <div class="gridInputColumn">
+                <input type="datetime-local" id="StartDate" required />
+            </div>
+            <div class="gridLabelColumn">
+                <label for="EndDate">End Date:</label>
+            </div>
+            <div class="gridInputColumn">
+                <input type="datetime-local" id="EndDate" required />
+            </div>
+            <div class="gridLabelColumn" id="petsLabel" style="display:none;">
+                <label for="Pets">Pets, etc.:</label>
+            </div>
+            <div class="gridInputColumn" id="petsCheckboxContainer"></div>
         </div>
-        <div></div><div><input type="hidden" id="CareRequestID" /></div>
-        <div class="gridLabelColumn">
-            <label for="StartDate">Start Date:</label>
+        <div>
+            <table id="CareVisitTable" style="display:none;">
+                <thead>
+                    <tr>
+                        <th colspan="2" class="tableHeading">
+                            Visits:
+                        </th>
+                    </tr>
+                    <tr>
+                        <th></th>
+                        <th>Visit Date</th>
+                        <th>Care Provider</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+                <tfoot>
+                    <tr></tr>
+                </tfoot>
+            </table>
         </div>
-        <div class="gridInputColumn">
-            <input type="datetime-local" id="StartDate" required />
+        <div>
+            <input type="submit" id="Save" value="Save" />
+            <input type="submit" id="SaveAndClose" value="Save & Close" />
         </div>
-        <div class="gridLabelColumn">
-            <label for="EndDate">End Date:</label>
-        </div>
-        <div class="gridInputColumn">
-            <input type="datetime-local" id="EndDate" required />
-        </div>
-        <div class="gridLabelColumn">
-            <label for="Pets">Pets, etc. needing care:</label>
-        </div>
-        <div class="gridInputColumn" id="divPets"></div>
-    </div>
-    <div>
-        <table id="CareVisitTable">
-            <thead>
-                <tr>
-                    <th colspan="2" class="tableHeading">
-                        Visits:
-                    </th>
-                </tr>
-                <tr>
-                    <th></th>
-                    <th>Visit Date</th>
-                    <th>Care Provider</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-            <tfoot>
-                <tr></tr>
-            </tfoot>
-        </table>
-    </div>
-    <div>
-        <input type="submit" id="Save" value="Save" />
-        <input type="submit" id="SaveAndClose" value="Save & Close" />
     </div>
 </form>

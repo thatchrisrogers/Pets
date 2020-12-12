@@ -45,13 +45,14 @@ input, select, textarea {
     position: fixed; /*Sit on top of page content*/
     display: none;
     width: 100%; /*Cover the whole page*/
-    height: 100%;
+    /*height: 100%;*/
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
     background-color: rgba(0,0,0,0.4);
     z-index: 1; /*Specify a stack order in case you are using a different order for other elements*/
+    overflow: auto;
 }
 
 .modalContent {
@@ -60,15 +61,17 @@ input, select, textarea {
     padding: 10px;
     border: 1px solid #888;
     border-radius: 4px;
-    width: 60%;
-    height:  90%;
-    overflow: auto;
+    width: 85%;
+    /*height: 90%;*/
+    /*height: auto;*/
+    /*overflow: auto;*/
 }
 
 @media screen and (max-width:600px) {
     .modalContent {
-        width: 100%;
-        height: 85%;
+        width: 98%;
+        /*height: 85%;*/
+        /*height: auto;*/
         margin: 10% auto;
     }
     .gridWith4Columns {
