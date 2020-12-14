@@ -38,11 +38,7 @@ function loadView(href) {
                     break; 
                 case 'careCalendar':
                     initCareCalendarView();
-                    break;   
-                case 'careRequest':  //ToDo - This is temporary while you build out the functionality
-                    initCareRequestForm(findQueryStringValueByKey(href, 'id'));
-                    //initCareRequestForm(6);
-                    break;   
+                    break;     
             }
             document.getElementById('Message').innerHTML = '';
             document.getElementById('Message').className = '';

@@ -97,8 +97,8 @@ function loadCalendar() {
                 cellHeading.onclick = function () {
                     try {
                         //displayCareCalendarRequestForm(this.innerHTML);
-                        let selectedDay = this.innerHTML;
-                        appendCareRequestForm(function () { displayCareRequestForm(selectedDay); })                                         
+                        let startDate = new Date(selectYear.value, parseInt(selectMonth.value) - 1, this.innerHTML, 7, 0, 0, 0);
+                        appendCareRequestForm(function () { displayCareRequestForm(undefined, startDate); })                                         
                     }
                     catch (e) {
                         displayError('Error displaying Care Calendar Request Form - ' + e.message);
@@ -122,7 +122,9 @@ function loadCalendar() {
                         hiddenCareRequestId.value = careRequest.ID;
                         pCustomerName.appendChild(hiddenCareRequestId);
                         pCustomerName.onclick = function () {
-                            loadView('?view=careRequest&id=' + this.querySelector("input[name='CareRequestId']").value);
+                            //loadView('?view=careRequest&id=' + this.querySelector("input[name='CareRequestId']").value);
+                            let careRequestID = this.querySelector("input[name='CareRequestId']").value;
+                            appendCareRequestForm(function () { displayCareRequestForm(careRequestID, undefined) });
                         }
                         cell.appendChild(pCustomerName);
                     }
@@ -147,10 +149,10 @@ function appendCareRequestForm(callBackFunction) {
     xhttp.send();
     
 }
-function displayCareRequestForm(selectedDay) {
+function displayCareRequestForm(careRequestID, startDate) {
     careRequestForm = document.getElementById('CareRequestForm')    
     careRequestForm.style.display = 'block';
-    initCareRequestForm(selectedDay, undefined);
+    initCareRequestForm(careRequestID, startDate);
 }
 function closeCareRequestForm() {
     careRequestForm.style.display = 'none';

@@ -102,7 +102,6 @@
   <ItemGroup>
     <Compile Include="Controllers\CareProviderController.cs" />
     <Compile Include="Controllers\CareRequestController.cs" />
-    <Compile Include="Controllers\CareVisitController.cs" />
     <Compile Include="Controllers\CustomerController.cs" />
     <Compile Include="Controllers\PetController.cs" />
     <Compile Include="Global.asax.cs">
@@ -110,7 +109,6 @@
     </Compile>
     <Compile Include="Models\CareProvider.cs" />
     <Compile Include="Models\CareRequest.cs" />
-    <Compile Include="Models\CareVisit.cs" />
     <Compile Include="Models\Customer.cs" />
     <Compile Include="Models\Pet.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -145,3 +145,40 @@ When Matched
 When Not Matched By Source And PetID = @petID
 	Then Delete;
 Go
+
+Drop Procedure If Exists dbo.MergeCareVisitTasks
+Drop Type If Exists dbo.typeCareVisitTasks
+Go
+
+Create Type dbo.typeCareVisitTasks As Table (
+	ID Int Null
+	,PetID Int Not Null
+	,Description VarChar(500) Not Null
+)
+Go
+
+Create Procedure dbo.MergeCareVisitTasks (@visitID smallint, @visitTasks dbo.typeCareVisitTasks ReadOnly)
+As
+Merge dbo.CareVisitTask targetTasks
+Using @visitTasks sourceTasks
+On targetTasks.ID = sourceTasks.ID
+When Not Matched By Target
+	Then Insert 
+	(
+		CareVisitID
+		,PetID
+		,Description
+	) 
+	Values
+	(
+		@visitID
+		,sourceTasks.PetID
+		,sourceTasks.Description
+	)
+When Matched
+	Then Update Set
+		PetID = sourceTasks.PetID
+		,Description = sourceTasks.Description
+When Not Matched By Source And CareVisitID = @visitID
+	Then Delete;
+Go
