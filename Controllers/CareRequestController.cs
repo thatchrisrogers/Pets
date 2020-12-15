@@ -101,6 +101,7 @@ namespace Pets.Controllers
                         }
                     }
                     careRequest.Customer = CustomerController.FindByID((int)careRequest.Customer.ID);
+                    careRequest.Visits = CareVisitController.GetList((int)careRequest.ID);
                 }              
                 catch (Exception ex)
                 {
@@ -154,6 +155,39 @@ namespace Pets.Controllers
     }
     public class CareVisitController : ApiController
     {
+        internal static List<CareVisit> GetList(int careRequestID)
+        {
+            List<CareVisit> visits = new List<CareVisit>();
+            CareVisit visit;
+            using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["Pets"].ConnectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    using (SqlCommand command = new SqlCommand("Select * From dbo.CareVisit Where CareRequestID = @careRequestID;", connection))
+                    {
+                        command.Parameters.AddWithValue("careRequestID", careRequestID);
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                visit = new CareVisit();
+                                visit.ID = ((int)reader["ID"]);
+                                visit.CareProviderID = ((int)reader["CareProviderID"]);
+                                visit.VisitDate = ((DateTime)reader["VisitDate"]);
+                                visit.Tasks = CareVisitTaskController.GetList((int)visit.ID);
+                                visits.Add(visit);
+                            }
+                        }
+                    }                 
+                    return visits;
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.Message);
+                }
+            }
+        }
         internal static void SaveList(int careRequestID, List<CareVisit> visits, SqlConnection connection, SqlTransaction transaction)
         {
             DataTable visitIDs = new DataTable();
@@ -198,6 +232,42 @@ namespace Pets.Controllers
     }
     public class CareVisitTaskController
     {
+        internal static List<CareVisitTask> GetList(int careVisitID)
+        {
+            List<CareVisitTask> tasks = new List<CareVisitTask>();
+            CareVisitTask task;
+            using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["Pets"].ConnectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    using (SqlCommand command = new SqlCommand("Select * From dbo.CareVisitTask Where CareVisitID = @careVisitID;", connection))
+                    {
+                        command.Parameters.AddWithValue("careVisitID", careVisitID);
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                task = new CareVisitTask();
+                                task.ID = ((int)reader["ID"]);
+                                task.CareVisitID = ((int)reader["CareVisitID"]);
+                                task.PetID = ((int)reader["PetID"]);
+                                task.Description = ((string)reader["Description"]);
+                                task.IsComplete = ((bool)reader["IsComplete"]);
+                                task.CompletedByCareProviderID = reader["CompletedByCareProviderID"] == DBNull.Value ? (int?)null : (int?)reader["CompletedByCareProviderID"];
+                                task.DateCompleted = reader["DateCompleted"] == DBNull.Value ? (DateTime?)null : (DateTime?)reader["DateCompleted"];
+                                tasks.Add(task);
+                            }
+                        }
+                    }
+                    return tasks;
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.Message);
+                }
+            }
+        }
         internal static void SaveList(int visitID, List<CareVisitTask> visitTasks, SqlConnection connection, SqlTransaction transaction)
         {
             try

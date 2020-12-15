@@ -58,8 +58,7 @@ function loadPets() {
         label.htmlFor = checkBox.id;
         petsCheckboxContainer.appendChild(checkBox);
         petsCheckboxContainer.appendChild(label);
-    }
-    
+    } 
 }
 function loadCareRequest() {
     careRequestForm = document.forms.namedItem("CareRequestForm");
@@ -73,6 +72,7 @@ function loadCareRequest() {
         initCareVisits(loadCareVisitTable);
     }
     else {
+        customer = careRequest.Customer;
         careVisits = careRequest.Visits;
         loadCareVisitTable();
     }
@@ -156,10 +156,10 @@ function addCareVisitRow(visit) {
 
     let weekdayLabel = document.createElement('label');
     weekdayLabel.name = 'VisitDayOfWeek';
-    weekdayLabel.innerHTML = (visit !== undefined ? visit.VisitDate.toWeekday() + ', ' : ''); 
+    weekdayLabel.innerHTML = (visit !== undefined ? new Date(visit.VisitDate).toWeekday() + ', ' : ''); 
     visitTableRow.cells[cellIndex].appendChild(weekdayLabel);
 
-    let visitDateElement = addElementToTableRow('VisitDate', 'input', 'datetime-local', 'userInput,hasDefaultValue', false, undefined, (visit !== undefined ? visit.VisitDate.toISOLocaleString() : undefined), cellIndex, visitTableRow);
+    let visitDateElement = addElementToTableRow('VisitDate', 'input', 'datetime-local', 'userInput,hasDefaultValue', false, undefined, (visit !== undefined ? new Date(visit.VisitDate).toISOLocaleString() : undefined), cellIndex, visitTableRow);
     visitDateElement.oninput = function () {
             this.previousSibling.innerHTML = new Date(this.value).toWeekday() + ', ';
     }

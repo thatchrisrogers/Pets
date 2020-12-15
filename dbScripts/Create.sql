@@ -70,7 +70,7 @@ Create Table dbo.CareVisit(
 	,CareProviderID Int Not Null
 	,VisitDate DateTime Not Null
 )
-Alter Table dbo.CareVisit Add Constraint FK_CareVisit_CareRequest Foreign Key(CareRequestID) References dbo.CareRequest(ID)
+Alter Table dbo.CareVisit Add Constraint FK_CareVisit_CareRequest Foreign Key(CareRequestID) References dbo.CareRequest(ID) On Delete Cascade
 Alter Table dbo.CareVisit Add Constraint FK_CareVisit_CareProvider Foreign Key(CareProviderID) References dbo.CareProvider(ID)
 
 Create Table dbo.CareVisitTask(
@@ -82,7 +82,7 @@ Create Table dbo.CareVisitTask(
 	,CompletedByCareProviderID Int Null
 	,DateCompleted DateTime Null
 )
-Alter Table dbo.CareVisitTask Add Constraint FK_CareVisitTask_CareVisit Foreign Key(CareVisitID) References dbo.CareVisit(ID)
+Alter Table dbo.CareVisitTask Add Constraint FK_CareVisitTask_CareVisit Foreign Key(CareVisitID) References dbo.CareVisit(ID) On Delete Cascade
 Alter Table dbo.CareVisitTask Add Constraint FK_CareVisitTask_Pet Foreign Key(PetID) References dbo.Pet(ID)
 Alter Table dbo.CareVisitTask Add Constraint FK_CareVisitTask_CareProvider Foreign Key(CompletedByCareProviderID) References dbo.CareProvider(ID)
 
