@@ -26,7 +26,7 @@ function getValidValues(apiName, validValues) {
     xhttp.open('GET', 'api/' + apiName, true);
     xhttp.onreadystatechange = function () {
         if (this.readyState == 4 && this.status === 200) {
-            validValues.push({ ID: '', Name: 'select' });
+            //validValues.push({ ID: '', Name: 'select' });
             for (item of JSON.parse(this.responseText)) {
                 validValues.push({ ID: item.ID, Name: item.Name });
             }
@@ -128,6 +128,10 @@ function tableRowChanged(tableRow, callBackFunction) {
      }
 }
 function loadSelectElement(selectElement, selectListItems) {
+    let option = document.createElement("option");
+    option.value = '';
+    option.text = 'select';
+    selectElement.appendChild(option);
     for (item of selectListItems) {
         option = document.createElement("option");
         option.value = item.ID;

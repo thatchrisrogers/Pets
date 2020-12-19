@@ -1,6 +1,5 @@
 ﻿let careVisitDate;
 let careVisitTableBody;
-//let customer = {};
 let careRequestForm;
 let careRequest = {};
 let careRequests = [];
@@ -8,10 +7,8 @@ let careVisit = {};
 let careVisits = [];
 let careVisitTask = {};
 let careVisitTasks = [];
+let petCheckboxes;
 
-//I think you need to ask which Pets Need Care before showing the VisitTable.  After that, Show the VistsTable and hide the Pet CheckBoxList
-//Build the following out for Lucy first.  Then decide how to handle a more simplifed form for the Customer where they specify the Stare and End Dates and Pets needing Care.
-//The Pet needing Care at this levle is not in the model
 function displayCareRequestForm(careRequestID, startDate) {
     careRequestForm = document.getElementById('CareRequestForm');
     careRequestForm.style.display = 'block';
@@ -35,8 +32,6 @@ function initCareRequestForm(id, startDate) {
             careRequest.EndDate.setHours(17, 0, 0, 0);
             document.getElementById('StartDate').value = careRequest.StartDate.toISOLocaleString(); 
             document.getElementById('EndDate').value = careRequest.EndDate.toISOLocaleString();
-            //document.getElementById('StartDate').value = selectedDate.toISOString().slice(0, 11) + '08:00'; //2020-11-01T15:41:28.027Z
-            //document.getElementById('EndDate').value = selectedDate.addDays(1).toISOString().slice(0, 11) + '17:00';
         }
     }
     else {
@@ -79,12 +74,15 @@ function loadCareRequest() {
     careRequestForm.Customer.value = careRequest.Customer.ID;
     careRequestForm.StartDate.value = careRequest.StartDate;
     careRequestForm.EndDate.value = careRequest.EndDate;
-    
-    if (careRequest.Visits === undefined) {
-        careVisits = [];
-        initCareVisits(loadCareVisitTable);
+    //The following elements must not be updated once a Care Request is saved
+    careRequestForm.Customer.disabled = true;
+    if (petCheckboxes !== undefined) {
+        for (petCheckbox of petCheckboxes) {
+            petCheckbox.disabled = true;
+        }      
     }
-    else {
+    
+    if (careRequest.Visits !== undefined) {
         customer = careRequest.Customer;
         careVisits = careRequest.Visits;
         loadCareVisitTable();
@@ -92,9 +90,10 @@ function loadCareRequest() {
 }
 function initCareVisits(callBackFunction) {
     //This function is used to prime the CareVisitTable with predefined PetTasks.  Once primed, the Tasks can be edited to become the CareVisitTasks.  Basically, PetTasks are a template for CareVisitTasks
+    careVisits = [];
     let pet = {};
     let petTasks = [];
-    let petCheckboxes = document.getElementsByName('petCheckboxes');
+    petCheckboxes = document.getElementsByName('petCheckboxes');
     for (petCheckbox of petCheckboxes) {
         if (petCheckbox.checked) {
             pet = customer.Pets.find(item => item.ID === parseInt(petCheckbox.value));
@@ -114,8 +113,8 @@ function initCareVisits(callBackFunction) {
             uniquePreferredTimes.push(petTask.PreferredTime);
         }
     }
-    careVisitDate = new Date(careRequest.StartDate);
-    let careVisitEndDate = new Date(careRequest.EndDate);
+    careVisitDate = new Date(careRequestForm.StartDate.value);
+    let careVisitEndDate = new Date(careRequestForm.EndDate.value);
     careVisitEndDate.setHours(23);
     careVisitEndDate.setMinutes(59);
     do {
@@ -173,21 +172,26 @@ function addCareVisitRow(visit) {
     visitTableRow.cells[cellIndex].appendChild(weekdayLabel);
 
     let visitDateElement = addElementToTableRow('VisitDate', 'input', 'datetime-local', 'userInput', true, undefined, (visit !== undefined ? new Date(visit.VisitDate).toISOLocaleString() : undefined), cellIndex, visitTableRow);
-    visitDateElement.min = careRequest.StartDate;
-    visitDateElement.max = careRequest.EndDate;
-    //visitDateElement.step = 60;  //15 Mins. (1 minute = 60,000 milliseconds).
+    visitDateElement.min = careRequestForm.StartDate.value;
+    visitDateElement.max = careRequestForm.EndDate.value;
     visitDateElement.oninput = function () {
             this.previousSibling.innerHTML = new Date(this.value).toWeekday() + ', ';
     }
     visitDateElement.onchange = function () {
         let visitDateElementThatChanged = this;
-        getCareVisitsFromPage(true,loadCareVisitTable);
-
-        //find the row that was moved so the user can eassily find it after table reloads
+        if (visitDateElementThatChanged.required) {
+            getCareVisitsFromPage(false, loadCareVisitTable);
+        }
+        else {
+            getCareVisitsFromPage(true, loadCareVisitTable);
+        }
+        
+        //find the row that was moved so the user can easily find it after table reloads
         for (visitDateElement of document.querySelectorAll('[name=VisitDate]')) {
             if (visitDateElement.value === visitDateElementThatChanged.value) {
                 let elementParentRow = visitDateElement.closest('.parentRow');
                 let elementSiblingRow = elementParentRow.nextElementSibling;
+                //tableRowChanged(elementSiblingRow, function () { });
                 elementParentRow.classList.add('messageSuccess');
                 elementSiblingRow.classList.add('messageSuccess');
                 setTimeout(function () {
