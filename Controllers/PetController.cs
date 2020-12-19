@@ -31,14 +31,11 @@ namespace Pets.Controllers
                                 pet.Name = ((string)reader["Name"]);
                                 pet.Type = new PetType((int)reader["TypeID"]);
                                 pet.Description = ((string)reader["Description"]);
+                                pet.Tasks = PetTaskController.GetList((int)pet.ID);
                                 pets.Add(pet);
                             }
                         }
-                    }
-                    foreach (Pet selectedPet in pets)
-                    {
-                        selectedPet.Tasks = PetTaskController.GetList((int)selectedPet.ID, connection);
-                    }
+                    }                 
                     return pets;
                 }
                 catch (Exception ex)
@@ -103,19 +100,23 @@ namespace Pets.Controllers
     }
     public class PetTaskController
     {
-        internal static List<PetTask> GetList(int petID, SqlConnection connection)
+        internal static List<PetTask> GetList(int petID)
         {
             List<PetTask> petTasks = new List<PetTask>();
             try
             {
-                using (SqlCommand command = new SqlCommand("Select * From dbo.PetTask Where PetID = @petID Order By PreferredTime;", connection))
+                using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["Pets"].ConnectionString))
                 {
-                    command.Parameters.AddWithValue("petID", petID);
-                    using (SqlDataReader reader = command.ExecuteReader())
+                    connection.Open();
+                    using (SqlCommand command = new SqlCommand("Select * From dbo.PetTask Where PetID = @petID Order By PreferredTime;", connection))
                     {
-                        while (reader.Read())
+                        command.Parameters.AddWithValue("petID", petID);
+                        using (SqlDataReader reader = command.ExecuteReader())
                         {
-                            petTasks.Add(new PetTask(((int)reader["ID"]), (TimeSpan)reader["PreferredTime"], (string)reader["Description"]));
+                            while (reader.Read())
+                            {
+                                petTasks.Add(new PetTask(((int)reader["ID"]), (TimeSpan)reader["PreferredTime"], (string)reader["Description"]));
+                            }
                         }
                     }
                 }

@@ -3,7 +3,6 @@ let months = [{ value: 1, text: "January" }, { value: 2, text: "February" }, { v
 let selectMonth;
 let selectYear;
 //let careCalendarRequestForm;
-let careRequestForm;
 let selectCustomer;
 
 function initCareCalendarView() {
@@ -35,8 +34,8 @@ function initCareCalendarView() {
     //selectCustomer = document.getElementById('Customer');
     //loadSelectElement(selectCustomer, customerListItems);
 
-    //careCalendarRequestForm = document.getElementById('CareCalendarRequestForm')
-    //careCalendarRequestForm.onsubmit = function (event) {
+    //careRequestForm = document.getElementById('CareRequestForm')
+    //careRequestForm.onsubmit = function (event) {
     //    event.preventDefault();       
     //    saveCareCalendarRequestForm();
     //};
@@ -149,14 +148,7 @@ function appendCareRequestForm(callBackFunction) {
     xhttp.send();
     
 }
-function displayCareRequestForm(careRequestID, startDate) {
-    careRequestForm = document.getElementById('CareRequestForm')    
-    careRequestForm.style.display = 'block';
-    initCareRequestForm(careRequestID, startDate);
-}
-function closeCareRequestForm() {
-    careRequestForm.style.display = 'none';
-}
+
 //function displayCareCalendarRequestForm(selectedDay) {  
 //    if (selectedDay !== undefined) {
 //        document.getElementById('CareRequestID').value = undefined;

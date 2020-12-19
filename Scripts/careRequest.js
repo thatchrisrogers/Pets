@@ -1,6 +1,7 @@
 ﻿let careVisitDate;
 let careVisitTableBody;
 //let customer = {};
+let careRequestForm;
 let careRequest = {};
 let careRequests = [];
 let careVisit = {};
@@ -11,8 +12,18 @@ let careVisitTasks = [];
 //I think you need to ask which Pets Need Care before showing the VisitTable.  After that, Show the VistsTable and hide the Pet CheckBoxList
 //Build the following out for Lucy first.  Then decide how to handle a more simplifed form for the Customer where they specify the Stare and End Dates and Pets needing Care.
 //The Pet needing Care at this levle is not in the model
-
+function displayCareRequestForm(careRequestID, startDate) {
+    careRequestForm = document.getElementById('CareRequestForm');
+    careRequestForm.style.display = 'block';
+    initCareRequestForm(careRequestID, startDate);
+}
 function initCareRequestForm(id, startDate) {
+    careRequest = {};
+    careRequests = [];
+    careVisit = {};
+    careVisits = [];
+    careVisitTask = {};
+    careVisitTasks = [];
     loadSelectElement(document.getElementById('Customer'), customerListItems);
     if (id === undefined) {
         if (startDate !== undefined) {
@@ -36,6 +47,9 @@ function initCareRequestForm(id, startDate) {
         saveCareRequest();
     };
 } 
+function closeCareRequestForm() {
+    careRequestForm.style.display = 'none';
+}
 function careRequestCustomerChanged(customerID) {
     getCustomer(customerID, loadPets);  
 }
@@ -61,7 +75,6 @@ function loadPets() {
     } 
 }
 function loadCareRequest() {
-    careRequestForm = document.forms.namedItem("CareRequestForm");
     careRequestForm.CareRequestID.value = careRequest.ID;
     careRequestForm.Customer.value = careRequest.Customer.ID;
     careRequestForm.StartDate.value = careRequest.StartDate;
@@ -159,13 +172,16 @@ function addCareVisitRow(visit) {
     weekdayLabel.innerHTML = (visit !== undefined ? new Date(visit.VisitDate).toWeekday() + ', ' : ''); 
     visitTableRow.cells[cellIndex].appendChild(weekdayLabel);
 
-    let visitDateElement = addElementToTableRow('VisitDate', 'input', 'datetime-local', 'userInput,hasDefaultValue', false, undefined, (visit !== undefined ? new Date(visit.VisitDate).toISOLocaleString() : undefined), cellIndex, visitTableRow);
+    let visitDateElement = addElementToTableRow('VisitDate', 'input', 'datetime-local', 'userInput', true, undefined, (visit !== undefined ? new Date(visit.VisitDate).toISOLocaleString() : undefined), cellIndex, visitTableRow);
+    visitDateElement.min = careRequest.StartDate;
+    visitDateElement.max = careRequest.EndDate;
+    //visitDateElement.step = 60;  //15 Mins. (1 minute = 60,000 milliseconds).
     visitDateElement.oninput = function () {
             this.previousSibling.innerHTML = new Date(this.value).toWeekday() + ', ';
     }
     visitDateElement.onchange = function () {
         let visitDateElementThatChanged = this;
-        getCareVisitsFromPage(loadCareVisitTable);
+        getCareVisitsFromPage(true,loadCareVisitTable);
 
         //find the row that was moved so the user can eassily find it after table reloads
         for (visitDateElement of document.querySelectorAll('[name=VisitDate]')) {
@@ -204,14 +220,14 @@ function taskTableRowChanged(taskRow) {
     let taskBody = taskRow.parentElement;
     tableRowChanged(taskRow, function () { addCareVisitTaskRow(undefined, taskBody) });
 }
-function getCareVisitsFromPage(callBackFunction) {
+function getCareVisitsFromPage(includeIncompleteVisits, callBackFunction) {
     careVisits = [];
     let careVisitTable = document.getElementById("CareVisitTable");
     for (parentRow of careVisitTable.getElementsByClassName('parentRow')) {
-        if (parentRow.querySelectorAll(".userInput[required]").length > 0) { //If row has required elements, then user has input values.  Let the required attribute handle data validation
+        if (parentRow.querySelectorAll(".userInput[required]").length > 0 || includeIncompleteVisits) { //If row has required elements, then user has input values.  Let the required attribute handle data validation
             careVisit = {};
             careVisit.ID = parentRow.querySelector('[name=VisitID]').value;
-            careVisit.VisitDate = new Date(parentRow.querySelector('[name=VisitDate]').value);
+            careVisit.VisitDate = parentRow.querySelector('[name=VisitDate]').value;
             careVisit.CareProviderID = parentRow.querySelector('[name=CareProvider]').value;
 
             careVisitTasks = [];
@@ -241,13 +257,12 @@ function getCareVisitsFromPage(callBackFunction) {
     }
 }
 function saveCareRequest() {
-    let formData = document.getElementById('CareRequestForm');
     careRequest = {};
-    careRequest.ID = formData.CareRequestID.value;
-    careRequest.Customer = { ID: formData.Customer.value };
-    careRequest.StartDate = formData.StartDate.value;
-    careRequest.EndDate = formData.EndDate.value;
-    careRequest.Visits = getCareVisitsFromPage(undefined);
+    careRequest.ID = careRequestForm.CareRequestID.value;
+    careRequest.Customer = { ID: careRequestForm.Customer.value };
+    careRequest.StartDate = careRequestForm.StartDate.value;
+    careRequest.EndDate = careRequestForm.EndDate.value;
+    careRequest.Visits = getCareVisitsFromPage(false, undefined);
     let xhttp = new XMLHttpRequest();
     xhttp.open("POST", "api/careRequest", true);
     xhttp.setRequestHeader('Content-Type', 'application/json;charset=UTF-8')
@@ -255,15 +270,14 @@ function saveCareRequest() {
         if (this.readyState === 4) {
             if (this.status === 200 || this.status === 204) {
                 displaySuccess('Care Request saved');
-
-
                 if (document.activeElement.id === 'Save') {
-                    //Load page from dB to get fresh IDs
+                    careRequest = JSON.parse(this.responseText);
+                    loadCareRequest();
                 }
                 else if (document.activeElement.id === 'SaveAndClose') {
-                    //Close the form
+                    closeCareRequestForm();
                 }
-                //Once this is embedded in the Calendar, then refresh the Calendar underneath the modalContent
+                getCareRequests(loadCalendar);
             }
             else {
                 displayError('Error saving Care Request', this);

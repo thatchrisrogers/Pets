@@ -164,7 +164,7 @@ namespace Pets.Controllers
                 try
                 {
                     connection.Open();
-                    using (SqlCommand command = new SqlCommand("Select * From dbo.CareVisit Where CareRequestID = @careRequestID;", connection))
+                    using (SqlCommand command = new SqlCommand("Select * From dbo.CareVisit Where CareRequestID = @careRequestID Order By VisitDate;", connection))
                     {
                         command.Parameters.AddWithValue("careRequestID", careRequestID);
                         using (SqlDataReader reader = command.ExecuteReader())
