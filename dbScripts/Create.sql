@@ -1,5 +1,6 @@
 Use Pets
 
+Drop View If Exists dbo.vwVisit
 Drop View If Exists dbo.vwCustomer
 Drop View If Exists dbo.vwCareRequest
 Drop Table If Exists dbo.CareVisitTask
@@ -27,6 +28,7 @@ Insert Into dbo.PetType Values ('Cat')
 Insert Into dbo.PetType Values ('Rabbit')
 Insert Into dbo.PetType Values ('Reptile')
 Insert Into dbo.PetType Values ('Bird')
+Insert Into dbo.PetType Values ('Hamster')
 Insert Into dbo.PetType Values ('etc.')
 
 Create Table dbo.Pet(
@@ -100,6 +102,30 @@ Select customer.ID, customer.Name, customer.Address, customer.Email, STRING_AGG(
 From dbo.Customer customer
 Left Join dbo.Pet pet On customer.ID = pet.CustomerID
 Group By customer.ID, customer.Name, customer.Address, customer.Email
+Go
+
+Create View dbo.vwVisit
+As
+Select 
+visit.ID
+,visit.VisitDate 
+,customer.Name As CustomerName
+,STRING_AGG(pet.PetName, ', ') WITHIN GROUP (ORDER BY pet.PetName ASC) AS PetNames
+,provider.Name As CareProviderName
+From dbo.CareVisit visit
+Inner Join dbo.CareRequest request On visit.CareRequestID = request.ID
+Inner Join dbo.Customer customer On request.CustomerID = customer.ID
+Inner Join (
+	Select Distinct task.CareVisitID, pet.Name As PetName
+	From dbo.Pet pet 
+	Inner Join dbo.CareVisitTask task On pet.ID = task.PetID
+) pet On visit.ID = pet.CareVisitID
+Inner Join dbo.CareProvider provider On visit.CareProviderID = provider.ID
+Group By 
+visit.ID
+,visit.VisitDate 
+,customer.Name
+,provider.Name
 Go
 
 Drop Type If Exists dbo.typeID

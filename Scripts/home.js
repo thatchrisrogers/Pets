@@ -1,15 +1,15 @@
 ﻿function initHomeView() {
-    let localOffset = new Date().getTimezoneOffset();
-    document.querySelector('#Offset').innerHTML = localOffset;
-
-    let date = new Date();
-    document.querySelector('#Date').innerHTML = date;
-
-    document.querySelector('#ISO').innerHTML = date.toISOString();
-
-    //document.querySelector('#Local').innerHTML = date.toLocaleString("sv");
-    document.querySelector('#Local').innerHTML = new Date(date.getTime() - (date.getTimezoneOffset() * 60000)).toISOString();
-    document.querySelector('#StartDate').value = date.toISOLocaleString();
-
-    document.querySelector('#TestTime').value = date.toISOLocaleString().split('T')[1];
+    //If Lucy, then display upcoming Care Visits.  Build the If Lucy part later.
+    appendCareVisitView(initCareVisitView);
+}
+function appendCareVisitView(callBackFunction) {
+    let xhttp = new XMLHttpRequest();
+    xhttp.open('GET', 'Views/careVisit.html', true);
+    xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            document.querySelector('#viewContainer').innerHTML = this.responseText;
+            callBackFunction();
+        }
+    }
+    xhttp.send();
 }

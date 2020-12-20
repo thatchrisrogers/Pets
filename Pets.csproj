@@ -86,6 +86,7 @@
     <Content Include="index.html" />
     <Content Include="Scripts\careCalendar.js" />
     <Content Include="Scripts\careRequest.js" />
+    <Content Include="Scripts\careVisit.js" />
     <Content Include="Scripts\common.js" />
     <Content Include="Scripts\customer.js" />
     <Content Include="Scripts\home.js" />
@@ -95,6 +96,7 @@
     <Content Include="Views\availability.html" />
     <Content Include="Views\careCalendar.html" />
     <Content Include="Views\careRequest.html" />
+    <Content Include="Views\careVisit.html" />
     <Content Include="Views\customer.html" />
     <Content Include="Views\home.html" />
     <Content Include="Web.config" />

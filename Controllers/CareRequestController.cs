@@ -155,6 +155,40 @@ namespace Pets.Controllers
     }
     public class CareVisitController : ApiController
     {
+        [HttpGet]
+        public List<CareVisit> Get()
+        {
+            List<CareVisit> visits = new List<CareVisit>();
+            CareVisit visit;
+            using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["Pets"].ConnectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    using (SqlCommand command = new SqlCommand("Select * From dbo.vwVisit Order By VisitDate, CustomerName", connection))
+                    {
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                visit = new CareVisit();
+                                visit.ID = ((int)reader["ID"]);
+                                visit.VisitDate = ((DateTime)reader["VisitDate"]);
+                                visit.CustomerName = ((string)reader["CustomerName"]);
+                                visit.PetNames = ((string)reader["PetNames"]);
+                                visit.CareProviderName = ((string)reader["CareProviderName"]);
+                                visits.Add(visit);
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.Message);
+                }
+            }
+            return visits;
+        }
         internal static List<CareVisit> GetList(int careRequestID)
         {
             List<CareVisit> visits = new List<CareVisit>();

@@ -29,10 +29,7 @@ function loadView(href) {
             switch (view) {
                 case 'home':
                     initHomeView();
-                    break;
-                case 'availability':
-                    //initAvailabilityView();
-                    break;   
+                    break;               
                 case 'customer':
                     initCustomerView();
                     break; 
