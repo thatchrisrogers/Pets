@@ -1,5 +1,4 @@
-﻿let careVisitDate;
-let careVisitTableBody;
+﻿let careVisitTableBody;
 let careRequestForm;
 let careRequest = {};
 let careRequests = [];
@@ -29,9 +28,8 @@ function initCareRequestForm(id, startDate) {
             careRequest.ID = undefined;
             careRequest.StartDate = startDate;
             careRequest.EndDate = new Date(startDate.addDays(1));
-            careRequest.EndDate.setHours(17, 0, 0, 0);
-            document.getElementById('StartDate').value = careRequest.StartDate.toISOLocaleString(); 
-            document.getElementById('EndDate').value = careRequest.EndDate.toISOLocaleString();
+            document.getElementById('StartDate').value = careRequest.StartDate.toISOString().split('T')[0]; 
+            document.getElementById('EndDate').value = careRequest.EndDate.toISOString().split('T')[0]; 
         }
     }
     else {
@@ -72,8 +70,8 @@ function loadPets() {
 function loadCareRequest() {
     careRequestForm.CareRequestID.value = careRequest.ID;
     careRequestForm.Customer.value = careRequest.Customer.ID;
-    careRequestForm.StartDate.value = careRequest.StartDate;
-    careRequestForm.EndDate.value = careRequest.EndDate;
+    careRequestForm.StartDate.value = careRequest.StartDate.split('T')[0];
+    careRequestForm.EndDate.value = careRequest.EndDate.split('T')[0];
     //The following elements must not be updated once a Care Request is saved
     careRequestForm.Customer.disabled = true;
     if (petCheckboxes !== undefined) {
@@ -113,8 +111,8 @@ function initCareVisits(callBackFunction) {
             uniquePreferredTimes.push(petTask.PreferredTime);
         }
     }
-    careVisitDate = new Date(careRequestForm.StartDate.value);
-    let careVisitEndDate = new Date(careRequestForm.EndDate.value);
+    let careVisitDate = new Date(careRequestForm.StartDate.value).toLocaleDate();
+    let careVisitEndDate = new Date(careRequestForm.EndDate.value).toLocaleDate();
     careVisitEndDate.setHours(23);
     careVisitEndDate.setMinutes(59);
     do {
@@ -172,8 +170,8 @@ function addCareVisitRow(visit) {
     visitTableRow.cells[cellIndex].appendChild(weekdayLabel);
 
     let visitDateElement = addElementToTableRow('VisitDate', 'input', 'datetime-local', 'userInput', true, undefined, (visit !== undefined ? new Date(visit.VisitDate).toISOLocaleString() : undefined), cellIndex, visitTableRow);
-    visitDateElement.min = careRequestForm.StartDate.value;
-    visitDateElement.max = careRequestForm.EndDate.value;
+    visitDateElement.min = careRequestForm.StartDate.value + 'T00:00:00';
+    visitDateElement.max = careRequestForm.EndDate.value + 'T23:59:59';
     visitDateElement.oninput = function () {
             this.previousSibling.innerHTML = new Date(this.value).toWeekday() + ', ';
     }

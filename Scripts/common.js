@@ -48,6 +48,11 @@ Date.prototype.addDays = function (days) {
 Date.prototype.toISOLocaleString = function () {  //Extend the native Date prototype to return the ISO format for a date that is offset for local timezone
     return new Date(this.getTime() - (this.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
 }
+Date.prototype.toLocaleDate = function () {
+    var date = new Date(this.valueOf());
+    date.setTime(this.getTime() + (this.getTimezoneOffset() * 60 * 1000));
+    return date;
+}
 Date.prototype.toWeekday = function () {
     let weekday = new Array(7);
     weekday[0] = "Sunday";

@@ -84,7 +84,7 @@ function loadCalendar() {
                 cellHeading.innerHTML = dayOfMonth;
                 cellHeading.onclick = function () {
                     try {
-                        let startDate = new Date(selectYear.value, parseInt(selectMonth.value) - 1, this.innerHTML, 7, 0, 0, 0);
+                        let startDate = new Date(selectYear.value, parseInt(selectMonth.value) - 1, this.innerHTML);
                         appendCareRequestForm(function () { displayCareRequestForm(undefined, startDate); })                                         
                     }
                     catch (e) {

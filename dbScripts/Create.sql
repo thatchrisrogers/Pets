@@ -52,8 +52,8 @@ Alter Table dbo.PetTask Add Constraint FK_PetTask_Pet Foreign Key(PetID) Referen
 Create Table dbo.CareRequest(
 	ID Int Identity(1,1) Primary Key Not Null
 	,CustomerID Int Not Null
-	,StartDate DateTime Not Null
-	,EndDate DateTime Not Null
+	,StartDate Date Not Null
+	,EndDate Date Not Null
 )
 Alter Table dbo.CareRequest Add Constraint FK_CareRequest_Customer Foreign Key(CustomerID) References dbo.Customer(ID)
 
