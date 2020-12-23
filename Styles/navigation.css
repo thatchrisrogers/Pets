@@ -14,7 +14,7 @@
     border-radius: 4px;
 }
 
-.topNavLink {
+.topNavLink:not(.topNavLogoContainer) {
     padding: 12px;
     color: black;
     text-align: center;

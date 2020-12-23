@@ -153,6 +153,8 @@ function getCustomers(callBackFunction, refresh) {
                 if (this.status === 200) {
                     customers = JSON.parse(this.responseText);
                     unfilteredCustomers = JSON.parse(this.responseText);
+                    customerListItems = [];
+                    getValidValues('customer', customerListItems);
                     callBackFunction();
                 }
                 else {

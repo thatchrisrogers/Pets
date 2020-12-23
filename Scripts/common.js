@@ -26,7 +26,6 @@ function getValidValues(apiName, validValues) {
     xhttp.open('GET', 'api/' + apiName, true);
     xhttp.onreadystatechange = function () {
         if (this.readyState == 4 && this.status === 200) {
-            //validValues.push({ ID: '', Name: 'select' });
             for (item of JSON.parse(this.responseText)) {
                 validValues.push({ ID: item.ID, Name: item.Name });
             }
@@ -47,14 +46,22 @@ Date.prototype.addDays = function (days) {
 }
 String.prototype.toDateInputFormat = function () {
     let dateParts = this.valueOf().split('/');
-    return dateParts[2] + '-' + dateParts[0] + '-' + dateParts[1];
+    return dateParts[2] + '-' + dateParts[0].padStart(2, '0') + '-' + dateParts[1].padStart(2, '0');
 }
 Date.prototype.toLocaleDateTime = function () {
     var date = new Date(this.valueOf());
     date.setTime(this.getTime() - (this.getTimezoneOffset() * 60 * 1000));
     return date;
 }
-Date.prototype.toFormatForDateTimeInput = function () {  //Extend the native Date prototype to return the ISO format for a date that is offset for local timezone
+Date.prototype.toFormatForDateInput = function () {
+    var dateString = this.getFullYear().toString();
+    dateString += '-';
+    dateString += (this.getMonth() + 1).toString().padStart(2, '0');
+    dateString += '-';
+    dateString += this.getDate().toString().padStart(2, '0');
+    return dateString;
+}
+Date.prototype.toFormatForDateTimeInput = function () { 
     var dateString = this.getFullYear().toString();
     dateString += '-';
     dateString += (this.getMonth() + 1).toString().padStart(2, '0');

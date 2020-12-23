@@ -7,13 +7,15 @@
         loadView(window.location.href);
     }
     //Init SPA behavior
-    let navLinks = document.querySelectorAll('a.topNavLink, a.topNavLogo');
+    let navLinks = document.querySelectorAll('a.topNavLink');
     for (var i = 0; i < navLinks.length; i++) {
-        navLinks[i].addEventListener('click', function (event) {
-            event.preventDefault();
-            loadView(this.href);
-            document.querySelector('.topNav').classList.remove('responsive'); //Collapse the navbar after clicking a link.  This applies only to mobile / small screen view
-        });
+        if (navLinks[i].classList.contains('topNavIcon') === false) {
+            navLinks[i].addEventListener('click', function (event) {
+                event.preventDefault();
+                loadView(this.href);
+                document.querySelector('.topNav').classList.remove('responsive'); //Collapse the navbar after clicking a link.  This applies only to mobile / small screen view
+            });
+        }       
     }
 });
 function topNavToggle() {
