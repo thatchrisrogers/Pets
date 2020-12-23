@@ -45,14 +45,28 @@ Date.prototype.addDays = function (days) {
     date.setDate(date.getDate() + days);
     return date;
 }
-Date.prototype.toISOLocaleString = function () {  //Extend the native Date prototype to return the ISO format for a date that is offset for local timezone
-    return new Date(this.getTime() - (this.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+String.prototype.toDateInputFormat = function () {
+    let dateParts = this.valueOf().split('/');
+    return dateParts[2] + '-' + dateParts[0] + '-' + dateParts[1];
 }
-Date.prototype.toLocaleDate = function () {
+Date.prototype.toLocaleDateTime = function () {
     var date = new Date(this.valueOf());
-    date.setTime(this.getTime() + (this.getTimezoneOffset() * 60 * 1000));
+    date.setTime(this.getTime() - (this.getTimezoneOffset() * 60 * 1000));
     return date;
 }
+Date.prototype.toFormatForDateTimeInput = function () {  //Extend the native Date prototype to return the ISO format for a date that is offset for local timezone
+    var dateString = this.getFullYear().toString();
+    dateString += '-';
+    dateString += (this.getMonth() + 1).toString().padStart(2, '0');
+    dateString += '-';
+    dateString += this.getDate().toString().padStart(2, '0');
+    dateString += 'T';
+    dateString += this.getHours().toString().padStart(2, '0');
+    dateString += ':';
+    dateString += this.getMinutes().toString().padStart(2, '0');
+    return dateString;
+}
+
 Date.prototype.toWeekday = function () {
     let weekday = new Array(7);
     weekday[0] = "Sunday";

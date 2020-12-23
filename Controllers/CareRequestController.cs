@@ -165,7 +165,7 @@ namespace Pets.Controllers
                 try
                 {
                     connection.Open();
-                    using (SqlCommand command = new SqlCommand("Select * From dbo.vwVisit Order By VisitDate, CustomerName", connection))
+                    using (SqlCommand command = new SqlCommand("Select * From dbo.vwVisit Order By VisitDateTime, CustomerName", connection))
                     {
                         using (SqlDataReader reader = command.ExecuteReader())
                         {
@@ -173,7 +173,7 @@ namespace Pets.Controllers
                             {
                                 visit = new CareVisit();
                                 visit.ID = ((int)reader["ID"]);
-                                visit.VisitDate = ((DateTime)reader["VisitDate"]);
+                                visit.VisitDateTime = ((DateTime)reader["VisitDateTime"]);
                                 visit.CustomerName = ((string)reader["CustomerName"]);
                                 visit.PetNames = ((string)reader["PetNames"]);
                                 visit.CareProviderName = ((string)reader["CareProviderName"]);
@@ -198,7 +198,7 @@ namespace Pets.Controllers
                 try
                 {
                     connection.Open();
-                    using (SqlCommand command = new SqlCommand("Select * From dbo.CareVisit Where CareRequestID = @careRequestID Order By VisitDate;", connection))
+                    using (SqlCommand command = new SqlCommand("Select * From dbo.CareVisit Where CareRequestID = @careRequestID Order By VisitDateTime;", connection))
                     {
                         command.Parameters.AddWithValue("careRequestID", careRequestID);
                         using (SqlDataReader reader = command.ExecuteReader())
@@ -208,7 +208,7 @@ namespace Pets.Controllers
                                 visit = new CareVisit();
                                 visit.ID = ((int)reader["ID"]);
                                 visit.CareProviderID = ((int)reader["CareProviderID"]);
-                                visit.VisitDate = ((DateTime)reader["VisitDate"]);
+                                visit.VisitDateTime = ((DateTime)reader["VisitDateTime"]);
                                 visit.Tasks = CareVisitTaskController.GetList((int)visit.ID);
                                 visits.Add(visit);
                             }
@@ -236,16 +236,16 @@ namespace Pets.Controllers
                     command.Transaction = transaction;
                     command.Parameters.AddWithValue("CareRequestID", careRequestID);
                     command.Parameters.AddWithValue("CareProviderID", visit.CareProviderID);
-                    command.Parameters.AddWithValue("VisitDate", visit.VisitDate);
+                    command.Parameters.AddWithValue("VisitDateTime", visit.VisitDateTime);
                     if (visit.ID == null)
                     {
-                        command.CommandText = "Insert Into dbo.CareVisit (CareRequestID, CareProviderID, VisitDate) OUTPUT Inserted.ID Values (@CareRequestID, @CareProviderID, @VisitDate); ";
+                        command.CommandText = "Insert Into dbo.CareVisit (CareRequestID, CareProviderID, VisitDateTime) OUTPUT Inserted.ID Values (@CareRequestID, @CareProviderID, @VisitDateTime); ";
                         visit.ID = (int)command.ExecuteScalar();
                     }
                     else
                     {
                         command.Parameters.AddWithValue("ID", visit.ID);
-                        command.CommandText = "Update dbo.CareVisit Set CareRequestID = @CareRequestID, CareProviderID = @CareProviderID, VisitDate = @VisitDate Where ID = @ID;";
+                        command.CommandText = "Update dbo.CareVisit Set CareRequestID = @CareRequestID, CareProviderID = @CareProviderID, VisitDateTime = @VisitDateTime Where ID = @ID;";
                         command.ExecuteNonQuery();
                     }
                     visitIDs.Rows.Add(visit.ID);

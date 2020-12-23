@@ -28,8 +28,8 @@ function initCareRequestForm(id, startDate) {
             careRequest.ID = undefined;
             careRequest.StartDate = startDate;
             careRequest.EndDate = new Date(startDate.addDays(1));
-            document.getElementById('StartDate').value = careRequest.StartDate.toISOString().split('T')[0]; 
-            document.getElementById('EndDate').value = careRequest.EndDate.toISOString().split('T')[0]; 
+            document.getElementById('StartDate').value = careRequest.StartDate.toLocaleDateString().toDateInputFormat(); 
+            document.getElementById('EndDate').value = careRequest.EndDate.toLocaleDateString().toDateInputFormat(); 
         }
     }
     else {
@@ -111,21 +111,21 @@ function initCareVisits(callBackFunction) {
             uniquePreferredTimes.push(petTask.PreferredTime);
         }
     }
-    let careVisitDate = new Date(careRequestForm.StartDate.value).toLocaleDate();
-    let careVisitEndDate = new Date(careRequestForm.EndDate.value).toLocaleDate();
-    careVisitEndDate.setHours(23);
-    careVisitEndDate.setMinutes(59);
+    let dateParts = careRequestForm.StartDate.value.split('-');
+    let careVisitDateTime = new Date(parseInt(dateParts[0]), parseInt(dateParts[1]) - 1, parseInt(dateParts[2]),0 ,0 ,0);
+    dateParts = careRequestForm.EndDate.value.split('-');
+    let careVisitEndDate = new Date(parseInt(dateParts[0]), parseInt(dateParts[1]) - 1, parseInt(dateParts[2]), 23, 59, 59);
     do {
-        //Create a careVisit object for each date + preferredTime (VisitDate) combo   
+        //Create a careVisit object for each date + preferredTime (VisitDateTime) combo   
         for (uniquePreferredTime of uniquePreferredTimes) {
-            careVisitDate.setHours(uniquePreferredTime.split(':')[0]);
-            careVisitDate.setMinutes(uniquePreferredTime.split(':')[1]);
-            careVisit = { CareRequestID: careRequest.ID, VisitDate: new Date(careVisitDate), CareProviderID: 1 };
+            careVisitDateTime.setHours(uniquePreferredTime.split(':')[0]);
+            careVisitDateTime.setMinutes(uniquePreferredTime.split(':')[1]);
+            careVisit = { CareRequestID: careRequest.ID, VisitDateTime: new Date(careVisitDateTime), CareProviderID: 1 };  //The date has is correct at this point in the init scenario
             careVisit.Tasks = petTasks.filter(item => item.PreferredTime.substring(0, 5) === uniquePreferredTime.substring(0, 5));
             careVisits.push(careVisit);
         }
-        careVisitDate.setDate(careVisitDate.getDate() + 1);
-    } while (careVisitDate <= careVisitEndDate)
+        careVisitDateTime.setDate(careVisitDateTime.getDate() + 1);
+    } while (careVisitDateTime <= careVisitEndDate)
     callBackFunction();
 }
 function loadCareVisitTable() {
@@ -166,18 +166,23 @@ function addCareVisitRow(visit) {
 
     let weekdayLabel = document.createElement('label');
     weekdayLabel.name = 'VisitDayOfWeek';
-    weekdayLabel.innerHTML = (visit !== undefined ? new Date(visit.VisitDate).toWeekday() + ', ' : ''); 
+    weekdayLabel.innerHTML = (visit !== undefined ? visit.VisitDateTime.toWeekday() + ', ' : ''); 
     visitTableRow.cells[cellIndex].appendChild(weekdayLabel);
 
-    let visitDateElement = addElementToTableRow('VisitDate', 'input', 'datetime-local', 'userInput', true, undefined, (visit !== undefined ? new Date(visit.VisitDate).toISOLocaleString() : undefined), cellIndex, visitTableRow);
-    visitDateElement.min = careRequestForm.StartDate.value + 'T00:00:00';
-    visitDateElement.max = careRequestForm.EndDate.value + 'T23:59:59';
-    visitDateElement.oninput = function () {
+    let visitDateTimeElement = addElementToTableRow('VisitDateTime', 'input', 'datetime-local', 'userInput', true, undefined, (visit !== undefined ? visit.VisitDateTime.toFormatForDateTimeInput() : undefined), cellIndex, visitTableRow);
+    visitDateTimeElement.min = careRequestForm.StartDate.value + 'T00:00:00';
+    visitDateTimeElement.max = careRequestForm.EndDate.value + 'T23:59:59';
+    //visitDateTimeElement.onfocus = function () {
+    //    if (this.value === '') {
+    //        this.value = '2020-12-22T00:00:00';
+    //    }
+    //}
+    visitDateTimeElement.oninput = function () {
             this.previousSibling.innerHTML = new Date(this.value).toWeekday() + ', ';
     }
-    visitDateElement.onchange = function () {
-        let visitDateElementThatChanged = this;
-        if (visitDateElementThatChanged.required) {
+    visitDateTimeElement.onchange = function () {
+        let visitDateTimeElementThatChanged = this;
+        if (visitDateTimeElementThatChanged.required) {
             getCareVisitsFromPage(false, loadCareVisitTable);
         }
         else {
@@ -185,9 +190,9 @@ function addCareVisitRow(visit) {
         }
         
         //find the row that was moved so the user can easily find it after table reloads
-        for (visitDateElement of document.querySelectorAll('[name=VisitDate]')) {
-            if (visitDateElement.value === visitDateElementThatChanged.value) {
-                let elementParentRow = visitDateElement.closest('.parentRow');
+        for (visitDateTimeElement of document.querySelectorAll('[name=VisitDateTime]')) {
+            if (visitDateTimeElement.value === visitDateTimeElementThatChanged.value) {
+                let elementParentRow = visitDateTimeElement.closest('.parentRow');
                 let elementSiblingRow = elementParentRow.nextElementSibling;
                 //tableRowChanged(elementSiblingRow, function () { });
                 elementParentRow.classList.add('messageSuccess');
@@ -229,7 +234,7 @@ function getCareVisitsFromPage(includeIncompleteVisits, callBackFunction) {
         if (parentRow.querySelectorAll(".userInput[required]").length > 0 || includeIncompleteVisits) { //If row has required elements, then user has input values.  Let the required attribute handle data validation
             careVisit = {};
             careVisit.ID = parentRow.querySelector('[name=VisitID]').value;
-            careVisit.VisitDate = parentRow.querySelector('[name=VisitDate]').value;
+            careVisit.VisitDateTime = new Date(parentRow.querySelector('[name=VisitDateTime]').value).toUTCString();
             careVisit.CareProviderID = parentRow.querySelector('[name=CareProvider]').value;
 
             careVisitTasks = [];
@@ -250,7 +255,7 @@ function getCareVisitsFromPage(includeIncompleteVisits, callBackFunction) {
         }
     }
     careVisits = careVisits.sort(function (a, b) {
-        return (a['VisitDate'] > b['VisitDate']) ? 1 : ((a['VisitDate'] < b['VisitDate']) ? -1 : 0);
+        return (a['VisitDateTime'] > b['VisitDateTime']) ? 1 : ((a['VisitDateTime'] < b['VisitDateTime']) ? -1 : 0);
     });
     if (callBackFunction !== undefined) {
         callBackFunction();
@@ -318,6 +323,9 @@ function getCareRequest(careRequestID, callBackFunction) {
         if (this.readyState == 4) {
             if (this.status === 200) {
                 careRequest = JSON.parse(this.responseText);
+                for (visit of careRequest.Visits) { //Convert from GMT string to Date object based on user's browser
+                    visit.VisitDateTime = new Date(visit.VisitDateTime).toLocaleDateTime();    
+                }
                 callBackFunction();
             }
             else {

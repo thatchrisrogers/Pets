@@ -16,7 +16,7 @@ namespace Pets.Models
         public int CareRequestID { get; set; }
         public int CareProviderID { get; set; }
         public string CareProviderName { get; set; }
-        public DateTime VisitDate { get; set; }
+        public DateTime VisitDateTime { get; set; }
         public List<CareVisitTask> Tasks { get; set; }
         public string CustomerName { get; set; }
         public string PetNames { get; set; }

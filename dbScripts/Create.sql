@@ -70,7 +70,7 @@ Create Table dbo.CareVisit(
 	ID Int Identity(1,1) Primary Key Not Null
 	,CareRequestID Int Not Null
 	,CareProviderID Int Not Null
-	,VisitDate DateTime Not Null
+	,VisitDateTimeTime DateTime Not Null
 )
 Alter Table dbo.CareVisit Add Constraint FK_CareVisit_CareRequest Foreign Key(CareRequestID) References dbo.CareRequest(ID) On Delete Cascade
 Alter Table dbo.CareVisit Add Constraint FK_CareVisit_CareProvider Foreign Key(CareProviderID) References dbo.CareProvider(ID)
@@ -108,7 +108,7 @@ Create View dbo.vwVisit
 As
 Select 
 visit.ID
-,visit.VisitDate 
+,visit.VisitDateTimeTime 
 ,customer.Name As CustomerName
 ,STRING_AGG(pet.PetName, ', ') WITHIN GROUP (ORDER BY pet.PetName ASC) AS PetNames
 ,provider.Name As CareProviderName
@@ -123,7 +123,7 @@ Inner Join (
 Inner Join dbo.CareProvider provider On visit.CareProviderID = provider.ID
 Group By 
 visit.ID
-,visit.VisitDate 
+,visit.VisitDateTimeTime 
 ,customer.Name
 ,provider.Name
 Go

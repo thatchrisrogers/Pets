@@ -20,7 +20,7 @@ function createCareVisitTable() {
         element.name = 'CareVisitID';
         element.value = careVisit.ID;
         element = document.createElement('label');
-        element.innerHTML = careVisit.VisitDate;
+        element.innerHTML = careVisit.VisitDateTime;
         tableCell.appendChild(element);
         tableCell = careVisitTableRow.insertCell(1);
         element = document.createElement('label');
