@@ -14,11 +14,10 @@ namespace Pets.Models
     {
         public int? ID { get; set; }
         public int CareRequestID { get; set; }
-        public int CareProviderID { get; set; }
-        public string CareProviderName { get; set; }
+        public CareProvider CareProvider { get; set; }
         public DateTime VisitDateTime { get; set; }
         public List<CareVisitTask> Tasks { get; set; }
-        public string CustomerName { get; set; }
+        public Customer Customer { get; set; }
         public string PetNames { get; set; }
     }
     public class CareVisitTask

@@ -165,7 +165,7 @@ namespace Pets.Controllers
                 try
                 {
                     connection.Open();
-                    using (SqlCommand command = new SqlCommand("Select * From dbo.vwVisit Order By VisitDateTime, CustomerName", connection))
+                    using (SqlCommand command = new SqlCommand("Select * From dbo.vwCareVisits Order By VisitDateTime, CustomerName", connection))
                     {
                         using (SqlDataReader reader = command.ExecuteReader())
                         {
@@ -174,9 +174,9 @@ namespace Pets.Controllers
                                 visit = new CareVisit();
                                 visit.ID = ((int)reader["ID"]);
                                 visit.VisitDateTime = ((DateTime)reader["VisitDateTime"]);
-                                visit.CustomerName = ((string)reader["CustomerName"]);
+                                visit.Customer = new Customer((string)reader["CustomerName"]);
                                 visit.PetNames = ((string)reader["PetNames"]);
-                                visit.CareProviderName = ((string)reader["CareProviderName"]);
+                                visit.CareProvider = new CareProvider((string)reader["CareProviderName"]);
                                 visits.Add(visit);
                             }
                         }
@@ -188,6 +188,39 @@ namespace Pets.Controllers
                 }
             }
             return visits;
+        }
+        [HttpGet]
+        public CareVisit Get(int id)
+        {
+            CareVisit visit = new CareVisit();
+            using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["Pets"].ConnectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    using (SqlCommand command = new SqlCommand("Select * From dbo.vwCareVisit Where ID = @id", connection))
+                    {
+                        command.Parameters.AddWithValue("id", id);
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            if (reader.HasRows)
+                            {
+                                reader.Read();
+                                visit.ID = ((int)reader["ID"]);
+                                visit.VisitDateTime = ((DateTime)reader["VisitDateTime"]);
+                                visit.Customer = new Customer((int)reader["CustomerID"], (string)reader["CustomerName"]);
+                                visit.CareProvider = new CareProvider((int)reader["CareProviderID"], (string)reader["CareProviderName"]);
+                            }
+                        }
+                    }
+                    visit.Tasks = CareVisitTaskController.GetList(id);
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.Message);
+                }
+            }
+            return visit;
         }
         internal static List<CareVisit> GetList(int careRequestID)
         {
@@ -207,7 +240,7 @@ namespace Pets.Controllers
                             {
                                 visit = new CareVisit();
                                 visit.ID = ((int)reader["ID"]);
-                                visit.CareProviderID = ((int)reader["CareProviderID"]);
+                                visit.CareProvider = new CareProvider((int)reader["CareProviderID"]);
                                 visit.VisitDateTime = ((DateTime)reader["VisitDateTime"]);
                                 visit.Tasks = CareVisitTaskController.GetList((int)visit.ID);
                                 visits.Add(visit);
@@ -235,7 +268,7 @@ namespace Pets.Controllers
                     command.Connection = connection;
                     command.Transaction = transaction;
                     command.Parameters.AddWithValue("CareRequestID", careRequestID);
-                    command.Parameters.AddWithValue("CareProviderID", visit.CareProviderID);
+                    command.Parameters.AddWithValue("CareProviderID", visit.CareProvider.ID);
                     command.Parameters.AddWithValue("VisitDateTime", visit.VisitDateTime);
                     if (visit.ID == null)
                     {

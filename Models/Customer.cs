@@ -22,5 +22,9 @@ namespace Pets.Models
             ID = id;
             Name = name;
         }
+        public Customer(string name)
+        {
+            Name = name;
+        }
     }
 }

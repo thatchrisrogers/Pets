@@ -1,5 +1,5 @@
 ﻿<table id="CareVisitTable" class="selecTable">
-    <thead>      
+    <thead>
         <tr>
             <th onclick="sortCustomers('VisitDateTime');" class="stickyHeader">Visit Date</th>
             <th onclick="sortCustomers('CustomerName');" class="stickyHeader">Customer</th>
@@ -9,3 +9,40 @@
     </thead>
     <tbody></tbody>
 </table>
+<form class="overlay" id="CareVisitForm">
+    <div class="modalContent">
+        <button type="button" class="modalClose" onclick="closeCareVisitForm();">&times;</button>
+        <div class="gridWith2Columns">
+            <div class="gridLabelColumn"><label>Name:</label></div>
+            <div class="gridInputColumn">
+                <label id="CustomerName" />
+            </div>
+            <div class="gridLabelColumn">
+                <label>Address:</label>
+            </div>
+            <div class="gridInputColumn">
+                <label id="Address" />
+            </div>
+        </div>
+        <div>
+            <table id="TaskTable">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Complete?</th>
+                        <th>PetName</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+                <tfoot>
+                    <tr></tr>
+                </tfoot>
+            </table>
+        </div>
+        <div>
+            <input type="submit" id="Save" value="Save" />
+            <input type="submit" id="SaveAndClose" value="Save & Close" />
+        </div>
+    </div>
+</form>

@@ -1,6 +1,7 @@
 Use Pets
 
-Drop View If Exists dbo.vwVisit
+Drop View If Exists dbo.vwCareVisit
+Drop View If Exists dbo.vwCareVisits
 Drop View If Exists dbo.vwCustomer
 Drop View If Exists dbo.vwCareRequest
 Drop Table If Exists dbo.CareVisitTask
@@ -104,11 +105,11 @@ Left Join dbo.Pet pet On customer.ID = pet.CustomerID
 Group By customer.ID, customer.Name, customer.Address, customer.Email
 Go
 
-Create View dbo.vwVisit
+Create View dbo.vwCareVisits
 As
 Select 
 visit.ID
-,visit.VisitDateTimeTime 
+,visit.VisitDateTime 
 ,customer.Name As CustomerName
 ,STRING_AGG(pet.PetName, ', ') WITHIN GROUP (ORDER BY pet.PetName ASC) AS PetNames
 ,provider.Name As CareProviderName
@@ -123,10 +124,26 @@ Inner Join (
 Inner Join dbo.CareProvider provider On visit.CareProviderID = provider.ID
 Group By 
 visit.ID
-,visit.VisitDateTimeTime 
+,visit.VisitDateTime
 ,customer.Name
 ,provider.Name
 Go
+
+Create View dbo.vwCareVisit
+As
+Select 
+visit.ID
+,visit.VisitDateTime 
+,customer.ID As CustomerID
+,customer.Name As CustomerName
+,provider.ID As CareProviderID
+,provider.Name As CareProviderName
+From dbo.CareVisit visit
+Inner Join dbo.CareRequest request On visit.CareRequestID = request.ID
+Inner Join dbo.Customer customer On request.CustomerID = customer.ID
+Inner Join dbo.CareProvider provider On visit.CareProviderID = provider.ID
+Go
+
 
 Drop Type If Exists dbo.typeID
 Go

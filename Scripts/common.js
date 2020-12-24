@@ -73,7 +73,12 @@ Date.prototype.toFormatForDateTimeInput = function () {
     dateString += this.getMinutes().toString().padStart(2, '0');
     return dateString;
 }
-
+Date.prototype.toDisplayFormat = function () {
+    let dateParts = this.toString().split(' '); //Thu Dec 24 2020 11:03:26 GMT-0500 (Eastern Standard Time)
+    let timeParts = this.toLocaleString().split(', ')[1].split(' ')[0].split(':'); //12/24/2020, 10:47:13 AM
+    let meridian = this.toLocaleString().split(', ')[1].split(' ')[1];
+    return dateParts[0] + ' ' + dateParts[1] + ' ' + dateParts[2] + ' ' + timeParts[0] + ':' + timeParts[1] + ' ' + meridian;
+}
 Date.prototype.toWeekday = function () {
     let weekday = new Array(7);
     weekday[0] = "Sunday";

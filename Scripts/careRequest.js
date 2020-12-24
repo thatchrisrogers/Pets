@@ -120,7 +120,8 @@ function initCareVisits(callBackFunction) {
         for (uniquePreferredTime of uniquePreferredTimes) {
             careVisitDateTime.setHours(uniquePreferredTime.split(':')[0]);
             careVisitDateTime.setMinutes(uniquePreferredTime.split(':')[1]);
-            careVisit = { CareRequestID: careRequest.ID, VisitDateTime: new Date(careVisitDateTime), CareProviderID: 1 };  //The date has is correct at this point in the init scenario
+            careVisit = { CareRequestID: careRequest.ID, VisitDateTime: new Date(careVisitDateTime)}; 
+            careVisit.CareProvider = { ID: 1 };
             careVisit.Tasks = petTasks.filter(item => item.PreferredTime.substring(0, 5) === uniquePreferredTime.substring(0, 5));
             careVisits.push(careVisit);
         }
@@ -206,7 +207,7 @@ function addCareVisitRow(visit) {
     }
 
     visitTableRow.insertCell(cellIndex += 1);
-    addElementToTableRow('CareProvider', 'select', undefined, 'userInput', true, careProviderListItems, (visit !== undefined ? visit.CareProviderID : undefined), cellIndex, visitTableRow);
+    addElementToTableRow('CareProvider', 'select', undefined, 'userInput', true, careProviderListItems, (visit !== undefined ? visit.CareProvider.ID : undefined), cellIndex, visitTableRow);
 
     //Tasks
     loadCareVisitTaskTable(visit, careVisitTableBody);
@@ -234,8 +235,8 @@ function getCareVisitsFromPage(includeIncompleteVisits, callBackFunction) {
         if (parentRow.querySelectorAll(".userInput[required]").length > 0 || includeIncompleteVisits) { //If row has required elements, then user has input values.  Let the required attribute handle data validation
             careVisit = {};
             careVisit.ID = parentRow.querySelector('[name=VisitID]').value;
-            careVisit.VisitDateTime = new Date(parentRow.querySelector('[name=VisitDateTime]').value).toUTCString();
-            careVisit.CareProviderID = parentRow.querySelector('[name=CareProvider]').value;
+            careVisit.VisitDateTime = new Date(parentRow.querySelector('[name=VisitDateTime]').value);
+            careVisit.CareProvider = { ID: parentRow.querySelector('[name=CareProvider]').value };
 
             careVisitTasks = [];
             let childTableContainerRow = parentRow.nextSibling;
@@ -279,6 +280,9 @@ function saveCareRequest() {
                 displaySuccess('Care Request saved');
                 if (document.activeElement.id === 'Save') {
                     careRequest = JSON.parse(this.responseText);
+                    for (visit of careRequest.Visits) { //Convert from GMT string to Date object based on user's browser
+                        visit.VisitDateTime = new Date(visit.VisitDateTime).toLocaleDateTime();
+                    }
                     loadCareRequest();
                 }
                 else if (document.activeElement.id === 'SaveAndClose') {
