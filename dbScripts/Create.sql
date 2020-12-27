@@ -1,5 +1,6 @@
-Use Pets
+Use PetsDB
 
+Drop View If Exists dbo.vwCareVisitTask
 Drop View If Exists dbo.vwCareVisit
 Drop View If Exists dbo.vwCareVisits
 Drop View If Exists dbo.vwCustomer
@@ -71,7 +72,10 @@ Create Table dbo.CareVisit(
 	ID Int Identity(1,1) Primary Key Not Null
 	,CareRequestID Int Not Null
 	,CareProviderID Int Not Null
-	,VisitDateTimeTime DateTime Not Null
+	,VisitDateTime DateTime Not Null
+	,IsComplete Bit Not Null Default 0
+	,CompletedByCareProviderID Int Null
+	,DateCompleted DateTime Null
 )
 Alter Table dbo.CareVisit Add Constraint FK_CareVisit_CareRequest Foreign Key(CareRequestID) References dbo.CareRequest(ID) On Delete Cascade
 Alter Table dbo.CareVisit Add Constraint FK_CareVisit_CareProvider Foreign Key(CareProviderID) References dbo.CareProvider(ID)
@@ -142,6 +146,12 @@ From dbo.CareVisit visit
 Inner Join dbo.CareRequest request On visit.CareRequestID = request.ID
 Inner Join dbo.Customer customer On request.CustomerID = customer.ID
 Inner Join dbo.CareProvider provider On visit.CareProviderID = provider.ID
+Go
+
+Create View dbo.vwCareVisitTask
+As
+Select task.*, pet.Name As PetName From dbo.CareVisitTask task 
+Inner Join dbo.Pet pet On task.PetID = pet.ID
 Go
 
 

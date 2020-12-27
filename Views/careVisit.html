@@ -13,22 +13,17 @@
     <div class="modalContent">
         <button type="button" class="modalClose" onclick="closeCareVisitForm();">&times;</button>
         <div class="gridWith2Columns">
+            <div class="gridLabelColumn"><label>Visit Date:</label></div>
+            <div class="gridInputColumn"><label id="VisitDateTime" /></div>
             <div class="gridLabelColumn"><label>Name:</label></div>
-            <div class="gridInputColumn">
-                <label id="CustomerName" />
-            </div>
-            <div class="gridLabelColumn">
-                <label>Address:</label>
-            </div>
-            <div class="gridInputColumn">
-                <label id="Address" />
-            </div>
+            <div class="gridInputColumn"><label id="CustomerName" /></div>
+            <div class="gridLabelColumn"><label>Address:</label></div>
+            <div class="gridInputColumn"><label id="Address" /></div>
         </div>
         <div>
             <table id="TaskTable">
                 <thead>
                     <tr>
-                        <th></th>
                         <th>Complete?</th>
                         <th>PetName</th>
                         <th>Description</th>
@@ -41,8 +36,7 @@
             </table>
         </div>
         <div>
-            <input type="submit" id="Save" value="Save" />
-            <input type="submit" id="SaveAndClose" value="Save & Close" />
+            <input type='submit' id="SendEmail" value="Complete Visit and Email Customer" style="display:none;" />
         </div>
     </div>
 </form>

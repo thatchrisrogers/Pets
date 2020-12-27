@@ -18,13 +18,12 @@ namespace Pets.Models
         public DateTime VisitDateTime { get; set; }
         public List<CareVisitTask> Tasks { get; set; }
         public Customer Customer { get; set; }
-        public string PetNames { get; set; }
+        public string PetNames { get; set; }      
     }
     public class CareVisitTask
     {
         public int? ID { get; set; }
-        public int CareVisitID { get; set; }
-        public int PetID { get; set; }
+        public Pet Pet { get; set; }
         public string Description { get; set; }
         public bool IsComplete { get; set; }
         public int? CompletedByCareProviderID { get; set; }

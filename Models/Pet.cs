@@ -10,6 +10,17 @@ namespace Pets.Models
         public string Name { get; set; }
         public string Description { get; set; }
         public List<PetTask> Tasks { get; set; }
+
+        public Pet() { }
+        public Pet(int? id)
+        {
+            ID = id;
+        }
+        public Pet(int id, string name)
+        {
+            ID = id;
+            Name = name;
+        }
     }
     public class PetType
     {

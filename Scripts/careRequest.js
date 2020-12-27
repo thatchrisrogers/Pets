@@ -219,7 +219,7 @@ function addCareVisitTaskRow(task, taskBody) {
     taskRow.insertCell(cellIndex);
     addElementToTableRow('TaskID', 'input', 'hidden', undefined, false, undefined, (task !== undefined ? task.ID : undefined), cellIndex, taskRow);
     taskRow.insertCell(cellIndex += 1);
-    addElementToTableRow('Pet', 'select', undefined, 'userInput', true, customer.Pets, (task !== undefined ? task.PetID : undefined), cellIndex, taskRow).oninput = function () { taskTableRowChanged(taskRow); } 
+    addElementToTableRow('Pet', 'select', undefined, 'userInput', true, customer.Pets, (task !== undefined ? task.Pet.ID : undefined), cellIndex, taskRow).oninput = function () { taskTableRowChanged(taskRow); } 
     taskRow.insertCell(cellIndex += 1);
     addElementToTableRow('TaskDescription', 'input', 'text', 'userInput', true, undefined, (task !== undefined ? task.Description : undefined), cellIndex, taskRow).oninput = function () { taskTableRowChanged(taskRow); } 
     return taskRow;
@@ -245,7 +245,7 @@ function getCareVisitsFromPage(includeIncompleteVisits, callBackFunction) {
                     if (childRow.querySelector('[name=TaskDescription]').value.trim() !== '') {
                         careVisitTask = {};
                         careVisitTask.ID = childRow.querySelector('[name=TaskID]').value;
-                        careVisitTask.PetID = childRow.querySelector('[name=Pet]').value;
+                        careVisitTask.Pet = { ID: childRow.querySelector('[name=Pet]').value };
                         careVisitTask.Description = childRow.querySelector('[name=TaskDescription]').value.trim();
                         careVisitTasks.push(careVisitTask);
                     }

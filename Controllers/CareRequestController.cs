@@ -208,12 +208,12 @@ namespace Pets.Controllers
                                 reader.Read();
                                 visit.ID = ((int)reader["ID"]);
                                 visit.VisitDateTime = ((DateTime)reader["VisitDateTime"]);
-                                visit.Customer = new Customer((int)reader["CustomerID"], (string)reader["CustomerName"]);
                                 visit.CareProvider = new CareProvider((int)reader["CareProviderID"], (string)reader["CareProviderName"]);
+                                visit.Customer = CustomerController.FindByID((int)reader["CustomerID"]);
+                                visit.Tasks = CareVisitTaskController.GetList(id);
                             }
                         }
                     }
-                    visit.Tasks = CareVisitTaskController.GetList(id);
                 }
                 catch (Exception ex)
                 {
@@ -297,7 +297,7 @@ namespace Pets.Controllers
             }
         }
     }
-    public class CareVisitTaskController
+    public class CareVisitTaskController : ApiController
     {
         internal static List<CareVisitTask> GetList(int careVisitID)
         {
@@ -308,7 +308,7 @@ namespace Pets.Controllers
                 try
                 {
                     connection.Open();
-                    using (SqlCommand command = new SqlCommand("Select * From dbo.CareVisitTask Where CareVisitID = @careVisitID;", connection))
+                    using (SqlCommand command = new SqlCommand("Select * From dbo.vwCareVisitTask Where CareVisitID = @careVisitID Order By PetName;", connection))
                     {
                         command.Parameters.AddWithValue("careVisitID", careVisitID);
                         using (SqlDataReader reader = command.ExecuteReader())
@@ -317,8 +317,7 @@ namespace Pets.Controllers
                             {
                                 task = new CareVisitTask();
                                 task.ID = ((int)reader["ID"]);
-                                task.CareVisitID = ((int)reader["CareVisitID"]);
-                                task.PetID = ((int)reader["PetID"]);
+                                task.Pet = new Pet((int)reader["PetID"], (string)reader["PetName"]);
                                 task.Description = ((string)reader["Description"]);
                                 task.IsComplete = ((bool)reader["IsComplete"]);
                                 task.CompletedByCareProviderID = reader["CompletedByCareProviderID"] == DBNull.Value ? (int?)null : (int?)reader["CompletedByCareProviderID"];
@@ -352,7 +351,7 @@ namespace Pets.Controllers
                 {
                     visitTaskRow = visitTaskTable.NewRow();
                     visitTaskRow["ID"] = visitTask.ID;
-                    visitTaskRow["PetID"] = visitTask.PetID;
+                    visitTaskRow["PetID"] = visitTask.Pet.ID;
                     visitTaskRow["Description"] = visitTask.Description;
                     //visitTaskRow["IsComplete"] = visitTask.IsComplete;
                     //visitTaskRow["CompletedByCareProviderID"] = visitTask.CompletedByCareProviderID;
@@ -371,6 +370,27 @@ namespace Pets.Controllers
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
+            }
+        }
+        [HttpPost]
+        public void Post(CareVisitTask careVisitTask)
+        {
+            using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["Pets"].ConnectionString))
+            {
+                connection.Open();
+                try
+                {
+                    using (SqlCommand command = new SqlCommand("Update dbo.CareVisitTask Set IsComplete = @isComplete Where ID = @id;", connection))
+                    {
+                        command.Parameters.AddWithValue("id", careVisitTask.ID);
+                        command.Parameters.AddWithValue("isComplete", careVisitTask.IsComplete);
+                        command.ExecuteNonQuery();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.Message);
+                }
             }
         }
     }
