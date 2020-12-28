@@ -52,12 +52,13 @@ namespace Pets.Controllers
         public List<CareRequest> Get(int month, int year)
         {
             List<CareRequest> careRequests = new List<CareRequest>();
+            string sql = "Select * From dbo.vwCareRequest Where (Month(StartDate) = @month And Year(StartDate) = @year) Or (Month(EndDate) = @month And Year(EndDate) = @year) Order By StartDate;";
             using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["Pets"].ConnectionString))
             {
                 try
                 {
                     connection.Open();
-                    using (SqlCommand command = new SqlCommand("Select * From dbo.vwCareRequest Where Month(StartDate) = @month And Year(StartDate) = @year Order By StartDate", connection))
+                    using (SqlCommand command = new SqlCommand(sql, connection))
                     {
                         command.Parameters.AddWithValue("month", month);
                         command.Parameters.AddWithValue("year", year);

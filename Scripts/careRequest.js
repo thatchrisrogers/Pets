@@ -89,15 +89,15 @@ function loadCareRequest() {
 function initCareVisits(callBackFunction) {
     //This function is used to prime the CareVisitTable with predefined PetTasks.  Once primed, the Tasks can be edited to become the CareVisitTasks.  Basically, PetTasks are a template for CareVisitTasks
     careVisits = [];
-    let Pet = {};
+    let pet = {};
     let petTasks = [];
     petCheckboxes = document.getElementsByName('petCheckboxes');
     for (petCheckbox of petCheckboxes) {
         if (petCheckbox.checked) {
-            Pet = customer.Pets.find(item => item.ID === parseInt(petCheckbox.value));
+            pet = customer.Pets.find(item => item.ID === parseInt(petCheckbox.value));
             //petTasks.push.apply(petTasks, pet.Tasks);
             for (task of pet.Tasks) {
-                petTasks.push({ PreferredTime: task.PreferredTime, Pet, Description: task.Description });
+                petTasks.push({ PreferredTime: task.PreferredTime, Pet: pet, Description: task.Description });
             }         
         }     
     }

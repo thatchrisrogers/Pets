@@ -1,20 +1,20 @@
-﻿let today = new Date();
+﻿let todaysDate = new Date();  //ToDo - Adjust to browser timezone
 let months = [{ value: 1, text: "January" }, { value: 2, text: "February" }, { value: 3, text: "March" }, { value: 4, text: "April" }, { value: 5, text: "May" }, { value: 6, text: "June" }, { value: 7, text: "July" }, { value: 8, text: "August" }, { value: 9, text: "September" }, { value: 10, text: "October" }, { value: 11, text: "November" }, { value: 12, text: "December" } ];
 let selectMonth;
 let selectYear;
 let selectCustomer;
 
 function initCareCalendarView() {
-    let currentMonth = today.getMonth() + 1;
-    let currentYear = today.getFullYear();
+    let currentMonth = todaysDate.getMonth() + 1;
+    let currentYear = todaysDate.getFullYear();
     selectMonth = document.getElementById("selectMonth");
     selectYear = document.getElementById("selectYear");
 
     let optionMonth;
-    for (month of months) {
+    for (selectedMonth of months) {
         optionMonth = document.createElement("option");
-        optionMonth.value = month.value;
-        optionMonth.text = month.text;
+        optionMonth.value = selectedMonth.value;
+        optionMonth.text = selectedMonth.text;
         selectMonth.appendChild(optionMonth);
     }
     selectMonth.value = currentMonth;
@@ -48,28 +48,26 @@ function changeMonth(gotoMonth) {
     changeMonthYear();
 }
 function loadCalendar() {
-    let month = parseInt(selectMonth.value - 1);
-    let year = parseInt(selectYear.value);
-
-    let firstDayOfMonth = (new Date(year, month)).getDay();
-
+    let selectedMonth = parseInt(selectMonth.value - 1);
+    let selectedYear = parseInt(selectYear.value);
+    let firstDayOfMonth = (new Date(selectedYear, selectedMonth)).getDay();
     let calendarBody = document.getElementById("calendarBody");
     calendarBody.innerHTML = "";   // clearing all previous cells
-
     // creating all cells
     let dayOfMonth = 1;
-    let daysInMonth = 32 - new Date(year, month, 32).getDate();
-    let startDay;
-    let endDay;
+    let daysInMonth = 32 - new Date(selectedYear, selectedMonth, 32).getDate();
     let cell;
+    let requestStartDate;
+    let requestEndDate;
+    let iterativeDate;
     let pCustomerName, hiddenCareRequestId;
     let cellHeading;
 
-    for (let i = 0; i < 6; i++) {
+    for (let rowNum = 0; rowNum < 6; rowNum++) {
         // creates a table row
         let row = document.createElement("tr");
-        for (let j = 0; j < 7; j++) {
-            if (i === 0 && j < firstDayOfMonth) {
+        for (let cellNum = 0; cellNum < 7; cellNum++) {
+            if (rowNum === 0 && cellNum < firstDayOfMonth) {
                 cell = document.createElement("td");
                 row.appendChild(cell);
             }
@@ -92,14 +90,14 @@ function loadCalendar() {
                     }
                 }
                 cell.appendChild(cellHeading);
-
-                if (dayOfMonth === today.getDate() && year === today.getFullYear() && month === today.getMonth()) {
+                iterativeDate = new Date(selectedYear, selectedMonth, dayOfMonth);
+                if (iterativeDate === todaysDate) {
                     cell.classList.add("selected");
-                } 
+                }             
                 for (careRequest of careRequests) {
-                    startDay = new Date(careRequest.StartDate).getDate();
-                    endDay = new Date(careRequest.EndDate).getDate();
-                    if (dayOfMonth >= startDay && dayOfMonth <= endDay) {
+                    requestStartDate = new Date(careRequest.StartDate);
+                    requestEndDate = new Date(careRequest.EndDate);
+                    if (iterativeDate >= requestStartDate && iterativeDate <= requestEndDate) {
                         pCustomerName = document.createElement('p');
                         pCustomerName.classList.add('calendarEntry');
                         pCustomerName.innerHTML = careRequest.Customer.Name;
@@ -114,8 +112,7 @@ function loadCalendar() {
                         }
                         cell.appendChild(pCustomerName);
                     }
-                }
-                
+                }                
                 row.appendChild(cell);
                 dayOfMonth++;
             }
