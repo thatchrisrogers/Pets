@@ -91,20 +91,23 @@
     <Content Include="Scripts\customer.js" />
     <Content Include="Scripts\home.js" />
     <Content Include="Scripts\index.js" />
+    <Content Include="Scripts\login.js" />
     <Content Include="Styles\navigation.css" />
     <Content Include="Styles\site.css" />
-    <Content Include="Views\availability.html" />
     <Content Include="Views\careCalendar.html" />
     <Content Include="Views\careRequest.html" />
     <Content Include="Views\careVisit.html" />
     <Content Include="Views\customer.html" />
     <Content Include="Views\home.html" />
+    <Content Include="Views\splash.html" />
+    <Content Include="Views\login.html" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\CareProviderController.cs" />
     <Compile Include="Controllers\CareRequestController.cs" />
     <Compile Include="Controllers\CustomerController.cs" />
+    <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Controllers\PetController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -113,6 +116,7 @@
     <Compile Include="Models\CareRequest.cs" />
     <Compile Include="Models\Customer.cs" />
     <Compile Include="Models\Pet.cs" />
+    <Compile Include="Models\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

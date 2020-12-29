@@ -180,6 +180,5 @@ function sendEmail() {
     window.open('mailTo:' + careVisit.Customer.Email + '?cc=thatchrisrogers@gmail.com' + '&subject=Care Visit Complete' + '&body=' + emailBody);
 }
 function completeVisit(callBackFunction) {
-
     callBackFunction();
 }

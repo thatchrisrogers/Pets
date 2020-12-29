@@ -37,6 +37,9 @@ function loadView(href) {
                     break; 
                 case 'careCalendar':
                     initCareCalendarView();
+                    break;  
+                case 'login':
+                    initLoginView();
                     break;     
             }
             document.getElementById('Message').innerHTML = '';
