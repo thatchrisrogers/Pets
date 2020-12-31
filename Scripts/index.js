@@ -1,6 +1,4 @@
 ﻿window.addEventListener("load", function (e) {
-    initValidValues();
-
     if (window.location.href.split('?')[1] === undefined) { //If no query string parameters were passed...
         loadView('?view=home');
     } else {

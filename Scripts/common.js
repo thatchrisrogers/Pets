@@ -1,8 +1,4 @@
-﻿var customerListItems = [];
-var careProviderListItems = [];
-var petTypeListItems = [];
-
-function findQueryStringValueByKey(href, key) {
+﻿function findQueryStringValueByKey(href, key) {
     let queryString = href.split('?')[1];
     let queryStringParams = [];
     let keyValues = queryString.split('&');
@@ -16,19 +12,14 @@ function findQueryStringValueByKey(href, key) {
     }
     return null;
 }
-function initValidValues() {
-    getValidValues('customer', customerListItems);
-    getValidValues('careProvider', careProviderListItems);
-    getValidValues('petType', petTypeListItems);
-}
 function getValidValues(apiName, validValues) {
     let xhttp = new XMLHttpRequest();
-    xhttp.open('GET', 'api/' + apiName, true);
+    xhttp.open('GET', 'api/' + apiName + '?userName=' + person.UserName, true);
     xhttp.onreadystatechange = function () {
         if (this.readyState == 4 && this.status === 200) {
             for (item of JSON.parse(this.responseText)) {
                 validValues.push({ ID: item.ID, Name: item.Name });
-            }
+            }           
         }
     };
     xhttp.send();

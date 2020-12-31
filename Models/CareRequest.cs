@@ -26,7 +26,7 @@ namespace Pets.Models
         public Pet Pet { get; set; }
         public string Description { get; set; }
         public bool IsComplete { get; set; }
-        public int? CompletedByCareProviderID { get; set; }
+        public int? CompletedByPersonID { get; set; }
         public DateTime? DateCompleted { get; set; }
     }    
 }

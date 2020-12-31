@@ -1,38 +1,39 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Web.Http;
-using System.Data.SqlClient;
 using Pets.Models;
+using System.Data.SqlClient;
 using System.Configuration;
+using System.Collections.Generic;
 
 namespace Pets.Controllers
 {
-    public class CareProviderController : ApiController
+    public class BusinessController : ApiController
     {
         [HttpGet]
-        public List<CareProvider> Get()
+        public List<Business> Get(string userName)
         {
-            List<CareProvider> careProviders = new List<CareProvider>();
-            CareProvider careProvider;
+            List<Business> businesses = new List<Business>();
+            Business business;
             using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["Pets"].ConnectionString))
             {
                 try
                 {
                     connection.Open();
-                    using (SqlCommand command = new SqlCommand("Select * From dbo.CareProvider Order By Name;", connection))
+                    using (SqlCommand command = new SqlCommand("Select * From dbo.GetBusinessesForUserName(@userName);", connection))
                     {
+                        command.Parameters.AddWithValue("userName", userName);
                         using (SqlDataReader reader = command.ExecuteReader())
                         {
                             while (reader.Read())
                             {
-                                careProvider = new CareProvider();
-                                careProvider.ID = ((int)reader["ID"]);
-                                careProvider.Name = ((string)reader["Name"]);
-                                careProviders.Add(careProvider);
+                                business = new Business();
+                                business.ID = ((int)reader["ID"]);
+                                business.Name = ((string)reader["Name"]);
+                                businesses.Add(business);
                             }
                         }
                     }
-                    return careProviders;
+                    return businesses;
                 }
                 catch (Exception ex)
                 {

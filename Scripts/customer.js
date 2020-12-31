@@ -48,9 +48,11 @@ function createCustomerTable() {
 function displayCustomerForm() {
     try {
         let customerForm = document.forms.namedItem("CustomerForm");
+        loadSelectElement(customerForm.Business, businessListItems);
         let petTable = document.getElementById("PetTable");
         if (customer !== null) {
             customerID = customer.ID;
+            customerForm.Business.value = customer.Business.ID;
             customerForm.CustomerName.value = customer.Name;
             customerForm.Address.value = customer.Address;
             customerForm.Email.value = customer.Email;
@@ -147,7 +149,7 @@ function petTaskRowChanged(petTaskRow) {
 function getCustomers(callBackFunction, refresh) {
     if (customers === undefined || refresh) {
         let xhttp = new XMLHttpRequest();
-        xhttp.open('GET', 'api/customer', true);
+        xhttp.open('GET', 'api/customer?userName=' + person.UserName, true);
         xhttp.onreadystatechange = function () {
             if (this.readyState == 4 ) {            
                 if (this.status === 200) {
@@ -192,6 +194,7 @@ function saveCustomer() {
     let formData = document.getElementById('CustomerForm');
     customer = {};
     customer.ID = customerID;
+    customer.Business = { ID: formData.Business.value };
     customer.Name = formData.CustomerName.value;
     customer.Address = formData.Address.value;
     customer.Email = formData.Email.value;

@@ -162,7 +162,7 @@ namespace Pets.Controllers
     public class PetTypeController : ApiController
     {
         [HttpGet]
-        public List<PetType> Get()
+        public List<PetType> Get(string userName)
         {
             List<PetType> petTypes = new List<PetType>();
             using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["Pets"].ConnectionString))
@@ -172,6 +172,7 @@ namespace Pets.Controllers
                     connection.Open();
                     using (SqlCommand command = new SqlCommand("Select * From dbo.PetType Order By Name;", connection))
                     {
+                        //ToDo - Need to change to accept userName similar to the Get functions in CareProviderController and CustomerController classes
                         using (SqlDataReader reader = command.ExecuteReader())
                         {
                             while (reader.Read())

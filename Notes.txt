@@ -1,0 +1,29 @@
+dbo.Customer - limit to logged in user
+
+
+ dbo.CareProvider 
+CompletedByCareProviderID to CompletedByPersonID
+
+
+
+Kidwise
+block
+Job
+Repeating tasks/activity
+
+Care Types:
+Pet Care
+Lawn Care
+Car Care
+
+Allow selection of dropped pin to allow 1 mile radius.  The idea is that using a neighborhood kid is encouraged.  Do not store actual address of the kid
+
+
+https://bizkids.com/
+
+Person to Person
+Neighbor to Neighbor
+
+Network - Neighborhood entrepreneur
+
+

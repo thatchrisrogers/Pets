@@ -321,7 +321,7 @@ namespace Pets.Controllers
                                 task.Pet = new Pet((int)reader["PetID"], (string)reader["PetName"]);
                                 task.Description = ((string)reader["Description"]);
                                 task.IsComplete = ((bool)reader["IsComplete"]);
-                                task.CompletedByCareProviderID = reader["CompletedByCareProviderID"] == DBNull.Value ? (int?)null : (int?)reader["CompletedByCareProviderID"];
+                                task.CompletedByPersonID  = reader["CompletedByPersonID"] == DBNull.Value ? (int?)null : (int?)reader["CompletedByPersonID"];
                                 task.DateCompleted = reader["DateCompleted"] == DBNull.Value ? (DateTime?)null : (DateTime?)reader["DateCompleted"];
                                 tasks.Add(task);
                             }
@@ -345,7 +345,7 @@ namespace Pets.Controllers
                 visitTaskTable.Columns.Add("Description");
                 //Note - I do not think the following fields should be part of the Merge.  I think these will be updated differently after each Visit.
                 //visitTaskTable.Columns.Add("IsComplete");
-                //visitTaskTable.Columns.Add("CompletedByCareProviderID");
+                //visitTaskTable.Columns.Add("CompletedByPersonID");
                 //visitTaskTable.Columns.Add("DateCompleted");
                 DataRow visitTaskRow;
                 foreach (CareVisitTask visitTask in visitTasks)
@@ -355,7 +355,7 @@ namespace Pets.Controllers
                     visitTaskRow["PetID"] = visitTask.Pet.ID;
                     visitTaskRow["Description"] = visitTask.Description;
                     //visitTaskRow["IsComplete"] = visitTask.IsComplete;
-                    //visitTaskRow["CompletedByCareProviderID"] = visitTask.CompletedByCareProviderID;
+                    //visitTaskRow["CompletedByPersonID"] = visitTask.CompletedByPersonID ;
                     //visitTaskRow["DateCompleted"] = visitTask.DateCompleted;
                     visitTaskTable.Rows.Add(visitTaskRow);
                 }

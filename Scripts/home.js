@@ -1,6 +1,6 @@
 ﻿function initHomeView() {
     //If Lucy, then display upcoming Care Visits.  Build the If Lucy part later.   
-    if (user !== undefined) {
+    if (person !== undefined) {
         appendCareVisitView(initCareVisitView);
     } else {
         appendSplashView();

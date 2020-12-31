@@ -1,37 +1,49 @@
-﻿let user;
+﻿let person;
+let businessListItems = [];
+var customerListItems = [];
+var careProviderListItems = [];
+var petTypeListItems = [];
+
 function initLoginView() {
     document.getElementById('LoginForm').onsubmit = function (event) {
         event.preventDefault();
-        getUser(displaySecurePages);
+        getUser(initValidValues, displaySecurePages);
     };
 }
-function getUser(callBackFunction) {
+function getUser(callBackFunction1, callBackFunction2) {
     let loginForm = document.getElementById('LoginForm');
-    user = {};
-    user.Name = loginForm.UserName.value;
-    user.Password = loginForm.Password.value;
+    person = {};
+    person.UserName = loginForm.UserName.value;
+    person.Password = loginForm.Password.value;
 
     let xhttp = new XMLHttpRequest();
-    xhttp.open("POST", "api/user", true);
+    xhttp.open("POST", "api/person", true);
     xhttp.setRequestHeader('Content-Type', 'application/json;charset=UTF-8')
     xhttp.onreadystatechange = function () {
         if (this.readyState === 4) {
             if (this.status === 200 || this.status === 204) {
-                user = JSON.parse(this.responseText);  
-                displaySuccess('Hi ' + user.FirstName + '.  Your Login was Successful');
-                callBackFunction();
+                person = JSON.parse(this.responseText);  
+                displaySuccess('Hi ' + person.FirstName + '.  Your Login was Successful');
+                callBackFunction1(callBackFunction2);
             }
             else {
-                user = undefined;
+                person = undefined;
                 displayError('Login Error - User Name or Password was not found.', undefined);
             }
         }
     };
-    xhttp.send(JSON.stringify(user));
+    xhttp.send(JSON.stringify(person));
     xhttp.onerror = function () {
-        user = undefined;
+        person = undefined;
         displayError('Login Error - onerror event');
     };
+}
+function initValidValues(callBackFunction) {
+    getValidValues('business', businessListItems);
+    getValidValues('customer', customerListItems);
+    getValidValues('careProvider', careProviderListItems);
+    getValidValues('petType', petTypeListItems);
+    callBackFunction();
 }
 function displaySecurePages() {
     let secureNavLinks = document.querySelectorAll('a.topNavSecure');
