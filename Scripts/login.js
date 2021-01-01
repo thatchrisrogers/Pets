@@ -50,10 +50,7 @@ function displaySecurePages() {
     for (secureNavLink of secureNavLinks) {
         secureNavLink.style.display = 'block';
     }
-    document.getElementById('LoginLink').style.display = 'none';
-    setTimeout(function () {
-        loadView('?view=home'); 
-    }, 3000);    
+    loadView('?view=home');   
 }
 
     

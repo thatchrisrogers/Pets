@@ -9,43 +9,51 @@ function initCareVisitView() {
     getCareVisits(createCareVisitTable);
     document.getElementById('CareVisitForm').onsubmit = function (event) {
         event.preventDefault();
-        completeVisit(sendEmail);
+        completeCareVisit();
     };
 }
 function createCareVisitTable() {
+    let careVisitMessage = document.getElementById("CareVisitMessage");
     let careVisitTable = document.getElementById("CareVisitTable");
     careVisitTable.removeChild(careVisitTable.getElementsByTagName('tbody')[0]); //remove tbody first to delete any rows (emptycareVisitTable)
     careVisitTableBody = careVisitTable.appendChild(document.createElement('tbody'));
     let careVisitTableRow;
     let tableCell;
     let element;
-    for (careVisit of careVisits) {
-        careVisitTableRow = careVisitTableBody.insertRow(-1);
-        tableCell = careVisitTableRow.insertCell(0);
-        element = document.createElement('input');
-        element.type = 'hidden';
-        element.name = 'CareVisitID';
-        element.value = careVisit.ID;
-        tableCell.appendChild(element);
-        element = document.createElement('label');
-        element.innerHTML = careVisit.VisitDateTime.toDisplayFormat();
-        tableCell.appendChild(element);
-        tableCell = careVisitTableRow.insertCell(1);
-        element = document.createElement('label');
-        element.innerHTML = careVisit.Customer.Name;
-        tableCell.appendChild(element);
-        tableCell = careVisitTableRow.insertCell(2);
-        element = document.createElement('label');
-        element.innerHTML = careVisit.PetNames;
-        tableCell.appendChild(element);
-        tableCell = careVisitTableRow.insertCell(3);
-        element = document.createElement('label');
-        element.innerHTML = careVisit.CareProvider.Name;
-        tableCell.appendChild(element);
-        careVisitTableRow.onclick = function () {
-            careVisitID = this.cells[0].querySelector('[name=CareVisitID]').value;
-            getCareVisit(careVisitID, displayCareVisitForm);
+    if (careVisits.length > 0) {
+        careVisitMessage.innerHTML = 'Upcoming Visits:';
+        careVisitTable.style.display = 'block';
+        for (careVisit of careVisits) {
+            careVisitTableRow = careVisitTableBody.insertRow(-1);
+            tableCell = careVisitTableRow.insertCell(0);
+            element = document.createElement('input');
+            element.type = 'hidden';
+            element.name = 'CareVisitID';
+            element.value = careVisit.ID;
+            tableCell.appendChild(element);
+            element = document.createElement('label');
+            element.innerHTML = careVisit.VisitDateTime.toDisplayFormat();
+            tableCell.appendChild(element);
+            tableCell = careVisitTableRow.insertCell(1);
+            element = document.createElement('label');
+            element.innerHTML = careVisit.Customer.Name;
+            tableCell.appendChild(element);
+            tableCell = careVisitTableRow.insertCell(2);
+            element = document.createElement('label');
+            element.innerHTML = careVisit.PetNames;
+            tableCell.appendChild(element);
+            tableCell = careVisitTableRow.insertCell(3);
+            element = document.createElement('label');
+            element.innerHTML = careVisit.CareProvider.Name;
+            tableCell.appendChild(element);
+            careVisitTableRow.onclick = function () {
+                careVisitID = this.cells[0].querySelector('[name=CareVisitID]').value;
+                getCareVisit(careVisitID, displayCareVisitForm);
+            }
         }
+    } else {
+        careVisitMessage.innerHTML = 'You currently do not have any, scheduled Visits.';
+        careVisitTable.style.display = 'none';
     }
 }
 function displayCareVisitForm() {
@@ -96,7 +104,7 @@ function closeCareVisitForm() {
 }
 function getCareVisits(callBackFunction) {
     let xhttp = new XMLHttpRequest();
-    xhttp.open('GET', 'api/careVisit', true);
+    xhttp.open('GET', 'api/careVisit?includeCompletedVisits=false', true);
     xhttp.onreadystatechange = function () {
         if (this.readyState == 4) {
             if (this.status === 200) {
@@ -136,11 +144,36 @@ function getCareVisit(careVisitID, callBackFunction) {
         displayError('Error getting Care Visits - onerror event');
     };
 }
+function completeCareVisit(callBackFunction) {
+    careVisit.IsComplete = true;
+    careVisit.CompletedByPersonID = person.ID;
+    let xhttp = new XMLHttpRequest();
+    xhttp.open("POST", "api/careVisit/", true);
+    xhttp.setRequestHeader('Content-Type', 'application/json;charset=UTF-8')
+    xhttp.onreadystatechange = function () {
+        if (this.readyState === 4) {
+            if (this.status === 200 || this.status === 204) {
+                displaySuccess('Care Visit saved');
+                sendEmail();
+                getCareVisits(createCareVisitTable);
+                closeCareVisitForm();
+            }
+            else {
+                displayError('Error saving Care Visit', this);
+            }
+        }
+    };
+    xhttp.send(JSON.stringify(careVisit));
+    xhttp.onerror = function () {
+        displayError('Error saving Care Visit - onerror event');
+    };
+}
 function saveCareVisitTask(element) {
     let careVisitTask = {};
     taskTableRow = element.parentElement.parentElement;
     careVisitTask = careVisit.Tasks.find(item => item.ID === parseInt(taskTableRow.querySelector('[name=CareVisitTaskID]').value));
     careVisitTask.IsComplete = taskTableRow.querySelector('[name=IsComplete]').checked;
+    careVisitTask.CompletedByPersonID = person.ID;
     let xhttp = new XMLHttpRequest();
     xhttp.open("POST", "api/careVisitTask/", true);
     xhttp.setRequestHeader('Content-Type', 'application/json;charset=UTF-8')
@@ -169,7 +202,7 @@ function displayEmailButton() {
 }
 function sendEmail() {
     let emailBody = 'Hi, %0D%0A';  //https://www.w3schools.com/tags/ref_urlencode.ASP
-    emailBody += 'I have completed the following tasks for the visit scheduled for ' + careVisit.VisitDateTime.toDisplayFormat() + ': %0D%0A';
+    emailBody += 'I have completed the following task(s) for the visit scheduled for ' + careVisit.VisitDateTime.toDisplayFormat() + ': %0D%0A';
     for (task of careVisit.Tasks) {
         emailBody += '%E2%80%A2  ' + task.Pet.Name + ' - ' + task.Description + '%0D%0A';
     }
@@ -178,7 +211,4 @@ function sendEmail() {
 
 
     window.open('mailTo:' + careVisit.Customer.Email + '?cc=thatchrisrogers@gmail.com' + '&subject=Care Visit Complete' + '&body=' + emailBody);
-}
-function completeVisit(callBackFunction) {
-    callBackFunction();
 }

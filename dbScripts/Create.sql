@@ -155,6 +155,7 @@ As
 Select 
 visit.ID
 ,visit.VisitDateTime 
+,visit.IsComplete
 ,customer.Name As CustomerName
 ,STRING_AGG(pet.PetName, ', ') WITHIN GROUP (ORDER BY pet.PetName ASC) AS PetNames
 ,careProvider.FirstName + ' ' + careProvider.LastName As CareProviderName
@@ -170,6 +171,7 @@ Inner Join dbo.Person careProvider On visit.CareProviderID = careProvider.ID
 Group By 
 visit.ID
 ,visit.VisitDateTime
+,visit.IsComplete
 ,customer.Name
 ,careProvider.FirstName
 ,careProvider.LastName

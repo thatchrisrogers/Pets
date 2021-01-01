@@ -40,8 +40,11 @@ function loadView(href) {
                     initLoginView();
                     break;     
             }
-            document.getElementById('Message').innerHTML = '';
-            document.getElementById('Message').className = '';
+            let message = document.getElementById('Message');
+            if (message.classList.contains('messageError')) {
+                message.innerHTML = '';
+                message.className = '';
+            }           
             console.log(href + 'view was loaded')
         }
     }

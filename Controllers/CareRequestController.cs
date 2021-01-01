@@ -157,7 +157,7 @@ namespace Pets.Controllers
     public class CareVisitController : ApiController
     {
         [HttpGet]
-        public List<CareVisit> Get()
+        public List<CareVisit> Get(bool includeCompletedVisits = true)
         {
             List<CareVisit> visits = new List<CareVisit>();
             CareVisit visit;
@@ -165,9 +165,18 @@ namespace Pets.Controllers
             {
                 try
                 {
-                    connection.Open();
-                    using (SqlCommand command = new SqlCommand("Select * From dbo.vwCareVisits Order By VisitDateTime, CustomerName", connection))
+                    connection.Open();                   
+                    using (SqlCommand command = new SqlCommand())
                     {
+                        command.Connection = connection;
+                        if (includeCompletedVisits)
+                        {
+                            command.CommandText = "Select * From dbo.vwCareVisits Order By VisitDateTime, CustomerName;";
+                        } 
+                        else
+                        {
+                            command.CommandText = "Select * From dbo.vwCareVisits Where IsComplete = 0 Order By VisitDateTime, CustomerName;";
+                        }
                         using (SqlDataReader reader = command.ExecuteReader())
                         {
                             while (reader.Read())
@@ -297,6 +306,30 @@ namespace Pets.Controllers
                 command.ExecuteNonQuery();
             }
         }
+        [HttpPost]
+        public void Post(CareVisit careVisit)
+        {
+            using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["Pets"].ConnectionString))
+            {
+                connection.Open();            
+                try
+                {
+                    using (SqlCommand command = new SqlCommand())
+                    {
+                        command.Connection = connection;
+                        command.Parameters.AddWithValue("ID", careVisit.ID);
+                        command.Parameters.AddWithValue("IsComplete", careVisit.IsComplete);
+                        command.Parameters.AddWithValue("CompletedByPersonID", careVisit.CompletedByPersonID);
+                        command.CommandText = "Update dbo.CareVisit Set IsComplete = @IsComplete, CompletedByPersonID = @CompletedByPersonID, DateCompleted = GetUTCDate() Where ID = @ID;";
+                        command.ExecuteNonQuery();
+                    }                  
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.Message);
+                }
+            }
+        }
     }
     public class CareVisitTaskController : ApiController
     {
@@ -343,10 +376,6 @@ namespace Pets.Controllers
                 visitTaskTable.Columns.Add("ID");
                 visitTaskTable.Columns.Add("PetID");
                 visitTaskTable.Columns.Add("Description");
-                //Note - I do not think the following fields should be part of the Merge.  I think these will be updated differently after each Visit.
-                //visitTaskTable.Columns.Add("IsComplete");
-                //visitTaskTable.Columns.Add("CompletedByPersonID");
-                //visitTaskTable.Columns.Add("DateCompleted");
                 DataRow visitTaskRow;
                 foreach (CareVisitTask visitTask in visitTasks)
                 {
@@ -354,9 +383,6 @@ namespace Pets.Controllers
                     visitTaskRow["ID"] = visitTask.ID;
                     visitTaskRow["PetID"] = visitTask.Pet.ID;
                     visitTaskRow["Description"] = visitTask.Description;
-                    //visitTaskRow["IsComplete"] = visitTask.IsComplete;
-                    //visitTaskRow["CompletedByPersonID"] = visitTask.CompletedByPersonID ;
-                    //visitTaskRow["DateCompleted"] = visitTask.DateCompleted;
                     visitTaskTable.Rows.Add(visitTaskRow);
                 }
                 using (SqlCommand command = new SqlCommand("dbo.MergeCareVisitTasks", connection, transaction))
@@ -381,10 +407,11 @@ namespace Pets.Controllers
                 connection.Open();
                 try
                 {
-                    using (SqlCommand command = new SqlCommand("Update dbo.CareVisitTask Set IsComplete = @isComplete Where ID = @id;", connection))
+                    using (SqlCommand command = new SqlCommand("Update dbo.CareVisitTask Set IsComplete = @IsComplete, CompletedByPersonID = @CompletedByPersonID, DateCompleted = GetUTCDate() Where ID = @ID;", connection))
                     {
-                        command.Parameters.AddWithValue("id", careVisitTask.ID);
-                        command.Parameters.AddWithValue("isComplete", careVisitTask.IsComplete);
+                        command.Parameters.AddWithValue("ID", careVisitTask.ID);
+                        command.Parameters.AddWithValue("IsComplete", careVisitTask.IsComplete);
+                        command.Parameters.AddWithValue("CompletedByPersonID", careVisitTask.CompletedByPersonID);
                         command.ExecuteNonQuery();
                     }
                 }

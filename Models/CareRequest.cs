@@ -18,7 +18,10 @@ namespace Pets.Models
         public DateTime VisitDateTime { get; set; }
         public List<CareVisitTask> Tasks { get; set; }
         public Customer Customer { get; set; }
-        public string PetNames { get; set; }      
+        public string PetNames { get; set; }
+        public bool IsComplete { get; set; }
+        public int? CompletedByPersonID { get; set; }
+        public DateTime? DateCompleted { get; set; }
     }
     public class CareVisitTask
     {
