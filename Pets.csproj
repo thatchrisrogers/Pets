@@ -84,6 +84,7 @@
     <Content Include="Global.asax" />
     <Content Include="Images\puppy.png" />
     <Content Include="index.html" />
+    <Content Include="sandbox.html" />
     <Content Include="Scripts\careCalendar.js" />
     <Content Include="Scripts\careRequest.js" />
     <Content Include="Scripts\careVisit.js" />

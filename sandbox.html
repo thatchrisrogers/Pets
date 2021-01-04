@@ -1,0 +1,30 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script type="text/javascript" src="Scripts/common.js"></script>
+    <script>
+        window.addEventListener("load", function (e) {
+            //let today = new Date(2021, 0, 1, 11, 0, 0);
+            //document.getElementById('toLocaleDateTime').innerHTML = today.toLocaleDateTime();
+            //document.getElementById('toLocaleDateString').innerHTML = today.toLocaleString();
+
+            let today = new Date();
+            let todaysDate = new Date(today.getFullYear(), today.getMonth() - 1, today.getDate());
+            document.getElementById('today').innerHTML = todaysDate;
+
+            let startDate = new Date('2021-01-01T00:00:00');
+            document.getElementById('startDate').innerHTML = startDate;
+            //This is careRequest.StartDate 2021-01-01T00:00:00
+        });
+    </script>
+</head>
+<body>
+    <!--<p>toLocaleDateTime:  <label id="toLocaleDateTime"></label></p>
+    <p>toLocaleDateString:  <label id="toLocaleDateString"></label></p>-->
+
+    <p>today:  <label id="today"></label></p>
+    <p>startDate:  <label id="startDate"></label></p>
+</body>
+</html>

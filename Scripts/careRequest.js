@@ -2,11 +2,10 @@
 let careRequestForm;
 let careRequest = {};
 let careRequests = [];
-//let careVisit = {};
-//let careVisits = [];
 let careVisitTask = {};
 let careVisitTasks = [];
 let petCheckboxes;
+let priorVisitDateTimeValue;
 
 function displayCareRequestForm(careRequestID, startDate) {
     careRequestForm = document.getElementById('CareRequestForm');
@@ -39,6 +38,16 @@ function initCareRequestForm(id, startDate) {
         event.preventDefault();
         saveCareRequest();
     };
+    document.getElementById('StartDate').onchange = function (event) {
+        for (visitDateTimeElement of document.querySelectorAll('[name=VisitDateTime]')) {
+            visitDateTimeElement.min = this.value + 'T00:00:00';
+        }
+    };
+    document.getElementById('EndDate').onchange = function (event) {
+        for (visitDateTimeElement of document.querySelectorAll('[name=VisitDateTime]')) {
+            visitDateTimeElement.max = this.value + 'T23:59:59';
+        }
+    };
 } 
 function closeCareRequestForm() {
     careRequestForm.style.display = 'none';
@@ -68,9 +77,15 @@ function loadPets() {
     } 
 }
 function loadCareRequest() {
+    let today = new Date();
+    let todaysDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    let startDate = new Date(careRequest.StartDate);
     careRequestForm.CareRequestID.value = careRequest.ID;
     careRequestForm.Customer.value = careRequest.Customer.ID;
     careRequestForm.StartDate.value = careRequest.StartDate.split('T')[0];
+    if (startDate <= todaysDate) {
+        careRequestForm.StartDate.disabled = true;
+    }
     careRequestForm.EndDate.value = careRequest.EndDate.split('T')[0];
     //The following elements must not be updated once a Care Request is saved
     careRequestForm.Customer.disabled = true;
@@ -156,6 +171,8 @@ function loadCareVisitTaskTable(visit, careVisitTableBody) {
     }
     taskTable.appendChild(taskBody);
     taskTableContainerCell.appendChild(taskTable);
+
+    if (visit !== undefined && visit.IsComplete) { disableTableRow(taskTableContainerRow); }
 }
 function addCareVisitRow(visit) {
     let visitTableRow = careVisitTableBody.insertRow(-1);
@@ -173,37 +190,46 @@ function addCareVisitRow(visit) {
     let visitDateTimeElement = addElementToTableRow('VisitDateTime', 'input', 'datetime-local', 'userInput', true, undefined, (visit !== undefined ? visit.VisitDateTime.toFormatForDateTimeInput() : undefined), cellIndex, visitTableRow);
     visitDateTimeElement.min = careRequestForm.StartDate.value + 'T00:00:00';
     visitDateTimeElement.max = careRequestForm.EndDate.value + 'T23:59:59';
-    //visitDateTimeElement.onfocus = function () {
-    //    if (this.value === '') {
-    //        this.value = '2020-12-22T00:00:00';
-    //    }
-    //}
     visitDateTimeElement.oninput = function () {
             this.previousSibling.innerHTML = new Date(this.value).toWeekday() + ', ';
     }
+    visitDateTimeElement.onfocus = function () {
+        priorVisitDateTimeValue = this.value;
+    }  
     visitDateTimeElement.onchange = function () {
         let visitDateTimeElementThatChanged = this;
-        if (visitDateTimeElementThatChanged.required) {
-            getCareVisitsFromPage(false, loadCareVisitTable);
-        }
-        else {
-            getCareVisitsFromPage(true, loadCareVisitTable);
-        }
-        
-        //find the row that was moved so the user can easily find it after table reloads
+        let duplicateExists = false;
         for (visitDateTimeElement of document.querySelectorAll('[name=VisitDateTime]')) {
-            if (visitDateTimeElement.value === visitDateTimeElementThatChanged.value) {
-                let elementParentRow = visitDateTimeElement.closest('.parentRow');
-                let elementSiblingRow = elementParentRow.nextElementSibling;
-                //tableRowChanged(elementSiblingRow, function () { });
-                elementParentRow.classList.add('messageSuccess');
-                elementSiblingRow.classList.add('messageSuccess');
-                setTimeout(function () {
-                    elementParentRow.classList.remove('messageSuccess');
-                    elementSiblingRow.classList.remove('messageSuccess');
-                }, 3000);
+            if (visitDateTimeElement.value === visitDateTimeElementThatChanged.value && visitDateTimeElement !== visitDateTimeElementThatChanged) {
+                alert('A Visit row already exists for the Date and Time selected.  Please update the existing Visit row, instead.');
+                visitDateTimeElementThatChanged.value = priorVisitDateTimeValue;
+                duplicateExists = true;
+                break;
             }
         }
+        if (duplicateExists === false) {
+            if (visitDateTimeElementThatChanged.required) {
+                getCareVisitsFromPage(false, loadCareVisitTable);
+            }
+            else {
+                getCareVisitsFromPage(true, loadCareVisitTable);
+            }
+
+            //find the row that was moved so the user can easily find it after table reloads
+            for (visitDateTimeElement of document.querySelectorAll('[name=VisitDateTime]')) {
+                if (visitDateTimeElement.value === visitDateTimeElementThatChanged.value) {
+                    let elementParentRow = visitDateTimeElement.closest('.parentRow');
+                    let elementSiblingRow = elementParentRow.nextElementSibling;
+                    //tableRowChanged(elementSiblingRow, function () { });
+                    elementParentRow.classList.add('messageSuccess');
+                    elementSiblingRow.classList.add('messageSuccess');
+                    setTimeout(function () {
+                        elementParentRow.classList.remove('messageSuccess');
+                        elementSiblingRow.classList.remove('messageSuccess');
+                    }, 3000);
+                }
+            }
+        }       
     }
 
     visitTableRow.insertCell(cellIndex += 1);
@@ -211,6 +237,8 @@ function addCareVisitRow(visit) {
 
     //Tasks
     loadCareVisitTaskTable(visit, careVisitTableBody);
+
+    if (visit !== undefined && visit.IsComplete) { disableTableRow(visitTableRow); }
 }
 function addCareVisitTaskRow(task, taskBody) {
     let taskRow = taskBody.insertRow(-1);

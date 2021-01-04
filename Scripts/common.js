@@ -40,6 +40,9 @@ String.prototype.toDateInputFormat = function () {
     return dateParts[2] + '-' + dateParts[0].padStart(2, '0') + '-' + dateParts[1].padStart(2, '0');
 }
 Date.prototype.toLocaleDateTime = function () {
+    //Change this to use native toLocaleDateString to do the timezone adjustment.
+    //Then, parse that and retuirn the DateTime corrected for timezone
+    //The below will not work for time zones East of UTC
     var date = new Date(this.valueOf());
     date.setTime(this.getTime() - (this.getTimezoneOffset() * 60 * 1000));
     return date;
@@ -147,6 +150,16 @@ function tableRowChanged(tableRow, callBackFunction) {
         addDeleteButton(tableRow);
         callBackFunction();
      }
+}
+function disableTableRow(tableRow) {
+    let inputs = tableRow.querySelectorAll('input, select');
+    for (input of inputs) {
+        input.disabled = true;
+    }
+    let deleteButtons = tableRow.querySelectorAll('.delete');
+    for (deleteButton of deleteButtons) {
+        deleteButton.style.display = 'none';
+    }
 }
 function loadSelectElement(selectElement, selectListItems) {
     let option = document.createElement("option");

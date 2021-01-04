@@ -11,8 +11,8 @@ function initLoginView() {
     };
 }
 function getUser(callBackFunction1, callBackFunction2) {
-    let loginForm = document.getElementById('LoginForm');
     person = {};
+    let loginForm = document.getElementById('LoginForm');
     person.UserName = loginForm.UserName.value;
     person.Password = loginForm.Password.value;
 
@@ -50,6 +50,7 @@ function displaySecurePages() {
     for (secureNavLink of secureNavLinks) {
         secureNavLink.style.display = 'block';
     }
+    document.getElementById('LoginLink').style.display = 'none';
     loadView('?view=home');   
 }
 

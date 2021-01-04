@@ -158,6 +158,10 @@ a.delete, a.undo {
     background-color: darkcyan;
     color: white;
 }
+.unavailableCalendarDay {
+    background-color: ghostwhite;
+    color: lightgray;
+}
 .parentTable td {
     padding: 1px;
 }

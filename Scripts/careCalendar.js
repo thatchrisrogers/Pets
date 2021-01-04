@@ -1,4 +1,4 @@
-﻿let todaysDate = new Date();  //ToDo - Adjust to browser timezone
+﻿let todaysDate = new Date(); 
 let months = [{ value: 1, text: "January" }, { value: 2, text: "February" }, { value: 3, text: "March" }, { value: 4, text: "April" }, { value: 5, text: "May" }, { value: 6, text: "June" }, { value: 7, text: "July" }, { value: 8, text: "August" }, { value: 9, text: "September" }, { value: 10, text: "October" }, { value: 11, text: "November" }, { value: 12, text: "December" } ];
 let selectMonth;
 let selectYear;
@@ -59,7 +59,7 @@ function loadCalendar() {
     let cell;
     let requestStartDate;
     let requestEndDate;
-    let iterativeDate;
+    let iDate;
     let pCustomerName, hiddenCareRequestId;
     let cellHeading;
 
@@ -76,28 +76,32 @@ function loadCalendar() {
             }
             else {
                 cell = document.createElement("td");
-                
+                iDate = new Date(selectedYear, selectedMonth, dayOfMonth);
                 cellHeading = document.createElement("h3");
-                cellHeading.classList.add('calendarDay');
                 cellHeading.innerHTML = dayOfMonth;
-                cellHeading.onclick = function () {
-                    try {
-                        let startDate = new Date(selectYear.value, parseInt(selectMonth.value) - 1, this.innerHTML);
-                        appendCareRequestForm(function () { displayCareRequestForm(undefined, startDate); })                                         
+                if (iDate >= todaysDate) {
+                    cellHeading.classList.add('calendarDay');
+                    cellHeading.onclick = function () {
+                        try {
+                            let startDate = new Date(selectYear.value, parseInt(selectMonth.value) - 1, this.innerHTML);
+                            appendCareRequestForm(function () { displayCareRequestForm(undefined, startDate); })
+                        }
+                        catch (e) {
+                            displayError('Error displaying Care Calendar Request Form - ' + e.message);
+                        }
                     }
-                    catch (e) {
-                        displayError('Error displaying Care Calendar Request Form - ' + e.message);
-                    }
+                } else {
+                    cell.classList.add('unavailableCalendarDay');
+                    cellHeading.classList.add('unavailableCalendarDay');
                 }
                 cell.appendChild(cellHeading);
-                iterativeDate = new Date(selectedYear, selectedMonth, dayOfMonth);
-                if (iterativeDate === todaysDate) {
+                if (iDate === todaysDate) {
                     cell.classList.add("selected");
                 }             
                 for (careRequest of careRequests) {
                     requestStartDate = new Date(careRequest.StartDate);
                     requestEndDate = new Date(careRequest.EndDate);
-                    if (iterativeDate >= requestStartDate && iterativeDate <= requestEndDate) {
+                    if (iDate >= requestStartDate && iDate <= requestEndDate) {
                         pCustomerName = document.createElement('p');
                         pCustomerName.classList.add('calendarEntry');
                         pCustomerName.innerHTML = careRequest.Customer.Name;

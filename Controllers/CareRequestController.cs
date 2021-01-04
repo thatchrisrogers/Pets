@@ -252,6 +252,7 @@ namespace Pets.Controllers
                                 visit.ID = ((int)reader["ID"]);
                                 visit.CareProvider = new CareProvider((int)reader["CareProviderID"]);
                                 visit.VisitDateTime = ((DateTime)reader["VisitDateTime"]);
+                                visit.IsComplete = ((bool)reader["IsComplete"]);
                                 visit.Tasks = CareVisitTaskController.GetList((int)visit.ID);
                                 visits.Add(visit);
                             }
