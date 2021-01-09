@@ -49,17 +49,18 @@ namespace Pets.Controllers
             return careRequests;
         }
 
-        public List<CareRequest> Get(int month, int year)
+        public List<CareRequest> Get(string userName, int month, int year)
         {
             List<CareRequest> careRequests = new List<CareRequest>();
-            string sql = "Select * From dbo.vwCareRequest Where (Month(StartDate) = @month And Year(StartDate) = @year) Or (Month(EndDate) = @month And Year(EndDate) = @year) Order By StartDate;";
             using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["Pets"].ConnectionString))
             {
                 try
                 {
                     connection.Open();
-                    using (SqlCommand command = new SqlCommand(sql, connection))
+                    using (SqlCommand command = new SqlCommand("dbo.GetCareRequests", connection))
                     {
+                        command.CommandType = CommandType.StoredProcedure;
+                        command.Parameters.AddWithValue("userName", userName);
                         command.Parameters.AddWithValue("month", month);
                         command.Parameters.AddWithValue("year", year);
                         using (SqlDataReader reader = command.ExecuteReader())
@@ -157,7 +158,7 @@ namespace Pets.Controllers
     public class CareVisitController : ApiController
     {
         [HttpGet]
-        public List<CareVisit> Get(bool includeCompletedVisits = true)
+        public List<CareVisit> Get(string userName, bool? isComplete = null)
         {
             List<CareVisit> visits = new List<CareVisit>();
             CareVisit visit;
@@ -166,17 +167,11 @@ namespace Pets.Controllers
                 try
                 {
                     connection.Open();                   
-                    using (SqlCommand command = new SqlCommand())
+                    using (SqlCommand command = new SqlCommand("dbo.GetCareVisits",connection))
                     {
-                        command.Connection = connection;
-                        if (includeCompletedVisits)
-                        {
-                            command.CommandText = "Select * From dbo.vwCareVisits Order By VisitDateTime, CustomerName;";
-                        } 
-                        else
-                        {
-                            command.CommandText = "Select * From dbo.vwCareVisits Where IsComplete = 0 Order By VisitDateTime, CustomerName;";
-                        }
+                        command.CommandType = CommandType.StoredProcedure;
+                        command.Parameters.AddWithValue("userName", userName);
+                        command.Parameters.AddWithValue("isComplete", isComplete == null ? DBNull.Value : (object)isComplete);    
                         using (SqlDataReader reader = command.ExecuteReader())
                         {
                             while (reader.Read())

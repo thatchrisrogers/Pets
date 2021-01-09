@@ -6,6 +6,7 @@ Drop View If Exists dbo.vwCareVisit
 Drop View If Exists dbo.vwCareVisits
 Drop View If Exists dbo.vwCareRequest
 
+Drop Table If Exists dbo.BusinessUnavailableDate
 Drop Table If Exists dbo.CareVisitTask
 Drop Table If Exists dbo.CareVisit
 Drop Table If Exists dbo.CareRequest
@@ -29,6 +30,8 @@ Alter Table dbo.Person Add Constraint UNQ_Person_Name Unique (UserName)
 Set Identity_Insert dbo.Person On
 Insert Into dbo.Person (ID, UserName, Password, FirstName, LastName) Values (6, 'LucyR', '0628', 'Lucy', 'Rogers')
 Insert Into dbo.Person (ID, UserName, Password, FirstName, LastName) Values (8, 'JamesR', '0821', 'James', 'Rogers')
+Insert Into dbo.Person (ID, UserName, Password, FirstName, LastName) Values (7, 'ChrisR', '7771', 'Chris', 'Rogers')
+Insert Into dbo.Person (ID, UserName, Password, FirstName, LastName) Values (5, 'StacyR', '0522', 'Stacy', 'Rogers')
 Set Identity_Insert dbo.Person Off
 
 Create Table dbo.Business (
@@ -48,6 +51,14 @@ Alter Table dbo.BusinessPerson Add Constraint FK_BusinessPerson_Business Foreign
 Alter Table dbo.BusinessPerson Add Constraint FK_BusinessPerson_Person Foreign Key(PersonID) References dbo.Person(ID)
 Insert Into dbo.BusinessPerson Values (1, 6, 1) --Lucy
 Insert Into dbo.BusinessPerson Values (1, 8, 0) --James
+
+Create Table dbo.BusinessUnavailableDate(
+	BusinessID Int Not Null
+	,UnavailableDate Date Not Null
+)
+Alter Table dbo.BusinessUnavailableDate Add Constraint PK_BusinessUnavailable Primary Key(BusinessID, UnavailableDate) 
+Alter Table dbo.BusinessUnavailableDate Add Constraint FK_UnavailableDate_Business Foreign Key(BusinessID) References dbo.Business(ID)
+
 
 Create Table dbo.Customer (
 	ID Int Identity(1,1) Primary Key Not Null
@@ -150,7 +161,24 @@ Group By customer.ID, customer.Name, customer.Address, customer.Email
 Order By customer.Name
 Go
 
-Create View dbo.vwCareVisits
+Drop Procedure If Exists dbo.GetCareRequests
+Go
+Create Procedure dbo.GetCareRequests(@userName VarChar(25), @month int, @year int)
+As
+Select request.*, customer.Name As CustomerName 
+From dbo.GetBusinessesForUserName(@userName) associatedBusiness
+Inner Join dbo.Customer customer On associatedBusiness.ID = customer.BusinessID
+Inner Join dbo.CareRequest request On customer.ID = request.CustomerID
+Where (Month(request.StartDate) = @month And Year(request.StartDate) = @year) 
+	Or (Month(request.EndDate) = @month And Year(request.EndDate) = @year) 
+Order By StartDate;
+Go
+
+Drop Procedure If Exists dbo.GetCareVisits
+Go
+Create Procedure dbo.GetCareVisits(
+	@userName VarChar(25)
+	,@isComplete bit = Null)
 As
 Select 
 visit.ID
@@ -159,9 +187,11 @@ visit.ID
 ,customer.Name As CustomerName
 ,STRING_AGG(pet.PetName, ', ') WITHIN GROUP (ORDER BY pet.PetName ASC) AS PetNames
 ,careProvider.FirstName + ' ' + careProvider.LastName As CareProviderName
-From dbo.CareVisit visit
-Inner Join dbo.CareRequest request On visit.CareRequestID = request.ID
-Inner Join dbo.Customer customer On request.CustomerID = customer.ID
+From dbo.GetBusinessesForUserName(@userName) associatedBusiness
+Inner Join dbo.Customer customer On associatedBusiness.ID = customer.BusinessID
+Inner Join dbo.CareRequest request On customer.ID = request.CustomerID
+Inner Join dbo.CareVisit visit On request.ID = visit.CareRequestID
+	And IsNull(@isComplete, visit.IsComplete) = visit.IsComplete
 Inner Join (
 	Select Distinct task.CareVisitID, pet.Name As PetName
 	From dbo.Pet pet 
@@ -175,6 +205,7 @@ visit.ID
 ,customer.Name
 ,careProvider.FirstName
 ,careProvider.LastName
+Order By VisitDateTime, CustomerName;
 Go
 
 Create View dbo.vwCareVisit
@@ -217,7 +248,7 @@ Create Type dbo.typePetTasks As Table (
 )
 Go
 
-Create Procedure dbo.MergePetTasks (@petID smallint, @petTasks dbo.typePetTasks ReadOnly)
+Create Procedure dbo.MergePetTasks (@petID int, @petTasks dbo.typePetTasks ReadOnly)
 As
 Merge dbo.PetTask targetPetTasks
 Using @petTasks sourcePetTasks
@@ -254,7 +285,7 @@ Create Type dbo.typeCareVisitTasks As Table (
 )
 Go
 
-Create Procedure dbo.MergeCareVisitTasks (@visitID smallint, @visitTasks dbo.typeCareVisitTasks ReadOnly)
+Create Procedure dbo.MergeCareVisitTasks (@visitID int, @visitTasks dbo.typeCareVisitTasks ReadOnly)
 As
 Merge dbo.CareVisitTask targetTasks
 Using @visitTasks sourceTasks

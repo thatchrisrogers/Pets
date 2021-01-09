@@ -104,7 +104,7 @@ function closeCareVisitForm() {
 }
 function getCareVisits(callBackFunction) {
     let xhttp = new XMLHttpRequest();
-    xhttp.open('GET', 'api/careVisit?includeCompletedVisits=false', true);
+    xhttp.open('GET', 'api/careVisit?userName=' + person.UserName + '&isComplete=false', true);
     xhttp.onreadystatechange = function () {
         if (this.readyState == 4) {
             if (this.status === 200) {

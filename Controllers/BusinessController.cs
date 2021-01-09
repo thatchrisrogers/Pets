@@ -42,4 +42,54 @@ namespace Pets.Controllers
             }
         }
     }
+    public class BusinessUnavailableDateController : ApiController
+    {
+        [HttpGet]
+        public List<BusinessUnavailableDate> Get(BusinessUnavailableDate unavailableDate)
+        {
+            List<BusinessUnavailableDate> unavailableDates = new List<BusinessUnavailableDate>();
+            //ToDo
+            return unavailableDates;
+        }
+        [HttpPost]
+        public void Post(BusinessUnavailableDate unavailableDate)
+        {
+            using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["Pets"].ConnectionString))
+            {
+                connection.Open();
+                try
+                {
+                    using (SqlCommand selectCommand = new SqlCommand("Select BusinessID,UnavailableDate From dbo.BusinessUnavailableDate Where BusinessID = @BusinessID And UnavailableDate = @UnavailableDate;", connection))
+                    {
+                        selectCommand.Parameters.AddWithValue("BusinessID", unavailableDate.BusinessID);
+                        selectCommand.Parameters.AddWithValue("UnavailableDate", unavailableDate.UnavailableDate);
+                        SqlDataReader reader = selectCommand.ExecuteReader();
+                        if (reader.HasRows)
+                        {
+                            using (SqlCommand deleteCommand = new SqlCommand("Delete From dbo.BusinessUnavailableDate Where BusinessID = @BusinessID And UnavailableDate = @UnavailableDate;", connection))
+                            {
+                                deleteCommand.Parameters.AddWithValue("BusinessID", unavailableDate.BusinessID);
+                                deleteCommand.Parameters.AddWithValue("UnavailableDate", unavailableDate.UnavailableDate);
+                                deleteCommand.ExecuteNonQuery();
+                            }
+                        }
+                        else
+                        {
+                            using (SqlCommand insertCommand = new SqlCommand("Insert Into dbo.BusinessUnavailableDate Values(BusinessID = @BusinessID, UnavailableDate = @UnavailableDate);", connection))
+                            {
+                                insertCommand.Parameters.AddWithValue("BusinessID", unavailableDate.BusinessID);
+                                insertCommand.Parameters.AddWithValue("UnavailableDate", unavailableDate.UnavailableDate);
+                                insertCommand.ExecuteNonQuery();
+                            }
+                        }
+
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.Message);
+                }
+            }
+        }
+    }
 }

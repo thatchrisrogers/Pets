@@ -136,6 +136,10 @@ function appendCareRequestForm(callBackFunction) {
     xhttp.send();
     
 }
+function toggleAvailability(element) {
+    let businessUnavailableDate = {};
+    //businessUnavailableDate.BusinessID = 
+}
 
 
 

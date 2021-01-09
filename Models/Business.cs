@@ -22,4 +22,15 @@ namespace Pets.Models
             Name = name;
         }
     }
+    public class BusinessUnavailableDate
+    {
+        public int BusinessID { get; set; }
+        public DateTime UnavailableDate { get; set; }
+
+        public BusinessUnavailableDate(int businessID, DateTime unavailableDate)
+        {
+            BusinessID = businessID;
+            UnavailableDate = unavailableDate;
+        }
+    }
 }
