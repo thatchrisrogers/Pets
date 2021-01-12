@@ -112,7 +112,7 @@ function addElementToTableRow(name, tagName, type, classNames, required, validVa
         }        
     }
     if (element.type === 'select-one' && validValues !== undefined) {
-        loadSelectElement(element, validValues);
+        loadSelectElement(element, validValues, true);
     }
     if (value !== undefined) {      
         element.value = value;
@@ -161,11 +161,17 @@ function disableTableRow(tableRow) {
         deleteButton.style.display = 'none';
     }
 }
-function loadSelectElement(selectElement, selectListItems) {
-    let option = document.createElement("option");
-    option.value = '';
-    option.text = 'select';
-    selectElement.appendChild(option);
+function loadSelectElement(selectElement, selectListItems, includeEmptyOption = true) {
+    while (selectElement.hasChildNodes()) {
+        selectElement.removeChild(selectElement.firstChild);  //Remove all options from select element if any exist
+    }
+    let option;
+    if (includeEmptyOption) {
+        option = document.createElement("option");
+        option.value = '';
+        option.text = 'select';
+        selectElement.appendChild(option);
+    }   
     for (item of selectListItems) {
         option = document.createElement("option");
         option.value = item.ID;

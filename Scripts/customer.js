@@ -48,8 +48,7 @@ function createCustomerTable() {
 function displayCustomerForm() {
     try {
         let customerForm = document.forms.namedItem("CustomerForm");
-        customerForm.Business.innerHTML = '';
-        loadSelectElement(customerForm.Business, businessListItems);
+        loadSelectElement(customerForm.Business, businessListItems, false);
         let petTable = document.getElementById("PetTable");
         if (customer !== null) {
             customerID = customer.ID;

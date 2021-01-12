@@ -1,0 +1,34 @@
+﻿<h1>Business Calendar</h1>
+<div class="gridWith2Columns">
+    <div class="gridLabelColumn"><label for="CustomerName">Business:</label></div>
+    <div class="gridInputColumn">
+        <select id="Business" required></select>
+    </div>
+</div>
+<div style="overflow-x:scroll;">
+    <table id="Calendar">
+        <thead>
+            <tr>
+                <th colspan="7" style="text-align:left">
+                    <input type="button" onclick="changeMonth(-1);" value="&lt">
+                    <select id="SelectMonth" style="font-weight:bold" onchange="changeMonthYear();"></select>
+                    <select id="SelectYear" style="font-weight:bold" onchange="changeMonthYear();"></select>
+                    <input type="button" onclick="changeMonth(1);" value="&gt">
+                </th>
+            </tr>
+            <tr>
+                <th>Sunday</th>
+                <th>Monday</th>
+                <th>Tuesday</th>
+                <th>Wednesday</th>
+                <th>Thursday</th>
+                <th>Friday</th>
+                <th>Saturday</th>
+            </tr>
+        </thead>
+
+        <tbody id="CalendarBody">
+        </tbody>
+    </table>
+</div>
+<div id="FormContainer"></div>

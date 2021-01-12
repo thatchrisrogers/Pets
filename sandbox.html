@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <title></title>
+    <link rel="stylesheet" href="Styles/site.css" />
     <script type="text/javascript" src="Scripts/common.js"></script>
     <script>
         window.addEventListener("load", function (e) {
@@ -26,5 +27,46 @@
 
     <p>today:  <label id="today"></label></p>
     <p>startDate:  <label id="startDate"></label></p>
+    <style>
+        .flex-container {
+            display: flex;
+            flex-wrap: nowrap;
+        }
+            .flex-container > div {
+                flex-grow: 1;
+                text-align: right;
+            }
+    </style>
+    <table class="selecTable">
+        <thead>
+            <tr>
+                <td class="calendarDayContainer">
+                        <input type="checkbox" />
+                        <div class="calendarDay">3</div>
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    <p class="calendarEntry">Request Link</p>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <style>
+        #box {
+            display: flex;
+        }
+
+        #b {
+            flex-grow: 100;
+            border: 1px solid green;
+        }
+    </style>
+    <div id='box'>
+        <div id='a'>Tree</div>
+        <div id='b'>View</div>
+    </div>
 </body>
 </html>

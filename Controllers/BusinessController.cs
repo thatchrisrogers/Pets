@@ -59,30 +59,12 @@ namespace Pets.Controllers
                 connection.Open();
                 try
                 {
-                    using (SqlCommand selectCommand = new SqlCommand("Select BusinessID,UnavailableDate From dbo.BusinessUnavailableDate Where BusinessID = @BusinessID And UnavailableDate = @UnavailableDate;", connection))
+                    using (SqlCommand command = new SqlCommand("dbo.ToggleBusinessAvailability", connection))
                     {
-                        selectCommand.Parameters.AddWithValue("BusinessID", unavailableDate.BusinessID);
-                        selectCommand.Parameters.AddWithValue("UnavailableDate", unavailableDate.UnavailableDate);
-                        SqlDataReader reader = selectCommand.ExecuteReader();
-                        if (reader.HasRows)
-                        {
-                            using (SqlCommand deleteCommand = new SqlCommand("Delete From dbo.BusinessUnavailableDate Where BusinessID = @BusinessID And UnavailableDate = @UnavailableDate;", connection))
-                            {
-                                deleteCommand.Parameters.AddWithValue("BusinessID", unavailableDate.BusinessID);
-                                deleteCommand.Parameters.AddWithValue("UnavailableDate", unavailableDate.UnavailableDate);
-                                deleteCommand.ExecuteNonQuery();
-                            }
-                        }
-                        else
-                        {
-                            using (SqlCommand insertCommand = new SqlCommand("Insert Into dbo.BusinessUnavailableDate Values(BusinessID = @BusinessID, UnavailableDate = @UnavailableDate);", connection))
-                            {
-                                insertCommand.Parameters.AddWithValue("BusinessID", unavailableDate.BusinessID);
-                                insertCommand.Parameters.AddWithValue("UnavailableDate", unavailableDate.UnavailableDate);
-                                insertCommand.ExecuteNonQuery();
-                            }
-                        }
-
+                        command.CommandType = System.Data.CommandType.StoredProcedure;
+                        command.Parameters.AddWithValue("businessID", unavailableDate.BusinessID);
+                        command.Parameters.AddWithValue("unavailableDate", unavailableDate.UnavailableDate);
+                        command.ExecuteNonQuery();
                     }
                 }
                 catch (Exception ex)

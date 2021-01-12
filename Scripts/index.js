@@ -1,10 +1,10 @@
 ﻿window.addEventListener("load", function (e) {
     if (window.location.href.split('?')[1] === undefined) { //If no query string parameters were passed...
-        loadView('?view=home');
+        //loadView('?view=home');
 
         //Temp - assign person to keep from loggin in during dev
-        //person = { ID: 6, FirstName: 'Lucy', LastName: 'Rogers', UserName: 'LucyR' };
-        //initValidValues(displaySecurePages);
+        person = { ID: 6, FirstName: 'Lucy', LastName: 'Rogers', UserName: 'LucyR' };
+        initValidValues(displaySecurePages);
     } else {
         loadView(window.location.href);
     }
@@ -37,8 +37,8 @@ function loadView(href) {
                 case 'customer':
                     initCustomerView();
                     break; 
-                case 'careCalendar':
-                    initCareCalendarView();
+                case 'businessCalendar':
+                    initbusinessCalendarView();
                     break;  
                 case 'login':
                     initLoginView();

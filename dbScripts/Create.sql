@@ -321,3 +321,13 @@ Inner Join dbo.BusinessPerson businessPerson On associatedBusiness.ID = business
 Inner Join dbo.Person person On businessPerson.PersonID = person.ID
 Order By person.FirstName, person.LastName
 Go
+
+Drop Procedure If Exists dbo.ToggleBusinessAvailability
+Go
+Create Procedure dbo.ToggleBusinessAvailability (@businessID Int, @unavailableDate Date)
+As
+If Exists (Select * From dbo.BusinessUnavailableDate Where BusinessID = @businessID And UnavailableDate = @unavailableDate)
+	Delete From dbo.BusinessUnavailableDate Where BusinessID = @businessID And UnavailableDate = @unavailableDate;
+Else 
+	Insert Into dbo.BusinessUnavailableDate Values (@businessID, @unavailableDate);
+Go
