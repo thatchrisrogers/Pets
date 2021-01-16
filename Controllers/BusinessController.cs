@@ -45,11 +45,32 @@ namespace Pets.Controllers
     public class BusinessUnavailableDateController : ApiController
     {
         [HttpGet]
-        public List<BusinessUnavailableDate> Get(BusinessUnavailableDate unavailableDate)
+        public List<BusinessUnavailableDate> Get(int businessID)
         {
             List<BusinessUnavailableDate> unavailableDates = new List<BusinessUnavailableDate>();
-            //ToDo
-            return unavailableDates;
+            using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["Pets"].ConnectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    using (SqlCommand command = new SqlCommand("Select UnavailableDate From dbo.BusinessUnavailableDate Where BusinessID = @businessID OrderBy UnavailableDate;", connection))
+                    {
+                        command.Parameters.AddWithValue("businessID", businessID);
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                unavailableDates.Add(new BusinessUnavailableDate(businessID, (DateTime)reader["UnavailableDate"]));
+                            }
+                        }
+                    }
+                    return unavailableDates;
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.Message);
+                }
+            }
         }
         [HttpPost]
         public void Post(BusinessUnavailableDate unavailableDate)

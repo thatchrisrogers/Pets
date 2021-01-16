@@ -3,6 +3,7 @@ let months = [{ value: 1, text: 'January' }, { value: 2, text: 'February' }, { v
 let selectMonth;
 let selectYear;
 let selectCustomer;
+let unavailableDates = [];
 
 function initbusinessCalendarView() {
     loadSelectElement(document.getElementById('Business'), businessListItems, false);
@@ -89,7 +90,7 @@ function loadCalendar() {
 
                 dateIsUnavailable = document.createElement('input');
                 dateIsUnavailable.type = 'checkbox';
-                dateIsUnavailable.Tooltip = 'Toggle availability for this date.';
+                dateIsUnavailable.title = 'Toggle availability for this date.';
                 //availableDate.checked = task.IsComplete;
                 dateIsUnavailable.onchange = function () { toggleAvailability(this); }
 
@@ -104,7 +105,7 @@ function loadCalendar() {
                         }
                     }
                 }
-                if (iDate === todaysDate) {
+                if (iDate.getDate() === todaysDate.getDate()) {
                     calendarDay.classList.add('selected');
                 }
                 else if (iDate < todaysDate) {
