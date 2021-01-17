@@ -163,14 +163,15 @@ Go
 
 Drop Procedure If Exists dbo.GetCareRequests
 Go
-Create Procedure dbo.GetCareRequests(@userName VarChar(25), @month int, @year int)
+Create Procedure dbo.GetCareRequests(@userName VarChar(25), @businessID int, @month int, @year int)
 As
 Select request.*, customer.Name As CustomerName 
 From dbo.GetBusinessesForUserName(@userName) associatedBusiness
 Inner Join dbo.Customer customer On associatedBusiness.ID = customer.BusinessID
 Inner Join dbo.CareRequest request On customer.ID = request.CustomerID
-Where (Month(request.StartDate) = @month And Year(request.StartDate) = @year) 
-	Or (Month(request.EndDate) = @month And Year(request.EndDate) = @year) 
+Where customer.BusinessID = @businessID
+	And (Month(request.StartDate) = @month And Year(request.StartDate) = @year) 
+		Or (Month(request.EndDate) = @month And Year(request.EndDate) = @year) 
 Order By StartDate;
 Go
 

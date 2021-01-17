@@ -53,7 +53,7 @@ namespace Pets.Controllers
                 try
                 {
                     connection.Open();
-                    using (SqlCommand command = new SqlCommand("Select UnavailableDate From dbo.BusinessUnavailableDate Where BusinessID = @businessID OrderBy UnavailableDate;", connection))
+                    using (SqlCommand command = new SqlCommand("Select UnavailableDate From dbo.BusinessUnavailableDate Where BusinessID = @businessID Order By UnavailableDate;", connection))
                     {
                         command.Parameters.AddWithValue("businessID", businessID);
                         using (SqlDataReader reader = command.ExecuteReader())

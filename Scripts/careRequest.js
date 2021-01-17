@@ -330,7 +330,7 @@ function saveCareRequest() {
 }
 function getCareRequests(callBackFunction) {
     let xhttp = new XMLHttpRequest();
-    xhttp.open('GET', 'api/careRequest?userName=' + person.UserName + '&month=' + selectMonth.value + '&' + 'year=' + selectYear.value, true);
+    xhttp.open('GET', 'api/careRequest?userName=' + person.UserName + '&businessID=' + selectBusiness.value + '&month=' + selectMonth.value + '&' + 'year=' + selectYear.value, true);
     xhttp.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
     xhttp.onreadystatechange = function () {
         if (this.readyState == 4) {

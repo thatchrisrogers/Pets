@@ -49,7 +49,7 @@ namespace Pets.Controllers
             return careRequests;
         }
 
-        public List<CareRequest> Get(string userName, int month, int year)
+        public List<CareRequest> Get(string userName, int businessID, int month, int year)
         {
             List<CareRequest> careRequests = new List<CareRequest>();
             using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["Pets"].ConnectionString))
@@ -61,6 +61,7 @@ namespace Pets.Controllers
                     {
                         command.CommandType = CommandType.StoredProcedure;
                         command.Parameters.AddWithValue("userName", userName);
+                        command.Parameters.AddWithValue("businessID", businessID);
                         command.Parameters.AddWithValue("month", month);
                         command.Parameters.AddWithValue("year", year);
                         using (SqlDataReader reader = command.ExecuteReader())
