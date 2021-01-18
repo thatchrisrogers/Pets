@@ -1,0 +1,42 @@
+﻿<p>
+    Busy Time is a customer-centric, workflow site intended to help young entrepreneurs manage their first business.
+    Whether your business is pet care, lawn care, washing cars, and/or general household chores,
+    this website will help you to manage your customers’ expectations by defining and scheduling tasks to be performed at each visit.
+    The website also helps to manage scheduling and payments.
+</p>
+<p>
+    Busy Time is also a portal for your current and prospective cutomers to view your business' services and availability.
+</p>
+<div class="gridWith2Columns">
+    <div class="gridLabelColumn"><label for="SelectLocalBusiness">Local Busy Time Businesses:</label></div>
+    <div class="gridInputColumn">
+        <select id="SelectLocalBusiness" required></select>
+    </div>
+</div>
+<h4>Availability</h4>
+<div style="overflow-x:scroll;">
+    <table id="VisitorCalendar">
+        <thead>
+            <tr>
+                <th colspan="7" style="text-align:left">
+                    <input type="button" onclick="changeMonth(-1, createVisitorCalendar);" value="&lt">
+                    <select id="SelectMonth" style="font-weight:bold" onchange="changeMonthYear(createVisitorCalendar);"></select>
+                    <select id="SelectYear" style="font-weight:bold" onchange="changeMonthYear(createVisitorCalendar);"></select>
+                    <input type="button" onclick="changeMonth(1, createVisitorCalendar);" value="&gt">
+                </th>
+            </tr>
+            <tr>
+                <th>Sunday</th>
+                <th>Monday</th>
+                <th>Tuesday</th>
+                <th>Wednesday</th>
+                <th>Thursday</th>
+                <th>Friday</th>
+                <th>Saturday</th>
+            </tr>
+        </thead>
+
+        <tbody id="CalendarBody">
+        </tbody>
+    </table>
+</div>

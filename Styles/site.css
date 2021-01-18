@@ -161,7 +161,7 @@ a.delete, a.undo {
         padding-right: 5px;
         text-decoration: underline;
     }
-        .calendarDayHeaderContainer > div:hover {
+        .calendarDayHeaderContainer > div:not(.unavailableCalendarDay):hover {
             cursor: pointer;
             background-color: darkcyan;
             color: white;

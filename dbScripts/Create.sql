@@ -320,7 +320,7 @@ Select person.ID, person.FirstName + ' ' + person.LastName As Name
 From dbo.GetBusinessesForUserName(@userName) associatedBusiness 
 Inner Join dbo.BusinessPerson businessPerson On associatedBusiness.ID = businessPerson.BusinessID
 Inner Join dbo.Person person On businessPerson.PersonID = person.ID
-Order By person.FirstName, person.LastName
+Order By businessPerson.IsOwner Desc, person.FirstName Asc
 Go
 
 Drop Procedure If Exists dbo.ToggleBusinessAvailability

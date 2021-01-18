@@ -136,7 +136,7 @@ function initCareVisits(callBackFunction) {
             careVisitDateTime.setHours(uniquePreferredTime.split(':')[0]);
             careVisitDateTime.setMinutes(uniquePreferredTime.split(':')[1]);
             careVisit = { CareRequestID: careRequest.ID, VisitDateTime: new Date(careVisitDateTime)}; 
-            careVisit.CareProvider = { ID: 1 };
+            careVisit.CareProvider = { ID: careProviderListItems[0].ID };
             careVisit.Tasks = petTasks.filter(item => item.PreferredTime.substring(0, 5) === uniquePreferredTime.substring(0, 5));
             careVisits.push(careVisit);
         }
@@ -233,7 +233,7 @@ function addCareVisitRow(visit) {
     }
 
     visitTableRow.insertCell(cellIndex += 1);
-    addElementToTableRow('CareProvider', 'select', undefined, 'userInput', true, careProviderListItems, (visit !== undefined ? visit.CareProvider.ID : undefined), cellIndex, visitTableRow);
+    addElementToTableRow('CareProvider', 'select', undefined, 'userInput', true, careProviderListItems, (visit !== undefined ? visit.CareProvider.ID : careProviderListItems[0].ID), cellIndex, visitTableRow);
 
     //Tasks
     loadCareVisitTaskTable(visit, careVisitTableBody);
@@ -316,7 +316,7 @@ function saveCareRequest() {
                 else if (document.activeElement.id === 'SaveAndClose') {
                     closeCareRequestForm();
                 }
-                getCareRequests(loadCalendar);
+                loadBusinessCalendar();
             }
             else {
                 displayError('Error saving Care Request', this);

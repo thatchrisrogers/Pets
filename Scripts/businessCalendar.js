@@ -1,57 +1,14 @@
-﻿let todaysDate = new Date(); 
-let months = [{ value: 1, text: 'January' }, { value: 2, text: 'February' }, { value: 3, text: 'March' }, { value: 4, text: 'April' }, { value: 5, text: 'May' }, { value: 6, text: 'June' }, { value: 7, text: 'July' }, { value: 8, text: 'August' }, { value: 9, text: 'September' }, { value: 10, text: 'October' }, { value: 11, text: 'November' }, { value: 12, text: 'December' } ];
-let selectMonth;
-let selectYear;
-let selectBusiness;
-let businessUnavailableDates = [];
-
-function initbusinessCalendarView() {
+﻿function initBusinessCalendarView() {
     selectBusiness = document.getElementById('SelectBusiness');
     loadSelectElement(selectBusiness, businessListItems, false);
-    getBusinessUnavailableDates();
-    let currentMonth = todaysDate.getMonth() + 1;
-    let currentYear = todaysDate.getFullYear();
-    selectMonth = document.getElementById('SelectMonth');
-    selectYear = document.getElementById('SelectYear');
-
-    let optionMonth;
-    for (selectedMonth of months) {
-        optionMonth = document.createElement('option');
-        optionMonth.value = selectedMonth.value;
-        optionMonth.text = selectedMonth.text;
-        selectMonth.appendChild(optionMonth);
-    }
-    selectMonth.value = currentMonth;
-
-    let optionYear;
-    for (let i = -1; i <= 1; i++) {
-        optionYear = document.createElement('option');
-        optionYear.text = currentYear + i;
-        optionYear.value = currentYear + i;
-        selectYear.appendChild(optionYear);
-        optionYear = document.createElement('option');
-    }
-    selectYear.value = currentYear;
-    getCareRequests(loadCalendar);
+    getBusinessUnavailableDates(selectBusiness.value);
+    initCalendarControls();
+    loadBusinessCalendar();
 }
-function changeMonthYear() {
-    getCareRequests(loadCalendar);
+function loadBusinessCalendar() {
+    getCareRequests(createBusinessCalendar);
 }
-function changeMonth(gotoMonth) {
-    let selectedMonth = parseInt(selectMonth.value);
-    let selectedYear = parseInt(selectYear.value);
-    if (gotoMonth === 1) {
-        gotoMonth = (selectedMonth === 12) ? 1 : selectedMonth + 1;
-        gotoYear = (selectedMonth === 12) ? selectedYear + 1 : selectedYear;
-    } else if (gotoMonth === -1) {
-        gotoMonth = (selectedMonth === 1) ? 12 : selectedMonth - 1;
-        gotoYear = (selectedMonth === 1) ? selectedYear - 1 : selectedYear;
-    }
-    selectMonth.value = gotoMonth;
-    selectYear.value = gotoYear;
-    changeMonthYear();
-}
-function loadCalendar() {
+function createBusinessCalendar() {
     let selectedMonth = parseInt(selectMonth.value - 1);
     let selectedYear = parseInt(selectYear.value);
     let firstDayOfMonth = (new Date(selectedYear, selectedMonth)).getDay();
@@ -66,6 +23,7 @@ function loadCalendar() {
     let requestEndDate;
     let iDate;
     let pCustomerName, hiddenCareRequestId;
+    let calendarDayHeaderContainer;
     let calendarDayHeader;
     let dateIsUnavailable;
     
@@ -83,7 +41,6 @@ function loadCalendar() {
             }
             else {
                 iDate = new Date(selectedYear, selectedMonth, dayOfMonth);
-
                
                 calendarDayHeaderContainer = document.createElement('div');
                 calendarDayHeaderContainer.classList.add('calendarDayHeaderContainer');
@@ -109,7 +66,7 @@ function loadCalendar() {
                         }
                     }
                 }
-                if (iDate.getDate() === todaysDate.getDate()) {
+                if (iDate.valueOf() === todaysDate.valueOf()) {
                     calendarDay.classList.add('selected');
                 }
                 else if (iDate < todaysDate) {
@@ -159,9 +116,9 @@ function appendCareRequestForm(callBackFunction) {
     }
     xhttp.send();  
 }
-function getBusinessUnavailableDates() {
+function getBusinessUnavailableDates(businessID, callBackFunction) {
     let xhttp = new XMLHttpRequest();
-    xhttp.open('GET', 'api/businessUnavailableDate?businessID=' + selectBusiness.value, true);
+    xhttp.open('GET', 'api/businessUnavailableDate?businessID=' + businessID, true);
     xhttp.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
     xhttp.onreadystatechange = function () {
         if (this.readyState == 4) {
@@ -169,6 +126,9 @@ function getBusinessUnavailableDates() {
                 businessUnavailableDates = JSON.parse(this.responseText);
                 for (businessUnavailableDate of businessUnavailableDates) { //Convert to Date object
                     businessUnavailableDate.UnavailableDate = new Date(businessUnavailableDate.UnavailableDate);
+                }
+                if (typeof (callBackFunction) === typeof (Function)) {
+                    callBackFunction();
                 }
             }
             else {
@@ -196,7 +156,7 @@ function toggleAvailability(element) {
                 } else {
                     element.parentElement.classList.remove('unavailableCalendarDay');
                 }
-                getBusinessUnavailableDates();
+                getBusinessUnavailableDates(selectBusiness.value);
             }
             else {
                 displayError('Error saving Care Visit', this);

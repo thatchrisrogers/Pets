@@ -41,6 +41,38 @@ namespace Pets.Controllers
                 }
             }
         }
+        [HttpGet]
+        public List<Business> GetLocal()
+        {
+            //ToDo - Figure out how to do local
+            List<Business> businesses = new List<Business>();
+            Business business;
+            using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["Pets"].ConnectionString))
+            {
+                try
+                {
+                    connection.Open();
+                    using (SqlCommand command = new SqlCommand("Select * From dbo.Business Order By Name;", connection))
+                    {
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                business = new Business();
+                                business.ID = ((int)reader["ID"]);
+                                business.Name = ((string)reader["Name"]);
+                                businesses.Add(business);
+                            }
+                        }
+                    }
+                    return businesses;
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.Message);
+                }
+            }
+        }
     }
     public class BusinessUnavailableDateController : ApiController
     {

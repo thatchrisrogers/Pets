@@ -1,2 +1,23 @@
-﻿<h1>Home</h1>
-<div id="viewContainer"></div>
+﻿<style>
+    .gridContainer {
+        display: grid;
+        grid-template-columns: 30% 70%;
+    }
+
+        .gridContainer > div:last-child {
+            text-align: right;
+        }
+
+    @media screen and (max-width:600px) {
+        .gridContainer {
+            grid-template-columns: max-content;
+        }
+    }
+</style>
+
+<div class="gridContainer">
+    <div><b>Welcome to Busy Time!</b></div>
+    <div><label id="BusyTime"></label></div>
+</div>
+<div id="ViewContainer"></div>
+

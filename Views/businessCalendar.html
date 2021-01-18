@@ -6,14 +6,14 @@
     </div>
 </div>
 <div style="overflow-x:scroll;">
-    <table id="Calendar">
+    <table id="BusinessCalendar">
         <thead>
             <tr>
                 <th colspan="7" style="text-align:left">
-                    <input type="button" onclick="changeMonth(-1);" value="&lt">
-                    <select id="SelectMonth" style="font-weight:bold" onchange="changeMonthYear();"></select>
-                    <select id="SelectYear" style="font-weight:bold" onchange="changeMonthYear();"></select>
-                    <input type="button" onclick="changeMonth(1);" value="&gt">
+                    <input type="button" onclick="changeMonth(-1, loadBusinessCalendar);" value="&lt">
+                    <select id="SelectMonth" style="font-weight:bold" onchange="changeMonthYear(loadBusinessCalendar);"></select>
+                    <select id="SelectYear" style="font-weight:bold" onchange="changeMonthYear(loadBusinessCalendar);"></select>
+                    <input type="button" onclick="changeMonth(1, loadBusinessCalendar);" value="&gt">
                 </th>
             </tr>
             <tr>
