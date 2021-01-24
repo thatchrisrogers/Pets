@@ -1,5 +1,6 @@
 ﻿let localBusinesses = [];
 let selectLocalBusiness;
+let requestCareForm;
 
 function initVisitorView() {
     initCalendarControls();
@@ -46,31 +47,36 @@ function createVisitorCalendar() {
             if (rowNum === 0 && cellNum < firstDayOfMonth) {
                 calendarRow.appendChild(calendarDay);
             }
-            else if (dayOfMonth > daysInMonth) {
-                break;
-            }
-            else {
+            else if (dayOfMonth <= daysInMonth) {
                 iDate = new Date(selectedYear, selectedMonth, dayOfMonth);
-
-                calendarDayHeaderContainer = document.createElement('div');
-                calendarDayHeaderContainer.classList.add('calendarDayHeaderContainer');
-                calendarDayHeader = document.createElement('div');
-                calendarDayHeader.innerHTML = dayOfMonth;              
+                calendarDay.innerHTML = dayOfMonth;              
                
                 if (iDate.valueOf() === todaysDate.valueOf()) {
                     calendarDay.classList.add('selected');
                 }
                 else if ((iDate < todaysDate) || (businessUnavailableDates.find(item => item.UnavailableDate.valueOf() === iDate.valueOf()) !== undefined)) {
                     calendarDay.classList.add('unavailableCalendarDay');
-                    calendarDayHeader.classList.add('unavailableCalendarDay');
                 }
-                calendarDayHeaderContainer.appendChild(calendarDayHeader);
-                calendarDay.appendChild(calendarDayHeaderContainer);
-              
+
+                if (calendarDay.classList.contains('unavailableCalendarDay') === false) {
+                    calendarDay.classList.add('availableCalendarDay');
+                    calendarDay.onclick = function () {
+                        displayRequestCareForm(new Date(selectYear.value, parseInt(selectMonth.value) - 1, this.innerHTML));
+                    }
+                }             
                 calendarRow.appendChild(calendarDay);
                 dayOfMonth++;
             }
         }
         calendarBody.appendChild(calendarRow); // appending each row into calendar body.
     }
+}
+function displayRequestCareForm(startDate) {
+    requestCareForm = document.forms.namedItem('RequestCareForm');
+    requestCareForm.style.display = 'block';
+    requestCareForm.StartDate.value = startDate.toLocaleDateString().toDateInputFormat(); 
+    requestCareForm.EndDate.value = new Date(startDate.addDays(1)).toLocaleDateString().toDateInputFormat(); 
+}
+function closeRequestCareForm() {
+    requestCareForm.style.display = 'none';
 }

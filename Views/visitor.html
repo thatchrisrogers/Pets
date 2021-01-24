@@ -13,8 +13,7 @@
         <select id="SelectLocalBusiness" required></select>
     </div>
 </div>
-<h4>Availability</h4>
-<div style="overflow-x:scroll;">
+<div>
     <table id="VisitorCalendar">
         <thead>
             <tr>
@@ -26,13 +25,13 @@
                 </th>
             </tr>
             <tr>
-                <th>Sunday</th>
-                <th>Monday</th>
-                <th>Tuesday</th>
-                <th>Wednesday</th>
-                <th>Thursday</th>
-                <th>Friday</th>
-                <th>Saturday</th>
+                <th>Sun</th>
+                <th>Mon</th>
+                <th>Tue</th>
+                <th>Wed</th>
+                <th>Thu</th>
+                <th>Fri</th>
+                <th>Sat</th>
             </tr>
         </thead>
 
@@ -40,3 +39,40 @@
         </tbody>
     </table>
 </div>
+<form id="RequestCareForm" class="overlay">
+    <div class="modalContent">
+        <button type="button" class="modalClose" onclick="closeRequestCareForm();">&times;</button>
+        <div class="gridWith4Columns">
+            <div class="gridLabelColumn">
+                <label for="StartDate">Start Date:</label>
+            </div>
+            <div class="gridInputColumn">
+                <input type="date" id="StartDate" required />
+            </div>
+            <div class="gridLabelColumn">
+                <label for="EndDate">End Date:</label>
+            </div>
+            <div class="gridInputColumn">
+                <input type="date" id="EndDate" required />
+            </div>
+            <div class="gridLabelColumn">
+                <label for="Name">Name:</label>
+            </div>
+            <div class="gridInputColumn">
+                <input type="text" id="Name" required />
+            </div>
+            <div class="gridLabelColumn">
+                <label for="Email">Email:</label>
+            </div>
+            <div class="gridInputColumn">
+                <input type="email" id="Email" required />
+            </div>
+            <div class="gridLabelColumn">
+                <label for="Request">Request:</label>
+            </div>
+            <div class="gridInputColumn" style="grid-column: 2/-1;">
+                <textarea id="Request" style="width:100%;" required placeholder="Briefly decribe the type of care you are requesting."></textarea>
+            </div>
+        </div>
+    </div>
+</form>

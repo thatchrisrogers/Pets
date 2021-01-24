@@ -150,6 +150,17 @@ a.delete, a.undo {
     height:50px;
     border: 1px solid lightgrey ;
 }
+.unavailableCalendarDay {
+    background-color: ghostwhite;
+    color: lightgray;
+}
+.availableCalendarDay:hover {
+    cursor: pointer;
+    background-color: darkcyan;
+    color: white;
+}
+
+/*The following are specific to the BusinessCalendar - not the Visitor Calendar.  Consdier renaming them. */
 .calendarDayHeaderContainer {
     display: flex;
     flex-wrap: nowrap;
@@ -171,10 +182,7 @@ a.delete, a.undo {
     background-color: darkcyan;
     color: white;
 }
-.unavailableCalendarDay {
-    background-color: ghostwhite;
-    color: lightgray;
-}
+/*End Business Calendar notes*/
 .parentTable td {
     padding: 1px;
 }

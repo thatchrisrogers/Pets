@@ -36,10 +36,7 @@ function createBusinessCalendar() {
             if (rowNum === 0 && cellNum < firstDayOfMonth) {
                 calendarRow.appendChild(calendarDay);
             }
-            else if (dayOfMonth > daysInMonth) {
-                break;
-            }
-            else {
+            else if (dayOfMonth <= daysInMonth) {
                 iDate = new Date(selectedYear, selectedMonth, dayOfMonth);
                
                 calendarDayHeaderContainer = document.createElement('div');
@@ -55,17 +52,6 @@ function createBusinessCalendar() {
                 }
                 dateIsUnavailable.onchange = function () { toggleAvailability(this); }
 
-                if(iDate >= todaysDate) {
-                    calendarDayHeader.onclick = function () {
-                        try {
-                            let startDate = new Date(selectYear.value, parseInt(selectMonth.value) - 1, this.innerHTML);
-                            appendCareRequestForm(function () { displayCareRequestForm(undefined, startDate); })
-                        }
-                        catch (e) {
-                            displayError('Error displaying Care Calendar Request Form - ' + e.message);
-                        }
-                    }
-                }
                 if (iDate.valueOf() === todaysDate.valueOf()) {
                     calendarDay.classList.add('selected');
                 }
@@ -74,7 +60,18 @@ function createBusinessCalendar() {
                     calendarDayHeader.classList.add('unavailableCalendarDay');
                 }
 
-
+                if (calendarDay.classList.contains('unavailableCalendarDay') === false) {
+                    calendarDayHeader.onclick = function () {
+                        try {
+                            let startDate = new Date(selectYear.value, parseInt(selectMonth.value) - 1, this.innerHTML);
+                            appendCareRequestForm(function () { displayCareRequestForm(undefined, startDate); })
+                        }
+                        catch (e) {
+                            displayError('Error displaying Care Request Form - ' + e.message);
+                        }
+                    }
+                }
+                
                 calendarDayHeaderContainer.appendChild(dateIsUnavailable);
                 calendarDayHeaderContainer.appendChild(calendarDayHeader);
                 calendarDay.appendChild(calendarDayHeaderContainer);
