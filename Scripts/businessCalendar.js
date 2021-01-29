@@ -53,14 +53,17 @@ function createBusinessCalendar() {
                 dateIsUnavailable.onchange = function () { toggleAvailability(this); }
 
                 if (iDate.valueOf() === todaysDate.valueOf()) {
-                    calendarDay.classList.add('selected');
+                    calendarDay.classList.add('currentCalendarDay');
                 }
                 else if (iDate < todaysDate) {
+                    calendarDay.classList.add('pastCalendarDay');
+                    calendarDayHeader.classList.add('pastCalendarDay');
+                }
+                else if (businessUnavailableDates.find(item => item.UnavailableDate.valueOf() === iDate.valueOf()) !== undefined) {
                     calendarDay.classList.add('unavailableCalendarDay');
-                    calendarDayHeader.classList.add('unavailableCalendarDay');
                 }
 
-                if (calendarDay.classList.contains('unavailableCalendarDay') === false) {
+                if (calendarDay.classList.contains('pastCalendarDay') === false && calendarDay.classList.contains('unavailableCalendarDay') === false) {
                     calendarDayHeader.onclick = function () {
                         try {
                             let startDate = new Date(selectYear.value, parseInt(selectMonth.value) - 1, this.innerHTML);
@@ -148,11 +151,8 @@ function toggleAvailability(element) {
     xhttp.onreadystatechange = function () {
         if (this.readyState === 4) {
             if (this.status === 200 || this.status === 204) {
-                if (element.checked) {
-                    element.parentElement.classList.add('unavailableCalendarDay');
-                } else {
-                    element.parentElement.classList.remove('unavailableCalendarDay');
-                }
+                element.parentElement.classList.toggle('unavailableCalendarDay');
+                element.parentElement.parentElement.classList.toggle('unavailableCalendarDay');
                 getBusinessUnavailableDates(selectBusiness.value);
             }
             else {

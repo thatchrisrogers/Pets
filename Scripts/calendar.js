@@ -6,6 +6,14 @@ let selectYear;
 let selectBusiness;
 let businessUnavailableDates = [];
 
+function setTheTime() {
+    let theTime = new Date();
+    let theTimeElement = document.getElementById("TheTime");
+    if (theTimeElement) {
+        theTimeElement.innerHTML = theTime.toDisplayTime();
+    }
+    setInterval(setTheTime, 60000);
+}
 function initCalendarControls() {
     let currentMonth = todaysDate.getMonth() + 1;
     let currentYear = todaysDate.getFullYear();

@@ -1,14 +1,14 @@
 ﻿<p>
-    Busy Time is a customer-centric, workflow site intended to help young entrepreneurs manage their first business.
-    Whether your business is pet care, lawn care, washing cars, and/or general household chores,
-    this website will help you to manage your customers’ expectations by defining and scheduling tasks to be performed at each visit.
-    The website also helps to manage scheduling and payments.
+    Welcome to <i>AndHow.biz!</i> The customer-centric, workflow site designed to help young entrepreneurs manage their first business.
+    Whether your business is pet care, babysitting, tutoring, lawn care, washing cars, and/or general household chores,
+    <i>AndHow.biz!</i> will help you define and schedule tasks to be performed at each customer visit.
 </p>
 <p>
-    Busy Time is also a portal for your current and prospective cutomers to view your business' services and availability.
+    By establishing the Who &#9830; What &#9830; When &#9830; Where &#9830; <i>AndHow.biz!</i> provides an easy way to record the tasks you have performed, keep your customers informed, collect payment,
+    and most importantly, see What’s Next!
 </p>
 <div class="gridWith2Columns">
-    <div class="gridLabelColumn"><label for="SelectLocalBusiness">Local Busy Time Businesses:</label></div>
+    <div class="gridLabelColumn"><label for="SelectLocalBusiness">Your Local Businesses:</label></div>
     <div class="gridInputColumn">
         <select id="SelectLocalBusiness" required></select>
     </div>
@@ -44,34 +44,40 @@
         <button type="button" class="modalClose" onclick="closeRequestCareForm();">&times;</button>
         <div class="gridWith4Columns">
             <div class="gridLabelColumn">
-                <label for="StartDate">Start Date:</label>
+                <label for="Name">Who:</label>
+            </div>
+            <div class="gridInputColumn">
+                <input type="text" id="Name" required placeholder="Please enter your name" />
+            </div>
+            <div class="gridLabelColumn">
+                <label for="Email"></label>
+            </div>
+            <div class="gridInputColumn">
+                <input type="email" id="Email" required placeholder="Please enter your Email" />
+            </div>
+            <div class="gridLabelColumn">
+                <label for="Request">What:</label>
+            </div>
+            <div class="gridInputColumn" style="grid-column: 2/-1;">
+                <textarea id="Request" style="width:100%;" required placeholder="Briefly decribe the type of care you are requesting."></textarea>
+            </div>
+            <div class="gridLabelColumn">
+                <label for="StartDate">When:</label>
             </div>
             <div class="gridInputColumn">
                 <input type="date" id="StartDate" required />
             </div>
             <div class="gridLabelColumn">
-                <label for="EndDate">End Date:</label>
+                <label for="EndDate"></label>
             </div>
             <div class="gridInputColumn">
                 <input type="date" id="EndDate" required />
             </div>
             <div class="gridLabelColumn">
-                <label for="Name">Name:</label>
-            </div>
-            <div class="gridInputColumn">
-                <input type="text" id="Name" required />
-            </div>
-            <div class="gridLabelColumn">
-                <label for="Email">Email:</label>
-            </div>
-            <div class="gridInputColumn">
-                <input type="email" id="Email" required />
-            </div>
-            <div class="gridLabelColumn">
-                <label for="Request">Request:</label>
+                <label for="Address">Where:</label>
             </div>
             <div class="gridInputColumn" style="grid-column: 2/-1;">
-                <textarea id="Request" style="width:100%;" required placeholder="Briefly decribe the type of care you are requesting."></textarea>
+                <textarea type="text" id="Address" style="width:100%;" required placeholder="Please enter your address"></textarea>
             </div>
         </div>
     </div>

@@ -138,9 +138,6 @@ td {
     background-color: darkcyan;
     color: white;
 }
-.selected {
-    background-color: cyan;
-}
 a.delete, a.undo {
     cursor: pointer;
     padding: 5px;
@@ -150,16 +147,32 @@ a.delete, a.undo {
     height:50px;
     border: 1px solid lightgrey ;
 }
-.unavailableCalendarDay {
-    background-color: ghostwhite;
+.currentCalendarDay {
+    color: darkcyan;
+    background-color: lightcyan;
+    border-color: darkcyan;
+}
+.pastCalendarDay {
     color: lightgray;
+    background-color: ghostwhite;
+    border-color: lightgray;
+}
+.unavailableCalendarDay {
+    color: #a94442;
+    background-color: #f2dede;
+    border-color: #a94442;
 }
 .availableCalendarDay:hover {
     cursor: pointer;
-    background-color: darkcyan;
-    color: white;
+    color: green;
+    background-color: lightgreen;
+    border-color: green;
 }
-
+.selectedCalendarDay {
+    color: green;
+    background-color: lightgreen;
+    border-color: green;
+}
 /*The following are specific to the BusinessCalendar - not the Visitor Calendar.  Consdier renaming them. */
 .calendarDayHeaderContainer {
     display: flex;

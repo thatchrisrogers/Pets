@@ -1,18 +1,8 @@
-﻿function initHomeView() {
-    setBusyTime();
-    let busyTimer = setInterval(setBusyTime, 60000);
-
+﻿function initHomeView() {    
     if (person !== undefined) {
         appendCareVisitView(initCareVisitView);
     } else {
         appendVisitorView(initVisitorView);
-    }   
-}
-function setBusyTime() {
-    let busyTime = new Date();
-    let busyTimeElement = document.getElementById("BusyTime");
-    if (busyTimeElement) {
-        busyTimeElement.innerHTML = 'The Busy Time is ' + busyTime.toDisplayFormat();
     }
 }
 function appendCareVisitView(callBackFunction) {

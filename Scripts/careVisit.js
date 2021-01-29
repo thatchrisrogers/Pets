@@ -21,7 +21,7 @@ function createCareVisitTable() {
     let tableCell;
     let element;
     if (careVisits.length > 0) {
-        careVisitMessage.innerHTML = 'Upcoming Visits:';
+        careVisitMessage.innerHTML = 'Whats Next:';
         careVisitTable.style.display = 'block';
         for (careVisit of careVisits) {
             careVisitTableRow = careVisitTableBody.insertRow(-1);
@@ -32,7 +32,7 @@ function createCareVisitTable() {
             element.value = careVisit.ID;
             tableCell.appendChild(element);
             element = document.createElement('label');
-            element.innerHTML = careVisit.VisitDateTime.toDisplayFormat();
+            element.innerHTML = careVisit.VisitDateTime.toDisplayDateTime();
             tableCell.appendChild(element);
             tableCell = careVisitTableRow.insertCell(1);
             element = document.createElement('label');
@@ -59,7 +59,7 @@ function createCareVisitTable() {
 function displayCareVisitForm() {
     try {
         careVisitForm = document.forms.namedItem("CareVisitForm");
-        careVisitForm.querySelector("[id=VisitDateTime]").innerHTML = careVisit.VisitDateTime.toDisplayFormat();
+        careVisitForm.querySelector("[id=VisitDateTime]").innerHTML = careVisit.VisitDateTime.toDisplayDateTime();
         careVisitForm.querySelector("[id=CustomerName]").innerHTML = careVisit.Customer.Name;
         careVisitForm.querySelector("[id=Address]").innerHTML = careVisit.Customer.Address;      
         careVisitForm.style.display = 'block';
@@ -202,7 +202,7 @@ function displayEmailButton() {
 }
 function sendEmail() {
     let emailBody = 'Hi, %0D%0A';  //https://www.w3schools.com/tags/ref_urlencode.ASP
-    emailBody += 'I have completed the following task(s) for the visit scheduled for ' + careVisit.VisitDateTime.toDisplayFormat() + ': %0D%0A';
+    emailBody += 'I have completed the following task(s) for the visit scheduled for ' + careVisit.VisitDateTime.toDisplayDateTime() + ': %0D%0A';
     for (task of careVisit.Tasks) {
         emailBody += '%E2%80%A2  ' + task.Pet.Name + ' - ' + task.Description + '%0D%0A';
     }

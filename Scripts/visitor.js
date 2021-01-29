@@ -6,7 +6,6 @@ function initVisitorView() {
     initCalendarControls();
     selectLocalBusiness = document.getElementById('SelectLocalBusiness');
     getLocalBusinesses(getBusinessUnavailableDates); //ToDo - figure out how to select local 
-    
 }
 function getLocalBusinesses(callBackFuntion) {
     let xhttp = new XMLHttpRequest();
@@ -35,8 +34,6 @@ function createVisitorCalendar() {
     let calendarDay;
     let calendarRow;
     let iDate;
-    let calendarDayHeaderContainer;
-    let calendarDayHeader;
 
     for (let rowNum = 0; rowNum < 6; rowNum++) {
         calendarRow = document.createElement('tr');
@@ -52,13 +49,19 @@ function createVisitorCalendar() {
                 calendarDay.innerHTML = dayOfMonth;              
                
                 if (iDate.valueOf() === todaysDate.valueOf()) {
-                    calendarDay.classList.add('selected');
+                    calendarDay.classList.add('currentCalendarDay');
+                    let theTime = document.createElement('h6');
+                    theTime.id = 'TheTime';
+                    calendarDay.appendChild(theTime);
                 }
-                else if ((iDate < todaysDate) || (businessUnavailableDates.find(item => item.UnavailableDate.valueOf() === iDate.valueOf()) !== undefined)) {
+                else if (iDate < todaysDate) {
+                    calendarDay.classList.add('pastCalendarDay');
+                }
+                else if (businessUnavailableDates.find(item => item.UnavailableDate.valueOf() === iDate.valueOf()) !== undefined) {
                     calendarDay.classList.add('unavailableCalendarDay');
                 }
 
-                if (calendarDay.classList.contains('unavailableCalendarDay') === false) {
+                if (calendarDay.classList.contains('pastCalendarDay') === false && calendarDay.classList.contains('unavailableCalendarDay') === false) {
                     calendarDay.classList.add('availableCalendarDay');
                     calendarDay.onclick = function () {
                         displayRequestCareForm(new Date(selectYear.value, parseInt(selectMonth.value) - 1, this.innerHTML));
@@ -69,13 +72,26 @@ function createVisitorCalendar() {
             }
         }
         calendarBody.appendChild(calendarRow); // appending each row into calendar body.
+        setTheTime();
     }
 }
 function displayRequestCareForm(startDate) {
     requestCareForm = document.forms.namedItem('RequestCareForm');
     requestCareForm.style.display = 'block';
     requestCareForm.StartDate.value = startDate.toLocaleDateString().toDateInputFormat(); 
-    requestCareForm.EndDate.value = new Date(startDate.addDays(1)).toLocaleDateString().toDateInputFormat(); 
+    requestCareForm.StartDate.min = startDate.toLocaleDateString().toDateInputFormat();
+    let iDate = startDate;
+    iDate.setHours(0, 0, 0);
+
+    for (let businessUnavailableDate of businessUnavailableDates) {
+        if (businessUnavailableDate.UnavailableDate.valueOf() === iDate.valueOf()) {
+            requestCareForm.EndDate.max = new Date(iDate.setDate(iDate.getDate() - 1)).toLocaleDateString().toDateInputFormat();
+            break;
+        }
+        iDate.setDate(iDate.getDate() +1);
+    }
+
+   // requestCareForm.EndDate.value = new Date(startDate.addDays(1)).toLocaleDateString().toDateInputFormat(); 
 }
 function closeRequestCareForm() {
     requestCareForm.style.display = 'none';

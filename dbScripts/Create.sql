@@ -51,6 +51,7 @@ Alter Table dbo.BusinessPerson Add Constraint FK_BusinessPerson_Business Foreign
 Alter Table dbo.BusinessPerson Add Constraint FK_BusinessPerson_Person Foreign Key(PersonID) References dbo.Person(ID)
 Insert Into dbo.BusinessPerson Values (1, 6, 1) --Lucy
 Insert Into dbo.BusinessPerson Values (1, 8, 0) --James
+Insert Into dbo.BusinessPerson Values (1, 5, 0) --Stacy
 
 Create Table dbo.BusinessUnavailableDate(
 	BusinessID Int Not Null
