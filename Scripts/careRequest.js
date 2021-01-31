@@ -233,7 +233,7 @@ function addCareVisitRow(visit) {
     }
 
     visitTableRow.insertCell(cellIndex += 1);
-    addElementToTableRow('CareProvider', 'select', undefined, 'userInput', true, careProviderListItems, (visit !== undefined ? visit.CareProvider.ID : careProviderListItems[0].ID), cellIndex, visitTableRow);
+    addElementToTableRow('CareProvider', 'select', undefined, 'userInput', true, careProviderListItems, (visit !== undefined ? visit.CareProvider.ID : undefined), cellIndex, visitTableRow);
 
     //Tasks
     loadCareVisitTaskTable(visit, careVisitTableBody);

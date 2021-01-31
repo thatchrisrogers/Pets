@@ -39,7 +39,8 @@ Create Table dbo.Business (
 	,Name VarChar(25) Not Null UNIQUE
 )
 Set Identity_Insert dbo.Business On
-Insert Into dbo.Business (ID, Name) Values (1, 'Lucy''s Pet Care')
+Insert Into dbo.Business (ID, Name) Values (1, 'Lucy''s Fluffy Pet Care')
+Insert Into dbo.Business (ID, Name) Values (2, 'James'' Reptile Care')
 Set Identity_Insert dbo.Business Off
 
 Create Table dbo.BusinessPerson (
@@ -50,8 +51,10 @@ Create Table dbo.BusinessPerson (
 Alter Table dbo.BusinessPerson Add Constraint FK_BusinessPerson_Business Foreign Key(BusinessID) References dbo.Business(ID)
 Alter Table dbo.BusinessPerson Add Constraint FK_BusinessPerson_Person Foreign Key(PersonID) References dbo.Person(ID)
 Insert Into dbo.BusinessPerson Values (1, 6, 1) --Lucy
-Insert Into dbo.BusinessPerson Values (1, 8, 0) --James
 Insert Into dbo.BusinessPerson Values (1, 5, 0) --Stacy
+
+Insert Into dbo.BusinessPerson Values (2, 8, 1) --James
+Insert Into dbo.BusinessPerson Values (2, 7, 0) --James
 
 Create Table dbo.BusinessUnavailableDate(
 	BusinessID Int Not Null
@@ -77,9 +80,11 @@ Create Table dbo.PetType(
 Insert Into dbo.PetType Values ('Dog')
 Insert Into dbo.PetType Values ('Cat')
 Insert Into dbo.PetType Values ('Rabbit')
-Insert Into dbo.PetType Values ('Reptile')
 Insert Into dbo.PetType Values ('Bird')
 Insert Into dbo.PetType Values ('Hamster')
+Insert Into dbo.PetType Values ('Snake')
+Insert Into dbo.PetType Values ('Lizard')
+Insert Into dbo.PetType Values ('Turtle')
 Insert Into dbo.PetType Values ('etc.')
 
 Create Table dbo.Pet(

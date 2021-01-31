@@ -5,7 +5,11 @@ let requestCareForm;
 function initVisitorView() {
     initCalendarControls();
     selectLocalBusiness = document.getElementById('SelectLocalBusiness');
+    selectLocalBusiness.onclick = function () {
+        getBusinessUnavailableDates(selectLocalBusiness.value, createVisitorCalendar);
+    }
     getLocalBusinesses(getBusinessUnavailableDates); //ToDo - figure out how to select local 
+    
 }
 function getLocalBusinesses(callBackFuntion) {
     let xhttp = new XMLHttpRequest();
